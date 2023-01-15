@@ -1,0 +1,20 @@
+node_modules
+tmp
+config/*
+!config/README.md
+!config/*-example.json
+test.js
+*-.js
+*-.json
+site/*
+data/*
+faq/*.json
+# For Visual Studio's temp directory
+.vs/
+.forever/
+faq/*
+package-lock.json
+config/snowflakes.json
+package-lock.json
+Judgement
+avatar/*

@@ -1,0 +1,23 @@
+{
+  "name": "chiron",
+  "version": "0.0.1",
+  "description": "Chiron Discord Bot Framework",
+  "main": "Chiron.ts",
+  "scripts": {
+    "test": "ts-node-esm src/Chiron.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Chiron"
+  },
+  "keywords": [
+    "Discord",
+    "Typescript",
+    "Framework"
+  ],
+  "author": "Nick Chevalier",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.7.1"
+  }
+}
