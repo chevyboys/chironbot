@@ -55,7 +55,7 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
                         possibleMod.file = moduleFile
                         return possibleMod;
                     } catch (error) {
-                        this.Module.client.errorHandler(error, `Error in Module Import for:"${moduleFile}"`);
+                        throw new Error(`Error in Module Import for:"${moduleFile}"`);
                     }
                 })
             //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
@@ -105,8 +105,8 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
             module.client = this.client;
             this.push(module)
             for (const component of module.components) {
-                if  (component.enabled)  {
-                    if  (component instanceof BaseInteractionComponent) {
+                if (component.enabled) {
+                    if (component instanceof BaseInteractionComponent) {
                         applicationCommands.push(component);
                     } else if (component instanceof ModuleLoading) {
                         component.process(null);
@@ -125,8 +125,8 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
             //Handle receiving command interactions
 
             //find any matching interactions
-            let matchingComponent: BaseInteractionComponent | MessageComponentInteractionComponent = (() => {
-                let match;
+            (() => {
+                let match: any = null;
                 let module = this.find(module => {
                     return module.components.filter(c => c.enabled).find((c) => {
                         if (
@@ -137,6 +137,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                             && interaction.commandName == c.name
                         ) {
                             match = c;
+
                             return true;
                         } else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent && c.customId(interaction["customId"])) {
                             match = c;
@@ -145,13 +146,12 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                         else return false;
                     })
                 })
-                if (!match || !module) {
+                if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) match.exec(interaction);
+                else {
                     throw new Error("I don't know how to handle that!");
                 }
-                return match;
             })()
 
-            matchingComponent.exec(interaction)
 
 
         })

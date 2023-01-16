@@ -1,5 +1,5 @@
 {
-  "name": "chiron",
+  "name": "ChironBot",
   "version": "0.0.3",
   "description": "Chiron Discord Bot Framework",
   "main": "Chiron.ts",
