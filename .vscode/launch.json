@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "echo 'Github Update Complete'",
+            "command": "exit",
             "name": "Git Push",
             "request": "launch",
             "type": "node-terminal",

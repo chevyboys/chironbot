@@ -3,6 +3,8 @@ import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunct
 import { ChironClient } from "../ChironClient";
 import path from "path"
 
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
 
 
 export class ChironModule implements IChironModule {

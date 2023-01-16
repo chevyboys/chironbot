@@ -2,10 +2,6 @@ import fs from "fs";
 import path from "path";
 import { Events } from "discord.js";
 import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 function readdirSyncRecursive(Directory) {
     let Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
