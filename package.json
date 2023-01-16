@@ -1,6 +1,6 @@
 {
   "name": "chiron",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Chiron Discord Bot Framework",
   "main": "Chiron.ts",
   "scripts": {
