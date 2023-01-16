@@ -13,7 +13,7 @@
     "url": "Chiron"
   },
   "files": [
-    "/dist"
+    "/src"
   ],
   "keywords": [
     "Discord",
