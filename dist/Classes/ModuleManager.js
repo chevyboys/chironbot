@@ -48,7 +48,7 @@ async function resolveRegisterable(registerable) {
             parsedRegisterable = registerable[0];
         else
             parsedRegisterable = registerable;
-        Promise.all(readdirSyncRecursive(parsedRegisterable).filter(file => file.endsWith('.ts'))
+        let possibleModules = await Promise.all(readdirSyncRecursive(parsedRegisterable).filter(file => file.endsWith('.ts'))
             .map(async (moduleFile) => {
             try {
                 let possibleMod = await import(moduleFile);
@@ -60,9 +60,8 @@ async function resolveRegisterable(registerable) {
             }
         })
         //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
-        ).then(async (possibleModules) => {
-            return possibleModules.filter((possibleModule) => possibleModule instanceof ChironModule);
-        });
+        );
+        return possibleModules.filter((possibleModule) => possibleModule instanceof ChironModule);
     }
     else if (Array.isArray(registerable)) {
         if (registerable.length < 1) {
