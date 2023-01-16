@@ -114,7 +114,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                             this.client.on(Events.MessageCreate, (input) => { component.exec(input) })
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input) })
                         }
-                        this.client.on(component.trigger, (input) => { component.exec(input) })
+                        else this.client.on(component.trigger, (input) => { component.exec(input) })
                     }
                 }
 
