@@ -2,7 +2,7 @@
   "name": "chironbot",
   "version": "0.1.0",
   "description": "Chiron Discord Bot Framework",
-  "main": "dist/index.ts",
+  "main": "dist/index.d.ts",
   "scripts": {
     "test": "echo 'complete'"
   },
