@@ -53,16 +53,13 @@ async function resolveRegisterable(registerable) {
         //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
         let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
-            try {
-                let possibleMod = (await import(moduleFile))?.Module;
-                possibleMod.file = moduleFile;
-                return possibleMod;
-            }
-            catch (error) {
-                throw new Error(`Error in Module Import for:"${moduleFile}"`);
-            }
-        }).filter((possibleModule) => possibleModule instanceof ChironModule));
-        return modules;
+            return import(moduleFile);
+        }));
+        let filteredModules = modules.map(m => {
+            let mod = m.Module ? m.Module : m;
+            return mod;
+        }).filter((possibleModule) => possibleModule instanceof ChironModule);
+        return filteredModules;
     }
     else if (Array.isArray(registerable)) {
         if (registerable.length < 1) {
