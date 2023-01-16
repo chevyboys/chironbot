@@ -2,7 +2,7 @@
   "name": "chironbot",
   "version": "0.0.6",
   "description": "Chiron Discord Bot Framework",
-  "main": "Chiron.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "ts-node-esm src/Chiron.ts"
   },
