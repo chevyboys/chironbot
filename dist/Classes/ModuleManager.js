@@ -41,6 +41,7 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
         }
     }
 }
+//testing
 async function resolveRegisterable(registerable) {
     if ((registerable instanceof String || typeof registerable == "string") || (Array.isArray(registerable) && registerable[0] && (typeof registerable[0] == "string" || registerable instanceof String))) {
         let parsedRegisterable;
