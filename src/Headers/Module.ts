@@ -107,12 +107,12 @@ export interface IContextMenuCommandComponent extends IBaseInteractionComponent 
 //event handler
 export interface IEventComponentOptions extends IBaseComponentOptions {
     readonly trigger: any
-    process: IInteractionProcessFunction
+    process: IEventProcessFunction
 }
 
 export interface IEventComponent extends IBaseComponent {
     readonly trigger: any
-    process: IInteractionProcessFunction
+    process: IEventProcessFunction
 }
 
 
