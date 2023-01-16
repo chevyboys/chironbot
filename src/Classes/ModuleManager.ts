@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module";
 
 
 function readdirSyncRecursive(Directory: string): Array<string> {
@@ -57,7 +57,7 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
                 return import(moduleFile);
             }))
         let filteredModules = modules.map(m => {
-            let mod = m.Module ? m.Module : m;
+            let mod = m.Module ? m.Module : m.module ? m.module : m.command ? m.command : m.Command ? m.Command : m;
             return mod;
         }
         ).filter((possibleModule) => possibleModule instanceof ChironModule);

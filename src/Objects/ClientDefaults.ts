@@ -1,5 +1,5 @@
 import { DMChannel, GuildChannel, Message } from "discord.js";
-import { ChironParseFunction, IChironClient, IErrorHandlerFunction } from "../../Headers/Client";
+import { ChironParseFunction, IChironClient, IErrorHandlerFunction } from "../Headers/Client";
 
 
 export let DefaultErrorHandler: IErrorHandlerFunction = function (error, msg) {

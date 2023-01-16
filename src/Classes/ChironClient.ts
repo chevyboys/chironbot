@@ -4,7 +4,7 @@ import { ChironParseFunction, IChironClient, IChironClientOptions, IErrorHandler
 import { IChironConfig } from "../Headers/Config";
 import { IModuleManager } from "../Headers/ModuleManager";
 import { ModuleManager } from "./ModuleManager";
-import { DefaultErrorHandler, DefaultParseMessage } from "./Objects/ClientDefaults";
+import { DefaultErrorHandler, DefaultParseMessage } from "../Objects/ClientDefaults";
 
 
 export class ChironClient extends Client implements IChironClient {

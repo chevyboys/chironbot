@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Events } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module";
 function readdirSyncRecursive(Directory) {
     let Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
@@ -54,7 +54,7 @@ async function resolveRegisterable(registerable) {
             return import(moduleFile);
         }));
         let filteredModules = modules.map(m => {
-            let mod = m.Module ? m.Module : m;
+            let mod = m.Module ? m.Module : m.module ? m.module : m.command ? m.command : m.Command ? m.Command : m;
             return mod;
         }).filter((possibleModule) => possibleModule instanceof ChironModule);
         return filteredModules;

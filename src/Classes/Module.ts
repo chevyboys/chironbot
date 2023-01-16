@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
-import { ChironClient } from "../ChironClient";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../Headers/Module";
+import { ChironClient } from "./ChironClient";
 import path from "path"
 
 import { fileURLToPath } from "url";
