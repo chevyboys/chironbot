@@ -57,7 +57,7 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
         let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
                 try {
-                    let possibleMod = await import(moduleFile);
+                    let possibleMod = (await import(moduleFile))?.Module;
                     possibleMod.file = moduleFile
                     return possibleMod;
                 } catch (error) {
