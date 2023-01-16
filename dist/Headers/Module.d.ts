@@ -108,14 +108,14 @@ export interface IMessageCommandComponentOptions extends IEventComponentOptions 
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction;
-    process: IMessageCommandProcessFunction;
+    process: IMessageCommandProcessFunction | any;
 }
 export interface IMessageCommandComponent extends IEventComponent {
     readonly name: string;
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction;
-    process: IMessageCommandProcessFunction;
+    process: IMessageCommandProcessFunction | any;
 }
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
     (msg: Message, suffix: string): any;

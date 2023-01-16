@@ -175,7 +175,7 @@ export interface IMessageCommandComponentOptions extends IEventComponentOptions 
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
-    process: IMessageCommandProcessFunction;
+    process: IMessageCommandProcessFunction | any;
 
 }
 
@@ -184,7 +184,7 @@ export interface IMessageCommandComponent extends IEventComponent {
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
-    process: IMessageCommandProcessFunction;
+    process: IMessageCommandProcessFunction | any;
 }
 
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
