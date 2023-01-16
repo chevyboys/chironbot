@@ -44,7 +44,7 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
         }
     }
 }
-
+//test
 async function resolveRegisterable(registerable: IModuleManagerRegisterable): Promise<Array<IChironModule>> {
     if ((registerable instanceof String || typeof registerable == "string") || (Array.isArray(registerable) && registerable[0] && (typeof registerable[0] == "string" || registerable instanceof String))) {
         let parsedRegisterable;
