@@ -32,7 +32,7 @@ export interface IBaseComponentOptions {
 export interface IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
-    module: IChironModule;
+    module?: IChironModule;
     exec: IBaseExecFunction; //added by the component manager
 }
 
@@ -41,7 +41,7 @@ export interface IBaseProcessFunction {
 }
 
 export interface IBaseExecFunction extends IBaseProcessFunction {
-    (input: any, InvokerId: Snowflake)
+    (input: any, InvokerId: Snowflake): string
 }
 
 //--------------------------------------------------------------------------
@@ -61,7 +61,6 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly description: string; //derived from the builder if not directly defined
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
-    command: ApplicationCommand; //the discord registered command instance of this command, added by the Module Registrar
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
     process: IInteractionProcessFunction;
 }
@@ -132,7 +131,7 @@ export interface IMessageComponentInteractionComponent extends IEventComponent {
 }
 
 export interface customIdFunction {
-    (interactionCustomId: string) :boolean;
+    (interactionCustomId: string): boolean;
 }
 
 //--------------------------------------------------------------------------

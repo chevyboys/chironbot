@@ -8,7 +8,7 @@ import path from "path"
 export class ChironModule implements IChironModule {
     name: string;
     components: Array<IBaseComponent>;
-    client: ChironClient;
+    client?: ChironClient;
     file?: string
 
     constructor(ModuleOptions: IChironModuleOptions) {
@@ -34,7 +34,7 @@ export class ChironModule implements IChironModule {
 export class BaseComponent implements IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
-    module: IChironModule;
+    module?: IChironModule;
     exec: IBaseExecFunction;
 
     constructor(BaseComponentOptions: IBaseComponentOptions) {
@@ -57,22 +57,22 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
     description: string; //derived from the builder if not directly defined
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
-    command: ApplicationCommand; //the discord registered command instance of this command, added by the Module Registrar
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
 
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption) {
         super(BaseInteractionComponentOptions)
         this.name = BaseInteractionComponentOptions.builder.name;
-        //description is implimented in child classes
+        //description is implimented in child classes, we only impliment here as a fallback
+        this.description = "";
         this.builder = BaseInteractionComponentOptions.builder;
-        this.category = BaseInteractionComponentOptions.category || this.module.file || "General";
+        this.category = BaseInteractionComponentOptions.category || this.module?.file || "General";
         this.permissions = BaseInteractionComponentOptions.permissions;
         this.exec = (interaction: Interaction) => {
             if (!this.enabled || !this.permissions(interaction)) {
                 if (interaction.isRepliable()) interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
                 return "I'm sorry, This feature is restricted behind a permissions lock";
             }
-            else if (this.module.client instanceof ChironClient && this.module.client.smiteArray.includes(interaction.user.id)) {
+            else if (this.module?.client instanceof ChironClient && this.module?.client.smiteArray.includes(interaction.user.id)) {
                 if (interaction.isRepliable()) interaction.reply({ content: "This feature is unavailable to you.", ephemeral: true });
                 return interaction.user.username + " Was blocked from using " + this.name + " by Smite System";
             } else return this.process(interaction);
@@ -121,12 +121,13 @@ export class EventComponent extends BaseComponent implements IEventComponent {
     constructor(EventComponentOptions: IEventComponentOptions) {
         super(EventComponentOptions)
         this.trigger = EventComponentOptions.trigger;
+        this.process = EventComponentOptions.process;
         this.exec = (...args: any) => {
             let argFinder = Array.isArray(args) ? args : [args];
             for (const arg of argFinder) {
                 if (arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id) {
                     let id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
-                    if (this.module.client instanceof ChironClient && this.module.client.smiteArray.includes(id)) {
+                    if (this.module?.client instanceof ChironClient && this.module?.client.smiteArray.includes(id)) {
                         return "Smite System Blocked Event Triggered by " + id;
                     }
                 }
@@ -145,8 +146,9 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
     process: IInteractionProcessFunction;
     constructor(MessageComponentInteractionComponentOptions: IMessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions)
-        this.customId = (string : string) =>  {
-            if( typeof MessageComponentInteractionComponentOptions.customId == "function") {
+        this.process = MessageComponentInteractionComponentOptions.process
+        this.customId = (string: string) => {
+            if (typeof MessageComponentInteractionComponentOptions.customId == "function") {
                 return MessageComponentInteractionComponentOptions.customId(string)
             } else {
                 return string == MessageComponentInteractionComponentOptions.customId;
@@ -155,8 +157,8 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
         this.exec = (interaction: Interaction | any) => {
             if (interaction?.member?.id || interaction?.user?.id || interaction.author?.id) {
                 let id = interaction?.member?.id || interaction?.user?.id || interaction.author?.id;
-                if (this.module.client instanceof ChironClient && this.module.client.smiteArray.includes(id)) {
-                    interaction.reply({ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)"})
+                if (this.module?.client instanceof ChironClient && this.module?.client.smiteArray.includes(id)) {
+                    interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" })
                     return "Smite System Blocked Event Triggered by " + id;
                 }
             }
@@ -172,6 +174,10 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
 
 export class ClockworkComponent extends BaseComponent implements IClockworkComponent {
     readonly interval: number //the number of seconds to wait between refresh intervals
+    constructor(ClockworkComponentOptions: any) {
+        super(ClockworkComponentOptions)
+        this.interval = ClockworkComponentOptions.interval
+    }
 }
 
 //-------------------------------------------------------------------------
