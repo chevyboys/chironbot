@@ -128,19 +128,19 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
             }
         }
         await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:\n" + events)
-        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + messageCommands.map(
-            (messageCommand: MessageCommandComponent) => {
-                return {
-                    name: messageCommand.name,
-                    description: messageCommand.description,
-                    category: messageCommand.category,
-                    enabled: messageCommand.enabled,
-                    permissions: messageCommand.permissions,
-                    process: messageCommand.process
-                }
-            }
-        ))
+        console.log("Successfully Registered " + events.length + " Events:\n");
+        console.dir(events)
+        console.log("Successfully Registered " + messageCommands + " Message Commands\n");
+        console.dir(messageCommands.map((messageCommand) => {
+            return {
+                name: messageCommand.name,
+                description: messageCommand.description,
+                category: messageCommand.category,
+                enabled: messageCommand.enabled,
+                permissions: messageCommand.permissions,
+                process: messageCommand.process
+            };
+        }))
 
         this.client.on(Events.InteractionCreate, (interaction: Interaction) => {
             //Handle receiving command interactions

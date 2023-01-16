@@ -121,8 +121,10 @@ export class ModuleManager extends Array {
             }
         }
         await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:\n" + events);
-        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + messageCommands.map((messageCommand) => {
+        console.log("Successfully Registered " + events.length + " Events:\n");
+        console.dir(events);
+        console.log("Successfully Registered " + messageCommands + " Message Commands\n");
+        console.dir(messageCommands.map((messageCommand) => {
             return {
                 name: messageCommand.name,
                 description: messageCommand.description,
