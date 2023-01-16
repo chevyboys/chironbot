@@ -188,8 +188,8 @@ export interface IMessageCommandComponent extends IEventComponent {
 }
 
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
-    (msg: Message, suffix: string): any
+    (msg: Message, suffix: string): any;
 }
 export interface IMessageCommandPermissionsFunction {
-    (msg: Message): any
+    (msg: Message): any;
 }
