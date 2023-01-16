@@ -77,7 +77,7 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
     }
     else {
         throw new Error("Cannot resolve unknown object type to registerable object");
-        
+
     }
     throw new Error("Unreachable state reached. How did you do this?");
 }
@@ -90,10 +90,10 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
     }
 
 
-    async register(registerable: IModuleManagerRegisterable): Promise<IModuleManager> {
+    async register(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
         let modules: Array<IChironModule>;
         if (!registerable) {
-             modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
+            modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
         } else {
             modules = await resolveRegisterable(registerable)
         }
@@ -103,25 +103,25 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
         for (const module of modules) {
             module.client = this.client;
             for (const component of module.components) {
-                if(component.enabled){
-                    if(component instanceof BaseInteractionComponent) {
+                if (component.enabled) {
+                    if (component instanceof BaseInteractionComponent) {
                         applicationCommands.push(component);
                     } else if (component instanceof ModuleLoading) {
                         component.process(null);
                     }
                 }
-                
+
             }
         }
         await registerInteractions(this.client, applicationCommands);
         return this;
     }
-    unregister(registerable: IModuleManagerRegisterable): IModuleManager {
+    unregister(registerable?: IModuleManagerRegisterable): IModuleManager {
 
 
         return this;
     }
-    reload(registerable: IModuleManagerRegisterable): IModuleManager {
+    reload(registerable?: IModuleManagerRegisterable): IModuleManager {
 
 
         return this;
