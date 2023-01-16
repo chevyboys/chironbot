@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Events } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
 import { ChironClient } from "../ChironClient";
 export declare class ChironModule implements IChironModule {
     name: string;
@@ -33,7 +33,7 @@ export declare class ContextMenuCommandComponent extends BaseInteractionComponen
     constructor(ContextMenuCommandComponentOptions: IContextMenuCommandComponentOptions);
 }
 export declare class EventComponent extends BaseComponent implements IEventComponent {
-    readonly trigger: Events | any;
+    trigger: Events | any;
     process: IEventProcessFunction;
     constructor(EventComponentOptions: IEventComponentOptions);
 }
@@ -49,4 +49,12 @@ export declare class ClockworkComponent extends BaseComponent implements IClockw
 export declare class ModuleLoading extends BaseComponent implements IModuleLoading {
 }
 export declare class ModuleUnloading extends BaseComponent {
+}
+export declare class MessageCommandComponent extends EventComponent implements IMessageCommandComponent {
+    readonly name: string;
+    readonly description: string;
+    readonly category: string;
+    readonly permissions: IMessageCommandPermissionsFunction;
+    process: IMessageCommandProcessFunction;
+    constructor(MessageCommandOptions: IMessageCommandComponentOptions);
 }

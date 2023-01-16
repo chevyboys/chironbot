@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
 
 
 function readdirSyncRecursive(Directory: string): Array<string> {
@@ -110,6 +110,10 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                     } else if (component instanceof ModuleLoading) {
                         component.process(null);
                     } else if (component instanceof EventComponent) {
+                        if (component instanceof MessageCommandComponent) {
+                            this.client.on(Events.MessageCreate, (input) => { component.exec(input) })
+                            this.client.on(Events.MessageUpdate, (input) => { component.exec(input) })
+                        }
                         this.client.on(component.trigger, (input) => { component.exec(input) })
                     }
                 }

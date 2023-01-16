@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 import { ModuleManager } from "./ModuleManager";
-import { DefaultErrorHandler } from "./Objects/ClientDefaults";
+import { DefaultErrorHandler, DefaultParseMessage } from "./Objects/ClientDefaults";
 export class ChironClient extends Client {
     config;
     color;
@@ -9,6 +9,7 @@ export class ChironClient extends Client {
     errorHandler;
     smiteArray; //an array of people to deny permissions to in all cases
     modules;
+    parser;
     constructor(ChironClientOptions) {
         super(ChironClientOptions);
         this.config = ChironClientOptions.config;
@@ -17,6 +18,7 @@ export class ChironClient extends Client {
         this.DEBUG = ChironClientOptions.DEBUG || false;
         this.errorHandler = ChironClientOptions.errorHandler || DefaultErrorHandler;
         this.smiteArray = ChironClientOptions.smiteArray || [];
+        this.parser = ChironClientOptions.parser || DefaultParseMessage;
         this.modules = new ModuleManager(this);
     }
 }

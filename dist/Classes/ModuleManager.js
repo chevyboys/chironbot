@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Events } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
 function readdirSyncRecursive(Directory) {
     let Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
@@ -105,6 +105,10 @@ export class ModuleManager extends Array {
                         component.process(null);
                     }
                     else if (component instanceof EventComponent) {
+                        if (component instanceof MessageCommandComponent) {
+                            this.client.on(Events.MessageCreate, (input) => { component.exec(input); });
+                            this.client.on(Events.MessageUpdate, (input) => { component.exec(input); });
+                        }
                         this.client.on(component.trigger, (input) => { component.exec(input); });
                     }
                 }

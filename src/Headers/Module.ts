@@ -1,5 +1,5 @@
 
-import { ApplicationCommand, Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { ApplicationCommand, Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
 
 
 export interface IChironModuleOptions {
@@ -165,4 +165,30 @@ export interface IModuleLoading extends IBaseComponent {
 
 export interface IModuleUnloading extends IBaseComponent {
 
+}
+
+//-------------------------------------------------------------------------
+// ------------------ Message Command Hanlder ---------------------------
+export interface IMessageCommandComponentOptions extends IEventComponentOptions {
+    readonly name: string;
+    readonly description: string;
+    readonly category: string;
+    readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
+    process: IMessageCommandProcessFunction;
+
+}
+
+export interface IMessageCommandComponent extends IEventComponent {
+    readonly name: string;
+    readonly description: string;
+    readonly category: string;
+    readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
+    process: IMessageCommandProcessFunction;
+}
+
+export interface IMessageCommandProcessFunction extends IEventProcessFunction {
+    (msg: Message, suffix: string): any
+}
+export interface IMessageCommandPermissionsFunction {
+    (msg: Message): any
 }

@@ -1,5 +1,5 @@
-import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
+import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message } from "discord.js";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
 import { ChironClient } from "../ChironClient";
 import path from "path"
 
@@ -118,7 +118,7 @@ export class ContextMenuCommandComponent extends BaseInteractionComponent implem
 //event handler
 
 export class EventComponent extends BaseComponent implements IEventComponent {
-    readonly trigger: Events | any
+    trigger: Events | any
     process: IEventProcessFunction
     constructor(EventComponentOptions: IEventComponentOptions) {
         super(EventComponentOptions)
@@ -190,5 +190,33 @@ export class ModuleLoading extends BaseComponent implements IModuleLoading {
 }
 
 export class ModuleUnloading extends BaseComponent {
+
+}
+
+//-------------------------------------------------------------------------
+//------------------ Message Command --------------------------------------
+export class MessageCommandComponent extends EventComponent implements IMessageCommandComponent {
+    readonly name: string;
+    readonly description: string;
+    readonly category: string;
+    readonly permissions: IMessageCommandPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
+    process: IMessageCommandProcessFunction;
+    constructor(MessageCommandOptions: IMessageCommandComponentOptions) {
+        super(MessageCommandOptions)
+        this.name = MessageCommandOptions.name;
+        this.description = MessageCommandOptions.description;
+        this.category = MessageCommandOptions.category || path.basename(__filename);
+        this.permissions = MessageCommandOptions.permissions
+        this.process = MessageCommandOptions.process
+        this.exec = (message: Message) => {
+            if (!this.module?.client && this.module?.client instanceof ChironClient) {
+                let parsed = this.module.client.parser(message, this.module.client);
+                if (parsed && parsed.command == this.name) {
+                    return this.process(message, parsed.suffix)
+                }
+                else return "Not a command";
+            }
+        }
+    }
 
 }

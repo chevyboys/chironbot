@@ -159,4 +159,31 @@ export class ModuleLoading extends BaseComponent {
 }
 export class ModuleUnloading extends BaseComponent {
 }
+//-------------------------------------------------------------------------
+//------------------ Message Command --------------------------------------
+export class MessageCommandComponent extends EventComponent {
+    name;
+    description;
+    category;
+    permissions; // a function that receives an interaction and returns if the function is allowed to be executed
+    process;
+    constructor(MessageCommandOptions) {
+        super(MessageCommandOptions);
+        this.name = MessageCommandOptions.name;
+        this.description = MessageCommandOptions.description;
+        this.category = MessageCommandOptions.category || path.basename(__filename);
+        this.permissions = MessageCommandOptions.permissions;
+        this.process = MessageCommandOptions.process;
+        this.exec = (message) => {
+            if (!this.module?.client && this.module?.client instanceof ChironClient) {
+                let parsed = this.module.client.parser(message, this.module.client);
+                if (parsed && parsed.command == this.name) {
+                    return this.process(message, parsed.suffix);
+                }
+                else
+                    return "Not a command";
+            }
+        };
+    }
+}
 //# sourceMappingURL=Module.js.map

@@ -1,10 +1,10 @@
 import { Snowflake } from "discord.js";
 import { HexColorString, Client } from "discord.js";
-import { IChironClient, IChironClientOptions, IErrorHandlerFunction } from "../Headers/Client";
+import { ChironParseFunction, IChironClient, IChironClientOptions, IErrorHandlerFunction } from "../Headers/Client";
 import { IChironConfig } from "../Headers/Config";
 import { IModuleManager } from "../Headers/ModuleManager";
 import { ModuleManager } from "./ModuleManager";
-import { DefaultErrorHandler } from "./Objects/ClientDefaults";
+import { DefaultErrorHandler, DefaultParseMessage } from "./Objects/ClientDefaults";
 
 
 export class ChironClient extends Client implements IChironClient {
@@ -14,7 +14,8 @@ export class ChironClient extends Client implements IChironClient {
     DEBUG: boolean //weather or not to enable Debugging mode and instant guild command registration
     errorHandler?: IErrorHandlerFunction
     smiteArray: Array<Snowflake> //an array of people to deny permissions to in all cases
-    modules: IModuleManager
+    modules: IModuleManager;
+    parser: ChironParseFunction;
 
 
 
@@ -26,6 +27,8 @@ export class ChironClient extends Client implements IChironClient {
         this.DEBUG = ChironClientOptions.DEBUG || false;
         this.errorHandler = ChironClientOptions.errorHandler || DefaultErrorHandler;
         this.smiteArray = ChironClientOptions.smiteArray || [];
+        this.parser = ChironClientOptions.parser || DefaultParseMessage
         this.modules = new ModuleManager(this);
+
     }
 }

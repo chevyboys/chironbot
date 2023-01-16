@@ -11,8 +11,8 @@ export interface IChironClientOptions extends ClientOptions {
     DEBUG: boolean //weather or not to enable Debugging mode and instant guild command registration
     errorHandler?: IErrorHandlerFunction
     smiteArray: Array<Snowflake> //an array of people to deny permissions to in all cases
+    parser?: ChironParseFunction
 }
-
 
 export interface IChironClient extends Client {
     config: IChironConfig;
@@ -22,8 +22,19 @@ export interface IChironClient extends Client {
     errorHandler?: IErrorHandlerFunction
     smiteArray: Array<Snowflake> //an array of people to deny permissions to in all cases
     modules: IModuleManager
+    parser: ChironParseFunction
 }
 
 export interface IErrorHandlerFunction {
     (error: any, msg: Message | Interaction | string): any
+}
+
+export interface ChironParsedContent {
+    command: string,
+    suffix: string,
+    params: Array<string>
+}
+
+export interface ChironParseFunction {
+    (msg: Message, client: IChironClient): ChironParsedContent | null
 }

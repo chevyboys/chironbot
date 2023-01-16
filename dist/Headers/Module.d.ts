@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, ContextMenuCommandBuilder, Interaction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { Client, CommandInteraction, ContextMenuCommandBuilder, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
 export interface IChironModuleOptions {
     readonly name?: string;
     readonly file?: string;
@@ -101,4 +101,24 @@ export interface IModuleUnloadingOptions extends IBaseComponentOptions {
 export interface IModuleLoading extends IBaseComponent {
 }
 export interface IModuleUnloading extends IBaseComponent {
+}
+export interface IMessageCommandComponentOptions extends IEventComponentOptions {
+    readonly name: string;
+    readonly description: string;
+    readonly category: string;
+    readonly permissions: IMessageCommandPermissionsFunction;
+    process: IMessageCommandProcessFunction;
+}
+export interface IMessageCommandComponent extends IEventComponent {
+    readonly name: string;
+    readonly description: string;
+    readonly category: string;
+    readonly permissions: IMessageCommandPermissionsFunction;
+    process: IMessageCommandProcessFunction;
+}
+export interface IMessageCommandProcessFunction extends IEventProcessFunction {
+    (msg: Message, suffix: string): any;
+}
+export interface IMessageCommandPermissionsFunction {
+    (msg: Message): any;
 }

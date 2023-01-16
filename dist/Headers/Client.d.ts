@@ -9,6 +9,7 @@ export interface IChironClientOptions extends ClientOptions {
     DEBUG: boolean;
     errorHandler?: IErrorHandlerFunction;
     smiteArray: Array<Snowflake>;
+    parser?: ChironParseFunction;
 }
 export interface IChironClient extends Client {
     config: IChironConfig;
@@ -18,7 +19,16 @@ export interface IChironClient extends Client {
     errorHandler?: IErrorHandlerFunction;
     smiteArray: Array<Snowflake>;
     modules: IModuleManager;
+    parser: ChironParseFunction;
 }
 export interface IErrorHandlerFunction {
     (error: any, msg: Message | Interaction | string): any;
+}
+export interface ChironParsedContent {
+    command: string;
+    suffix: string;
+    params: Array<string>;
+}
+export interface ChironParseFunction {
+    (msg: Message, client: IChironClient): ChironParsedContent | null;
 }
