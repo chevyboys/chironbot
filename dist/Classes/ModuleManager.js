@@ -140,7 +140,10 @@ export class ModuleManager extends Array {
                 if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent)
                     match.exec(interaction);
                 else {
-                    throw new Error("I don't know how to handle that!");
+                    if (interaction.isRepliable())
+                        interaction.reply("I don't know how to handle that!");
+                    else
+                        throw new Error("I don't know how to handle that!");
                 }
             })();
         });
