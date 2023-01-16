@@ -151,10 +151,4 @@ export class ClockworkComponent extends BaseComponent {
         this.interval = ClockworkComponentOptions.interval;
     }
 }
-//-------------------------------------------------------------------------
-//---------------- Module Loading and unloading components ----------------
-export class ModuleLoading extends BaseComponent {
-}
-export class ModuleUnloading extends BaseComponent {
-}
 //# sourceMappingURL=Module.js.map

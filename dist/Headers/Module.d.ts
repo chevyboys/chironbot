@@ -1,6 +1,6 @@
-import { Client, ContextMenuCommandBuilder, Interaction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { Client, CommandInteraction, ContextMenuCommandBuilder, Interaction, SlashCommandBuilder, Snowflake } from "discord.js";
 export interface IChironModuleOptions {
-    readonly name: string;
+    readonly name?: string;
     readonly file?: string;
     components: Array<IBaseComponent>;
     client?: Client;
@@ -54,6 +54,9 @@ export interface ISlashCommandComponentOptions extends IBaseInteractionComponent
 }
 export interface ISlashCommandComponent extends IBaseInteractionComponent {
     readonly builder: SlashCommandBuilder;
+}
+export interface ISlashCommandInteractionProcessFunction {
+    (interaction: CommandInteraction): any;
 }
 export interface IContextMenuCommandComponentOptions extends IBaseInteractionComponentOption {
     readonly builder: ContextMenuCommandBuilder;

@@ -8,7 +8,8 @@ import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, Ev
 
 function readdirSyncRecursive(Directory: string): Array<string> {
     let Files: Array<string> = [];
-    fs.readdirSync(Directory).forEach(File => {
+    const commandPath = path.resolve(process.cwd(), Directory)
+    fs.readdirSync(commandPath).forEach(File => {
         const Absolute = path.join(Directory, File);
         if (fs.statSync(Absolute).isDirectory()) return readdirSyncRecursive(Absolute);
         else return Files.push(Absolute);

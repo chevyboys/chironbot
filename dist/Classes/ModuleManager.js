@@ -4,7 +4,8 @@ import { Events } from "discord.js";
 import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
 function readdirSyncRecursive(Directory) {
     let Files = [];
-    fs.readdirSync(Directory).forEach(File => {
+    const commandPath = path.resolve(process.cwd(), Directory);
+    fs.readdirSync(commandPath).forEach(File => {
         const Absolute = path.join(Directory, File);
         if (fs.statSync(Absolute).isDirectory())
             return readdirSyncRecursive(Absolute);
