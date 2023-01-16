@@ -121,8 +121,17 @@ export class ModuleManager extends Array {
             }
         }
         await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:\n" + JSON.stringify(events));
-        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + JSON.stringify(messageCommands));
+        console.log("Successfully Registered " + events.length + " Events:\n" + JSON.stringify(events, null, 2));
+        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + JSON.stringify(messageCommands.map((messageCommand) => {
+            return {
+                name: messageCommand.name,
+                description: messageCommand.description,
+                category: messageCommand.category,
+                enabled: messageCommand.enabled,
+                permissions: messageCommand.permissions,
+                process: messageCommand.process
+            };
+        })));
         this.client.on(Events.InteractionCreate, (interaction) => {
             //Handle receiving command interactions
             //find any matching interactions
