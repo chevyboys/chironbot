@@ -33,8 +33,9 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
                 commandData = await client.application?.commands.set(commandsToRegister, client.config.adminServer);
             }
             else commandData = await client.application?.commands.set(commandsToRegister);
-
+            console.log(commandData)
             console.log(`Successfully reloaded ${commandData?.size} application (/) commands.`);
+
             return commandData;
         } catch (error) {
             // And of course, make sure you catch and log any errors!

@@ -29,6 +29,7 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
             }
             else
                 commandData = await client.application?.commands.set(commandsToRegister);
+            console.log(commandData);
             console.log(`Successfully reloaded ${commandData?.size} application (/) commands.`);
             return commandData;
         }
