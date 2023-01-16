@@ -93,6 +93,8 @@ export class ModuleManager extends Array {
         }
         //take care of onInit functions, and register commands to discord
         let applicationCommands = [];
+        let events = [];
+        let messageCommands = [];
         for (const module of modules) {
             module.client = this.client;
             this.push(module);
@@ -108,14 +110,19 @@ export class ModuleManager extends Array {
                         if (component instanceof MessageCommandComponent) {
                             this.client.on(Events.MessageCreate, (input) => { component.exec(input); });
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input); });
+                            messageCommands.push(component);
                         }
-                        else
+                        else {
                             this.client.on(component.trigger, (input) => { component.exec(input); });
+                            events.push(component);
+                        }
                     }
                 }
             }
         }
         await registerInteractions(this.client, applicationCommands);
+        console.log("Successfully Registered " + events.length + " Events:" + events);
+        console.log("Successfully Registered " + messageCommands + " Message Commands" + messageCommands);
         this.client.on(Events.InteractionCreate, (interaction) => {
             //Handle receiving command interactions
             //find any matching interactions

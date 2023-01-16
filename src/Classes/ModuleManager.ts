@@ -100,6 +100,8 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
 
         //take care of onInit functions, and register commands to discord
         let applicationCommands: Array<BaseInteractionComponent> = [];
+        let events: Array<EventComponent> = [];
+        let messageCommands: Array<MessageCommandComponent> = [];
         for (const module of modules) {
             module.client = this.client;
             this.push(module)
@@ -113,8 +115,12 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                         if (component instanceof MessageCommandComponent) {
                             this.client.on(Events.MessageCreate, (input) => { component.exec(input) })
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input) })
+                            messageCommands.push(component);
                         }
-                        else this.client.on(component.trigger, (input) => { component.exec(input) })
+                        else {
+                            this.client.on(component.trigger, (input) => { component.exec(input) })
+                            events.push(component);
+                        }
                     }
                 }
 
@@ -122,7 +128,8 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
             }
         }
         await registerInteractions(this.client, applicationCommands);
-
+        console.log("Successfully Registered " + events.length + " Events:" + events)
+        console.log("Successfully Registered " + messageCommands + " Message Commands" + messageCommands)
 
         this.client.on(Events.InteractionCreate, (interaction: Interaction) => {
             //Handle receiving command interactions
