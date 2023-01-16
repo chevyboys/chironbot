@@ -40,9 +40,6 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
             // And of course, make sure you catch and log any errors!
             throw error
         }
-        finally {
-            return null;
-        }
     }
 }
 //testing

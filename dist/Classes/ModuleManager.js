@@ -36,9 +36,6 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
             // And of course, make sure you catch and log any errors!
             throw error;
         }
-        finally {
-            return null;
-        }
     }
 }
 //testing
