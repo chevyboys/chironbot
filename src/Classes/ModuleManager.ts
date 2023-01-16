@@ -128,8 +128,8 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
             }
         }
         await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:\n" + JSON.stringify(events, null, 2))
-        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + JSON.stringify(messageCommands.map(
+        console.log("Successfully Registered " + events.length + " Events:\n" + events)
+        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + messageCommands.map(
             (messageCommand: MessageCommandComponent) => {
                 return {
                     name: messageCommand.name,
@@ -140,7 +140,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                     process: messageCommand.process
                 }
             }
-        )))
+        ))
 
         this.client.on(Events.InteractionCreate, (interaction: Interaction) => {
             //Handle receiving command interactions
