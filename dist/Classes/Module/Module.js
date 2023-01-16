@@ -1,3 +1,4 @@
+import { Events } from "discord.js";
 import { ChironClient } from "../ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -169,13 +170,18 @@ export class MessageCommandComponent extends EventComponent {
     process;
     constructor(MessageCommandOptions) {
         super(MessageCommandOptions);
+        this.trigger = Events.MessageCreate;
         this.name = MessageCommandOptions.name;
         this.description = MessageCommandOptions.description;
         this.category = MessageCommandOptions.category || path.basename(__filename);
         this.permissions = MessageCommandOptions.permissions;
         this.process = MessageCommandOptions.process;
         this.exec = (message) => {
+            if (!this.enabled)
+                return "disabled";
             if (!this.module?.client && this.module?.client instanceof ChironClient) {
+                if (this.module.client.smiteArray.includes(message.author.id))
+                    return "Dissallowed by smite system";
                 let parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
                     return this.process(message, parsed.suffix);
