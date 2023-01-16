@@ -7,10 +7,14 @@
     "test": "ts-node-esm src/Chiron.ts"
   },
   "type": "module",
+  "types": "dist/Chiron.d.ts",
   "repository": {
     "type": "git",
     "url": "Chiron"
   },
+  "files": [
+    "/dist"
+  ],
   "keywords": [
     "Discord",
     "Typescript",
