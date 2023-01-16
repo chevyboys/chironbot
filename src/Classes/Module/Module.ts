@@ -211,7 +211,7 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
         this.process = MessageCommandOptions.process
         this.exec = (message: Message) => {
             if (!this.enabled) return "disabled";
-            if (!this.module?.client && this.module?.client instanceof ChironClient) {
+            if (this.module?.client && this.module?.client instanceof ChironClient) {
                 if (this.module.client.smiteArray.includes(message.author.id)) return "Dissallowed by smite system"
                 let parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
@@ -219,6 +219,7 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
                 }
                 else return "Not a command";
             }
+            else throw new Error("No Client found. Make sure your Client.modules.register() is after Client.login()");
         }
     }
 
