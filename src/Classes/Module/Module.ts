@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ContextMenuCommandBuilder, ApplicationCommand, Interaction, Events, Snowflake } from "discord.js";
+import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events } from "discord.js";
 import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
 import { ChironClient } from "../ChironClient";
 import path from "path"
@@ -183,10 +183,10 @@ export class ClockworkComponent extends BaseComponent implements IClockworkCompo
 //-------------------------------------------------------------------------
 //---------------- Module Loading and unloading components ----------------
 
-export class ModuleLoading extends BaseComponent implements IModuleLoading {
+export declare class ModuleLoading extends BaseComponent implements IModuleLoading {
 
 }
 
-export class ModuleUnloading extends BaseComponent {
+export declare class ModuleUnloading extends BaseComponent {
 
 }
