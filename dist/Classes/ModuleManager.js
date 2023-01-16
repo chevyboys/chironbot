@@ -48,7 +48,7 @@ async function resolveRegisterable(registerable) {
             parsedRegisterable = registerable[0];
         else
             parsedRegisterable = registerable;
-        let possibleModules = await Promise.all(readdirSyncRecursive(parsedRegisterable).filter(file => file.endsWith('.ts'))
+        let possibleModules = await Promise.all(readdirSyncRecursive(parsedRegisterable).filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
             try {
                 let possibleMod = await import(moduleFile);
