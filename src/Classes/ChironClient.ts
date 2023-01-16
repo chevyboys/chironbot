@@ -2,7 +2,7 @@ import { Snowflake } from "discord.js";
 import { HexColorString, Client } from "discord.js";
 import { IChironClient, IChironClientOptions, IErrorHandlerFunction } from "../Headers/Client";
 import { IChironConfig } from "../Headers/Config";
-import { IModuleManager} from "../Headers/ModuleManager";
+import { IModuleManager } from "../Headers/ModuleManager";
 import { ModuleManager } from "./ModuleManager";
 import { DefaultErrorHandler } from "./Objects/ClientDefaults";
 
@@ -12,7 +12,7 @@ export class ChironClient extends Client implements IChironClient {
     color: HexColorString;
     modulePath: string | Array<string>;
     DEBUG: boolean //weather or not to enable Debugging mode and instant guild command registration
-    errorHandler: IErrorHandlerFunction
+    errorHandler?: IErrorHandlerFunction
     smiteArray: Array<Snowflake> //an array of people to deny permissions to in all cases
     modules: IModuleManager
 

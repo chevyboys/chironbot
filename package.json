@@ -1,11 +1,12 @@
 {
   "name": "chiron",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Chiron Discord Bot Framework",
   "main": "Chiron.ts",
   "scripts": {
     "test": "ts-node-esm src/Chiron.ts"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "Chiron"
