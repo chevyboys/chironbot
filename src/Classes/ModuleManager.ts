@@ -6,6 +6,12 @@ import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
 import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module/Module";
 
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 function readdirSyncRecursive(Directory: string): Array<string> {
     let Files: Array<string> = [];
     const commandPath = path.resolve(process.cwd(), Directory)
