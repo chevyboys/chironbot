@@ -135,7 +135,7 @@ export class EventComponent extends BaseComponent implements IEventComponent {
                 }
 
             }
-            return this.process(args)
+            return this.process.apply(null, args)
         }
     }
 }

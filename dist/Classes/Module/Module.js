@@ -112,7 +112,7 @@ export class EventComponent extends BaseComponent {
                     }
                 }
             }
-            return this.process(args);
+            return this.process.apply(null, args);
         };
     }
 }
