@@ -51,22 +51,22 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
         let parsedRegisterable;
         if ((Array.isArray(registerable))) parsedRegisterable = registerable[0];
         else parsedRegisterable = registerable;
-        let possibleModules = await Promise.all(
-            readdirSyncRecursive(parsedRegisterable as unknown as string).filter(file => file.endsWith('.js'))
-                .map(async (moduleFile) => {
-                    try {
-                        let possibleMod = await import(moduleFile);
-                        possibleMod.file = moduleFile
-                        return possibleMod;
-                    } catch (error) {
-                        throw new Error(`Error in Module Import for:"${moduleFile}"`);
-                    }
-                })
-            //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
-        )
-        return possibleModules.filter(
-            (possibleModule) => possibleModule instanceof ChironModule
-        )
+        let possibleModules =
+            readdirSyncRecursive(parsedRegisterable as unknown as string)
+        //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
+        let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
+            .map(async (moduleFile) => {
+                try {
+                    let possibleMod = await import(moduleFile);
+                    possibleMod.file = moduleFile
+                    return possibleMod;
+                } catch (error) {
+                    throw new Error(`Error in Module Import for:"${moduleFile}"`);
+                }
+            }).filter(
+                (possibleModule) => possibleModule instanceof ChironModule
+            ))
+        return modules;
 
     } else if (Array.isArray(registerable)) {
         if (registerable.length < 1) {

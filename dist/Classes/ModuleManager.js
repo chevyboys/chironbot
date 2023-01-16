@@ -49,7 +49,9 @@ async function resolveRegisterable(registerable) {
             parsedRegisterable = registerable[0];
         else
             parsedRegisterable = registerable;
-        let possibleModules = await Promise.all(readdirSyncRecursive(parsedRegisterable).filter(file => file.endsWith('.js'))
+        let possibleModules = readdirSyncRecursive(parsedRegisterable);
+        //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
+        let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
             try {
                 let possibleMod = await import(moduleFile);
@@ -59,10 +61,8 @@ async function resolveRegisterable(registerable) {
             catch (error) {
                 throw new Error(`Error in Module Import for:"${moduleFile}"`);
             }
-        })
-        //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
-        );
-        return possibleModules.filter((possibleModule) => possibleModule instanceof ChironModule);
+        }).filter((possibleModule) => possibleModule instanceof ChironModule));
+        return modules;
     }
     else if (Array.isArray(registerable)) {
         if (registerable.length < 1) {
