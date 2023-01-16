@@ -1,5 +1,5 @@
 
-import { ApplicationCommand, Client, ContextMenuCommandBuilder, Events, Interaction, SlashCommandBuilder } from "discord.js";
+import { ApplicationCommand, Client, ContextMenuCommandBuilder, Events, Interaction, SlashCommandBuilder, Snowflake } from "discord.js";
 
 
 export interface IChironModuleOptions {
@@ -41,7 +41,7 @@ export interface IBaseProcessFunction {
 }
 
 export interface IBaseExecFunction extends IBaseProcessFunction {
-
+    (input: any, InvokerId: Snowflake)
 }
 
 //--------------------------------------------------------------------------
@@ -53,6 +53,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly description?: string
     readonly category: string
     readonly permissions: IInteractionPermissionsFunction //A function that receives an interaction object, and returns if the interaction user can do it
+    readonly process: IInteractionProcessFunction;
 }
 
 export interface IBaseInteractionComponent extends IBaseComponent {
@@ -62,10 +63,15 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly category: string;
     command: ApplicationCommand; //the discord registered command instance of this command, added by the Module Registrar
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
+    process: IInteractionProcessFunction;
 }
 
 export interface IInteractionPermissionsFunction {
     (interaction: Interaction): boolean
+}
+
+export interface IInteractionProcessFunction {
+    (interaction: Interaction): any
 }
 
 //--------------------------------------------------------------------------
@@ -96,13 +102,38 @@ export interface IContextMenuCommandComponent extends IBaseInteractionComponent 
 //--------------------------------------------------------------------------
 //event handler
 export interface IEventComponentOptions extends IBaseComponentOptions {
-    readonly trigger: Events
+    readonly trigger: any
+    process: IInteractionProcessFunction
 }
 
 export interface IEventComponent extends IBaseComponent {
-    readonly trigger: Events
+    readonly trigger: any
+    process: IInteractionProcessFunction
 }
 
+
+
+export interface IEventProcessFunction {
+    (args: any): any
+}
+
+
+//--------------------------------------------------------------------------
+// ------------------------- message component interaction -----------------
+
+export interface IMessageComponentInteractionComponentOptions extends IEventComponentOptions {
+    customId: string | customIdFunction;
+    process: IInteractionProcessFunction
+}
+
+export interface IMessageComponentInteractionComponent extends IEventComponent {
+    customId: string | customIdFunction;
+    process: IInteractionProcessFunction
+}
+
+export interface customIdFunction {
+    (interactionCustomId: string) :boolean;
+}
 
 //--------------------------------------------------------------------------
 //------------------------ Clockwork Components ----------------------------
