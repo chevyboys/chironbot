@@ -37,7 +37,7 @@ export interface IBaseComponent {
 }
 
 export interface IBaseProcessFunction {
-    (input: any): string
+    (input: any, input2?: any): string
 }
 
 export interface IBaseExecFunction extends IBaseProcessFunction {

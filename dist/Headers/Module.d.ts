@@ -23,7 +23,7 @@ export interface IBaseComponent {
     exec: IBaseExecFunction;
 }
 export interface IBaseProcessFunction {
-    (input: any): string;
+    (input: any, input2?: any): string;
 }
 export interface IBaseExecFunction extends IBaseProcessFunction {
     (input: any, InvokerId: Snowflake): string;
