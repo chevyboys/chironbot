@@ -183,10 +183,10 @@ export class ClockworkComponent extends BaseComponent implements IClockworkCompo
 //-------------------------------------------------------------------------
 //---------------- Module Loading and unloading components ----------------
 
-export declare class ModuleLoading extends BaseComponent implements IModuleLoading {
+export class ModuleLoading extends BaseComponent implements IModuleLoading {
 
 }
 
-export declare class ModuleUnloading extends BaseComponent {
+export class ModuleUnloading extends BaseComponent {
 
 }
