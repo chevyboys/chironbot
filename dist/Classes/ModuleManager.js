@@ -6,7 +6,7 @@ function readdirSyncRecursive(Directory) {
     let Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
     fs.readdirSync(commandPath).forEach(File => {
-        const Absolute = path.join(Directory, File);
+        const Absolute = path.join(commandPath, File);
         if (fs.statSync(Absolute).isDirectory())
             return readdirSyncRecursive(Absolute);
         else
