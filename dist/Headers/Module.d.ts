@@ -68,11 +68,11 @@ export interface IContextMenuCommandComponent extends IBaseInteractionComponent 
 }
 export interface IEventComponentOptions extends IBaseComponentOptions {
     readonly trigger?: any;
-    process: IEventProcessFunction;
+    process: IEventProcessFunction | IMessageCommandProcessFunction;
 }
 export interface IEventComponent extends IBaseComponent {
     readonly trigger: any;
-    process: IEventProcessFunction;
+    process: IEventProcessFunction | IMessageCommandProcessFunction;
 }
 export interface IEventProcessFunction {
     (args: any): any;
@@ -117,7 +117,7 @@ export interface IMessageCommandComponent extends IEventComponent {
     readonly permissions: IMessageCommandPermissionsFunction;
     process: IMessageCommandProcessFunction;
 }
-export interface IMessageCommandProcessFunction extends IEventProcessFunction {
+export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
     (msg: Message, suffix: string): any;
 }
 export interface IMessageCommandPermissionsFunction {
