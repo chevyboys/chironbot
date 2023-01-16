@@ -121,8 +121,8 @@ export class ModuleManager extends Array {
             }
         }
         await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:" + events);
-        console.log("Successfully Registered " + messageCommands + " Message Commands" + messageCommands);
+        console.log("Successfully Registered " + events.length + " Events:\n" + JSON.stringify(events));
+        console.log("Successfully Registered " + messageCommands + " Message Commands\n" + JSON.stringify(messageCommands));
         this.client.on(Events.InteractionCreate, (interaction) => {
             //Handle receiving command interactions
             //find any matching interactions
