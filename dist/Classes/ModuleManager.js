@@ -12,7 +12,10 @@ function readdirSyncRecursive(Directory) {
         else
             return Files.push(Absolute);
     });
-    throw new Error("No files found in " + Directory);
+    if (Files.length == 0)
+        throw new Error("No files found in " + Directory);
+    else
+        return Files;
 }
 async function registerInteractions(client, ApplicationAndContextMenuCommands) {
     if (client.user) {
