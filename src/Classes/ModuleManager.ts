@@ -51,7 +51,7 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
         if ((Array.isArray(registerable))) parsedRegisterable = registerable[0];
         else parsedRegisterable = registerable;
         let possibleModules = await Promise.all(
-            readdirSyncRecursive(parsedRegisterable as unknown as string).filter(file => file.endsWith('.ts'))
+            readdirSyncRecursive(parsedRegisterable as unknown as string).filter(file => file.endsWith('.js'))
                 .map(async (moduleFile) => {
                     try {
                         let possibleMod = await import(moduleFile);
