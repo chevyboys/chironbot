@@ -67,7 +67,7 @@ export interface IContextMenuCommandComponent extends IBaseInteractionComponent 
     readonly description: string;
 }
 export interface IEventComponentOptions extends IBaseComponentOptions {
-    readonly trigger: any;
+    readonly trigger?: any;
     process: IEventProcessFunction;
 }
 export interface IEventComponent extends IBaseComponent {
@@ -103,6 +103,7 @@ export interface IModuleLoading extends IBaseComponent {
 export interface IModuleUnloading extends IBaseComponent {
 }
 export interface IMessageCommandComponentOptions extends IEventComponentOptions {
+    trigger?: null;
     readonly name: string;
     readonly description: string;
     readonly category: string;
