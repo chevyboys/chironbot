@@ -7,6 +7,8 @@ export interface IChironConfigOptions {
     token: string;
     webhooks?: Array<IWebhookConfig>;
     adminServer: Snowflake;
+    DEBUG?: boolean;
+    smiteArray?: Array<Snowflake>;
 }
 export interface IWebhookConfig {
     name: string;
@@ -15,9 +17,11 @@ export interface IWebhookConfig {
 export interface IChironConfig {
     adminIds: Array<Snowflake>;
     database: object;
+    DEBUG: boolean;
     prefix?: string;
     repo?: URL | string;
     token: string;
     webhooks?: Array<IWebhookConfig>;
     adminServer: Snowflake;
+    smiteArray: Array<Snowflake>;
 }

@@ -61,7 +61,7 @@ export class BaseInteractionComponent extends BaseComponent {
                     interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
                 return "I'm sorry, This feature is restricted behind a permissions lock";
             }
-            else if (this.module?.client instanceof ChironClient && this.module?.client.smiteArray.includes(interaction.user.id)) {
+            else if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(interaction.user.id)) {
                 if (interaction.isRepliable())
                     interaction.reply({ content: "This feature is unavailable to you.", ephemeral: true });
                 return interaction.user.username + " Was blocked from using " + this.name + " by Smite System";
@@ -108,7 +108,7 @@ export class EventComponent extends BaseComponent {
             for (const arg of argFinder) {
                 if (arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id) {
                     let id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
-                    if (this.module?.client instanceof ChironClient && this.module?.client.smiteArray.includes(id)) {
+                    if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
                         return "Smite System Blocked Event Triggered by " + id;
                     }
                 }
@@ -136,7 +136,7 @@ export class MessageComponentInteractionComponent extends EventComponent {
         this.exec = (interaction) => {
             if (interaction?.member?.id || interaction?.user?.id || interaction.author?.id) {
                 let id = interaction?.member?.id || interaction?.user?.id || interaction.author?.id;
-                if (this.module?.client instanceof ChironClient && this.module?.client.smiteArray.includes(id)) {
+                if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
                     interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
                     return "Smite System Blocked Event Triggered by " + id;
                 }
@@ -180,7 +180,7 @@ export class MessageCommandComponent extends EventComponent {
             if (!this.enabled)
                 return "disabled";
             if (this.module?.client && this.module?.client instanceof ChironClient) {
-                if (this.module.client.smiteArray.includes(message.author.id))
+                if (this.module.client.config.smiteArray.includes(message.author.id))
                     return "Dissallowed by smite system";
                 let parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {

@@ -6,6 +6,8 @@ export class ChironConfig {
     token; //the token to login with
     webhooks; //An array of debugging webhooks
     adminServer;
+    DEBUG; //weather or not to enable Debugging mode and instant guild command registration
+    smiteArray;
     constructor(options) {
         this.adminIds = options.adminIds;
         this.database = options.database;
@@ -14,6 +16,8 @@ export class ChironConfig {
         this.token = options.token;
         this.webhooks = options.webhooks;
         this.adminServer = options.adminServer;
+        this.DEBUG = options.DEBUG || false;
+        this.smiteArray = options.smiteArray || [];
     }
 }
 //# sourceMappingURL=ChironConfig.js.map

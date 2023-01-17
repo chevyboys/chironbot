@@ -24,7 +24,7 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
             console.log(`Started refreshing ${commandsToRegister.length} application (/) commands.`);
             // Register all commands as guild commands in the test guild if Debug is enabled. Else, register all commands as global
             let commandData;
-            if (client.DEBUG) {
+            if (client.config.DEBUG) {
                 commandData = await client.application?.commands.set(commandsToRegister, client.config.adminServer);
             }
             else

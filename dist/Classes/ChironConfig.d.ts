@@ -8,5 +8,7 @@ export declare class ChironConfig implements IChironConfig {
     token: string;
     webhooks?: Array<IWebhookConfig>;
     adminServer: Snowflake;
+    DEBUG: boolean;
+    smiteArray: Array<Snowflake>;
     constructor(options: IChironConfigOptions);
 }
