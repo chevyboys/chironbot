@@ -118,7 +118,7 @@ export interface IEventComponent extends IBaseComponent {
 
 
 export interface IEventProcessFunction {
-    (args: any): any
+    (arg1?: any, arg2?: any, arg3?: any): any
 }
 
 

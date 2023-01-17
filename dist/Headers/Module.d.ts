@@ -75,7 +75,7 @@ export interface IEventComponent extends IBaseComponent {
     process: IEventProcessFunction | IMessageCommandProcessFunction;
 }
 export interface IEventProcessFunction {
-    (args: any): any;
+    (arg1?: any, arg2?: any, arg3?: any): any;
 }
 export interface IMessageComponentInteractionComponentOptions extends IEventComponentOptions {
     customId: string | customIdFunction;
