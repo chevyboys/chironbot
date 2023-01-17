@@ -124,6 +124,7 @@ export class MessageComponentInteractionComponent extends EventComponent {
     process;
     constructor(MessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions);
+        this.trigger = Events.InteractionCreate;
         this.process = MessageComponentInteractionComponentOptions.process;
         this.customId = (string) => {
             if (typeof MessageComponentInteractionComponentOptions.customId == "function") {

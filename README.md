@@ -209,12 +209,58 @@ The `new [ComponentClass]()` method defines a new bot Component.
 * `permissions` (function): A function used to determine whether the user has permission to run the command. Accepts a `Discord.Message` object.
 
 ### Events
+```
+import { EventComponent } from "chiron";
+import { Events, MessageReaction, User } from "discord.js";
+
+export let HelloWorldEventComponent = new EventComponent({
+    trigger: Events.MessageReactionAdd,
+    enabled: true,
+    process: async (MessageReaction: MessageReaction, user: User) => {
+        await MessageReaction.react();
+    }
+})
+
+```
+* `trigger` (Discord Client Events Enum Instance): The Event that triggers this
+* `enabled` (boolean): If this trigger should be enabled
+* `process` (The function to run when the trigger is invoked. It recieves whatever the discord client gives on that event)
 
 ### Context Menu Interactions
+```
+import { ContextMenuCommandComponent } from "chiron";
+import { ApplicationCommandType, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction } from "discord.js";
+
+
+export const HelloWorldContextMenu = new ContextMenuCommandComponent(
+    {
+        builder: new ContextMenuCommandBuilder().setName("Hello World").setType(ApplicationCommandType.Message),
+        description: "Replies 'Hello World!' to any message it is used on",
+        category: "general",
+        enabled: true,
+        permissions: (interaction) => { return true },
+        process(interaction) {
+            if (interaction instanceof MessageContextMenuCommandInteraction) {
+                interaction.reply("Hello World!")
+            }
+        }
+    }
+)
+
+```
+* `builder`: A Discord Context Menu Builder
+* `description`: a string for you to describe it by
+* `category` (string): A category name, for convenience in organizing commands.
+* `enabled`: (boolean) weather or not the command should be processed or registered (disabling it will unregister it with discord)
+* `permissions` (function): A function used to determine whether the user has permission to run the command. Accepts a `Discord.Interaction` object.
+* `process` (function): A function that is run when the Context Menu Command of the appropriate name is called
 
 ### Message Component Interactions
+* undocumented, but available
 
 ### Initialization
+* Coming soon
 
 ### Unloading
+* Coming soon
 

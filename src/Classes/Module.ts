@@ -148,6 +148,7 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
     process: IInteractionProcessFunction;
     constructor(MessageComponentInteractionComponentOptions: IMessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions)
+        this.trigger = Events.InteractionCreate;
         this.process = MessageComponentInteractionComponentOptions.process
         this.customId = (string: string) => {
             if (typeof MessageComponentInteractionComponentOptions.customId == "function") {
