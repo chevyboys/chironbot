@@ -59,12 +59,17 @@ export class BaseInteractionComponent extends BaseComponent {
             if (!this.enabled || !this.permissions(interaction)) {
                 if (interaction.isRepliable())
                     interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
+                console.log("I'm sorry, This feature is restricted behind a permissions lock");
                 return "I'm sorry, This feature is restricted behind a permissions lock";
             }
             else if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(interaction.user.id)) {
-                if (interaction.isRepliable())
+                if (interaction.isRepliable()) {
                     interaction.reply({ content: "This feature is unavailable to you.", ephemeral: true });
-                return interaction.user.username + " Was blocked from using " + this.name + " by Smite System";
+                    console.log(interaction.user.username + " Was blocked from using " + this.name + " by Smite System");
+                    return interaction.user.username + " Was blocked from using " + this.name + " by Smite System";
+                }
+                else
+                    return "Nothing to be done";
             }
             else
                 return this.process(interaction);
