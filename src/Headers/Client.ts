@@ -10,7 +10,6 @@ export interface IChironClientOptions extends ClientOptions {
     modulePath: string | Array<string>,
     DEBUG: boolean //weather or not to enable Debugging mode and instant guild command registration
     errorHandler?: IErrorHandlerFunction
-    smiteArray: Array<Snowflake> //an array of people to deny permissions to in all cases
     parser?: ChironParseFunction
 }
 
@@ -18,9 +17,7 @@ export interface IChironClient extends Client {
     config: IChironConfig;
     color: HexColorString;
     modulePath: string | Array<string>;
-    DEBUG: boolean //weather or not to enable Debugging mode and instant guild command registration
     errorHandler?: IErrorHandlerFunction
-    smiteArray: Array<Snowflake> //an array of people to deny permissions to in all cases
     modules: IModuleManager
     parser: ChironParseFunction
 }

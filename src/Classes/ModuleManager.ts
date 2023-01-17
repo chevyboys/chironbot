@@ -29,7 +29,7 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
             console.log(`Started refreshing ${commandsToRegister.length} application (/) commands.`);
             // Register all commands as guild commands in the test guild if Debug is enabled. Else, register all commands as global
             let commandData: Collection<Snowflake, ApplicationCommand> | any;
-            if (client.DEBUG) {
+            if (client.config.DEBUG) {
                 commandData = await client.application?.commands.set(commandsToRegister, client.config.adminServer);
             }
             else commandData = await client.application?.commands.set(commandsToRegister);

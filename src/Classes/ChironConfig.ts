@@ -12,6 +12,8 @@ export class ChironConfig implements IChironConfig {
     token: string; //the token to login with
     webhooks?: Array<IWebhookConfig>; //An array of debugging webhooks
     adminServer: Snowflake
+    DEBUG: boolean //weather or not to enable Debugging mode and instant guild command registration
+    smiteArray: Array<Snowflake>
     constructor(options: IChironConfigOptions) {
         this.adminIds = options.adminIds;
         this.database = options.database;
@@ -20,5 +22,7 @@ export class ChironConfig implements IChironConfig {
         this.token = options.token;
         this.webhooks = options.webhooks;
         this.adminServer = options.adminServer;
+        this.DEBUG = options.DEBUG || false;
+        this.smiteArray = options.smiteArray || [];
     }
 }
