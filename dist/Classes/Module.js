@@ -135,6 +135,8 @@ export class MessageComponentInteractionComponent extends EventComponent {
             }
         };
         this.exec = (interaction) => {
+            if (!this.customId(interaction.customId))
+                return;
             if (interaction?.member?.id || interaction?.user?.id || interaction.author?.id) {
                 let id = interaction?.member?.id || interaction?.user?.id || interaction.author?.id;
                 if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
