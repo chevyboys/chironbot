@@ -155,8 +155,9 @@ export class ModuleManager extends Array {
                             return false;
                     });
                 });
-                if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent)
+                if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) {
                     match.exec(interaction);
+                }
                 else {
                     if (interaction.isRepliable())
                         interaction.reply("I don't know how to handle that!");
