@@ -150,6 +150,9 @@ export class MessageComponentInteractionComponent extends EventComponent {
                     interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
                     return "Smite System Blocked Event Triggered by " + id;
                 }
+                if (!this.permissions(interaction)) {
+                    interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
+                }
             }
             return this.process(interaction);
         };

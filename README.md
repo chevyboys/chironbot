@@ -2,10 +2,12 @@
 
 Chiron is a Discord bot framework, utilizing the `discord.js` library.
 The npm version "chironbot" is the "Stable" version of the framework. For the alpha channel, install "chevyboys/chiron"
+For a basic example bot, take a look at https://github.com/chevyboys/Corrigation
 
 ### Change Log
 
-We're still in Alpha, so changes are frequent. See the github for more details
+We're still in Alpha, so changes are frequent. See the github for more details.
+
 
 ### Installation
 
@@ -262,6 +264,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, Comman
 export const HelloWorldMessageComponentInteraction = new MessageComponentInteractionComponent({
     customId: (id) => id == "exampleid",
     enabled: true,
+    permissions: (interaction) => true;
     process(interaction) {
         if (interaction instanceof ButtonInteraction) {
             interaction.reply({ content: "You pushed me!", ephemeral: true });
