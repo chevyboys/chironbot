@@ -54,8 +54,6 @@ The `options` object includes:
 
 * `color`: The default color the bot should use. Any hex color should work
 
-* `Client Options`: Any options to be passed to the new Discord.Client().
-
 * `config`: A configuration object containing per instance data. See below
 
 * `modulePath` (string): A directory, relative to the base file, containing any command modules you wish to load. This will only load modules that are ChironModules, are exported under the name "Module", or "Command", but it will search recursively through all folder in the base folder to find more modules.
@@ -64,7 +62,7 @@ The `options` object includes:
 
 * `parser` (async function): An asynchronous function accepting `message` as its argument, returning an object with `command` and `suffix` properties. This will replace the default parsing function. (Useful in case different servers use different prefixes, for example.)
 
-
+* `Discord Client options`: Any discord client options
 
 ### The `config` Object
 
