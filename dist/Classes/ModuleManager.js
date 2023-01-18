@@ -112,7 +112,7 @@ export class ModuleManager extends Array {
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input); });
                             messageCommands.push(component);
                         }
-                        else {
+                        else if (!(component instanceof MessageComponentInteractionComponent)) {
                             this.client.on(component.trigger, (input) => { component.exec(input); });
                             events.push(component);
                         }
