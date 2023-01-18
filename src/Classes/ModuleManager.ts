@@ -116,10 +116,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                             this.client.on(Events.MessageCreate, (input) => { component.exec(input) })
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input) })
                             messageCommands.push(component);
-                        } else if (component instanceof MessageComponentInteractionComponent) {
-                            //let the interaction handler register these, don't do anything
-                        }
-                        else {
+                        } else if (!(component instanceof MessageComponentInteractionComponent)) {
                             this.client.on(component.trigger, (input) => { component.exec(input) })
                             events.push(component);
                         }
