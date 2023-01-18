@@ -127,8 +127,10 @@ export class EventComponent extends BaseComponent {
 export class MessageComponentInteractionComponent extends EventComponent {
     customId;
     process;
+    permissions;
     constructor(MessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions);
+        this.permissions = MessageComponentInteractionComponentOptions.permissions || (() => true);
         this.trigger = Events.InteractionCreate;
         this.process = MessageComponentInteractionComponentOptions.process;
         this.customId = (string) => {

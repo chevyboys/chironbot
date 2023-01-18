@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Events } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../Headers/Module";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 export declare class ChironModule implements IChironModule {
     name: string;
@@ -37,9 +37,10 @@ export declare class EventComponent extends BaseComponent implements IEventCompo
     process: IEventProcessFunction;
     constructor(EventComponentOptions: IEventComponentOptions);
 }
-export declare class MessageComponentInteractionComponent extends EventComponent implements IEventComponent {
+export declare class MessageComponentInteractionComponent extends EventComponent implements IMessageComponentInteractionComponent {
     customId: customIdFunction;
     process: IInteractionProcessFunction;
+    permissions: IInteractionPermissionsFunction;
     constructor(MessageComponentInteractionComponentOptions: IMessageComponentInteractionComponentOptions);
 }
 export declare class ClockworkComponent extends BaseComponent implements IClockworkComponent {
