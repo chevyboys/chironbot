@@ -127,12 +127,14 @@ export interface IEventProcessFunction {
 
 export interface IMessageComponentInteractionComponentOptions extends IEventComponentOptions {
     customId: string | customIdFunction;
+    permissions: IInteractionPermissionsFunction;
     process: IInteractionProcessFunction
 }
 
 export interface IMessageComponentInteractionComponent extends IEventComponent {
     customId: string | customIdFunction;
-    process: IInteractionProcessFunction
+    permissions: IInteractionPermissionsFunction;
+    process: IInteractionProcessFunction;
 }
 
 export interface customIdFunction {

@@ -256,7 +256,25 @@ export const HelloWorldContextMenu = new ContextMenuCommandComponent(
 * `process` (function): A function that is run when the Context Menu Command of the appropriate name is called
 
 ### Message Component Interactions
-* undocumented, but available
+```
+import { MessageComponentInteractionComponent, SlashCommandComponent } from "chiron";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CommandInteraction, SlashCommandBuilder } from "discord.js";
+export const HelloWorldMessageComponentInteraction = new MessageComponentInteractionComponent({
+    customId: (id) => id == "exampleid",
+    enabled: true,
+    process(interaction) {
+        if (interaction instanceof ButtonInteraction) {
+            interaction.reply({ content: "You pushed me!", ephemeral: true });
+        }
+    }
+});
+```
+* `customId`: A function that receives a customId string, and returns true if this is the correct processing file for it. Note: it's easy to accidentally include something you don't want to, so be careful and as restrictive as possible
+* `enabled`: (boolean) weather or not the command should be processed; (If set to false, previously built buttons using the same customId  as this function may stop working!)
+* `process` (function): A function that is run when the Context Menu Command of the appropriate name is called.
+* `permissions` (function): A function used to determine whether the user has permission to run the command. Accepts a `Discord.Interaction` object.
+
+
 
 ### Initialization
 * Coming soon
