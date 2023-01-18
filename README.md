@@ -18,7 +18,7 @@ We're still in Alpha, so changes are frequent. See the github for more details.
 
 ## The Chiron Client
 
-Within your base file, import { `ChironConfig`, `ChironClient` } from `chironbot` and create a new instance of `ChironClient`:
+Within your base file, import { `ChironConfig`, `ChironClient` } from `chironbot`(or `chiron` if you are using the beta branch) and create a new instance of `ChironClient`:
 ```
 import { `ChironConfig`, `ChironClient` } from `chironbot`
 import { configOptions } from "YOUR_CONFIG_TYPESCRIPT_FILE"
