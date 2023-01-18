@@ -4,6 +4,7 @@ Chiron is a Discord bot framework, utilizing the `discord.js` library.
 The npm version "chironbot" is the "Stable" version of the framework. For the alpha channel, install "chevyboys/chiron"
 For a basic example bot, take a look at https://github.com/chevyboys/Corrigation
 
+
 ### Change Log
 
 We're still in Alpha, so changes are frequent. See the github for more details.
@@ -11,7 +12,7 @@ We're still in Alpha, so changes are frequent. See the github for more details.
 
 ### Installation
 
-`npm install --save chiron discord.js`
+`npm install --save chironbot discord.js`
 
 ---
 
