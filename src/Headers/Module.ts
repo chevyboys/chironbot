@@ -1,6 +1,6 @@
 
 import { ApplicationCommand, Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
-
+import * as Schedule from "node-schedule";
 
 export interface IChironModuleOptions {
     readonly name?: string
@@ -37,11 +37,11 @@ export interface IBaseComponent {
 }
 
 export interface IBaseProcessFunction {
-    (input: any, input2?: any): string
+    (input: any, input2?: any): any
 }
 
 export interface IBaseExecFunction extends IBaseProcessFunction {
-    (input: any, InvokerId: Snowflake): string
+    (input: any, InvokerId?: Snowflake): any
 }
 
 //--------------------------------------------------------------------------
@@ -142,13 +142,14 @@ export interface customIdFunction {
 }
 
 //--------------------------------------------------------------------------
-//------------------------ Clockwork Components ----------------------------
-export interface IClockworkComponentOptions extends IBaseComponentOptions {
-    readonly interval: number //the number of seconds to wait between refresh intervals
+//------------------------ Schedule Components ----------------------------
+export interface IScheduleComponentOptions extends IBaseComponentOptions {
+    readonly chronSchedule: string //the number of seconds to wait between refresh intervals
 }
 
-export interface IClockworkComponent extends IBaseComponent {
-    readonly interval: number //the number of seconds to wait between refresh intervals
+export interface IScheduleComponent extends IBaseComponent {
+    job?: Schedule.Job; //build by constructor
+    readonly chronSchedule: string //the number of seconds to wait between refresh intervals
 }
 
 //-------------------------------------------------------------------------
