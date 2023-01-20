@@ -4,7 +4,8 @@ import fs from "fs";
 import path from "path";
 import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ScheduleComponent, SlashCommandComponent } from "./Module";
+import * as Schedule from "node-schedule";
 
 
 function readdirSyncRecursive(Directory: string): Array<string> {
@@ -43,7 +44,6 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
         }
     }
 }
-//testing
 async function resolveRegisterable(registerable: IModuleManagerRegisterable): Promise<Array<IChironModule>> {
     if ((registerable instanceof String || typeof registerable == "string") || (Array.isArray(registerable) && registerable[0] && (typeof registerable[0] == "string" || registerable instanceof String))) {
         let parsedRegisterable;
@@ -84,6 +84,8 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
 
 export class ModuleManager extends Array<IChironModule> implements IModuleManager {
     client: IChironClient;
+    applicationCommands?: Array<BaseInteractionComponent> = [];
+
     constructor(ChironClient: IChironClient) {
         super()
         this.client = ChironClient
@@ -99,14 +101,16 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
         }
 
         //take care of onInit functions, and register commands to discord
-        let applicationCommands: Array<BaseInteractionComponent> = [];
-        let events: Array<EventComponent> = [];
+        this.applicationCommands: Array<BaseInteractionComponent> = [];
+        this.events: Array<EventComponent> = [];
         let messageCommands: Array<MessageCommandComponent> = [];
+        let scheduledJobs: Array<ScheduleComponent> = [];
         for (const module of modules) {
             module.client = this.client;
             this.push(module)
             for (const component of module.components) {
                 if (component.enabled) {
+                    component.module = module;
                     if (component instanceof BaseInteractionComponent) {
                         applicationCommands.push(component);
                     } else if (component instanceof ModuleLoading) {
@@ -120,6 +124,11 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                             this.client.on(component.trigger, (input) => { component.exec(input) })
                             events.push(component);
                         }
+                    }
+                    else if (component instanceof ScheduleComponent) {
+                        component.job = Schedule.scheduleJob(component.module?.name || component.module?.file || "unknown", component.chronSchedule, component.exec)
+                        scheduledJobs.push(component);
+
                     }
                 }
 
