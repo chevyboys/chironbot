@@ -145,11 +145,18 @@ export interface customIdFunction {
 //------------------------ Schedule Components ----------------------------
 export interface IScheduleComponentOptions extends IBaseComponentOptions {
     readonly chronSchedule: string //the number of seconds to wait between refresh intervals
+    readonly process: IScheduleProccessFunction
 }
 
 export interface IScheduleComponent extends IBaseComponent {
     job?: Schedule.Job; //build by constructor
+    process: IScheduleProccessFunction
     readonly chronSchedule: string //the number of seconds to wait between refresh intervals
+}
+
+export interface IScheduleProccessFunction extends IBaseProcessFunction {
+    (client: Client, fireDate: Date): any
+    //the client is the Chiron Client, and the Date is the date the event is supposed to fire.
 }
 
 //-------------------------------------------------------------------------

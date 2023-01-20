@@ -93,10 +93,15 @@ export interface customIdFunction {
 }
 export interface IScheduleComponentOptions extends IBaseComponentOptions {
     readonly chronSchedule: string;
+    readonly process: IScheduleProccessFunction;
 }
 export interface IScheduleComponent extends IBaseComponent {
     job?: Schedule.Job;
+    process: IScheduleProccessFunction;
     readonly chronSchedule: string;
+}
+export interface IScheduleProccessFunction extends IBaseProcessFunction {
+    (client: Client, fireDate: Date): any;
 }
 export interface IModuleLoadingOptions extends IBaseComponentOptions {
 }

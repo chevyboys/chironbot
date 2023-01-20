@@ -12,7 +12,7 @@ We're still in Alpha, so changes are frequent. See the github for more details.
 
 ### Installation
 
-`npm install --save chironbot discord.js node-schedule`
+`npm install --save chironbot discord.js node-schedule && npm i --save-dev @types/node-schedule`
 
 ---
 
