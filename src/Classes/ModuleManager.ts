@@ -84,7 +84,11 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
 
 export class ModuleManager extends Array<IChironModule> implements IModuleManager {
     client: IChironClient;
-    applicationCommands?: Array<BaseInteractionComponent> = [];
+    applicationCommands: Array<BaseInteractionComponent> = [];
+    events: Array<EventComponent> = [];
+    messageCommands: Array<MessageCommandComponent> = [];
+    scheduledJobs: Array<ScheduleComponent> = [];
+
 
     constructor(ChironClient: IChironClient) {
         super()
@@ -101,10 +105,8 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
         }
 
         //take care of onInit functions, and register commands to discord
-        this.applicationCommands: Array<BaseInteractionComponent> = [];
-        this.events: Array<EventComponent> = [];
-        let messageCommands: Array<MessageCommandComponent> = [];
-        let scheduledJobs: Array<ScheduleComponent> = [];
+
+
         for (const module of modules) {
             module.client = this.client;
             this.push(module)
@@ -112,22 +114,22 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                 if (component.enabled) {
                     component.module = module;
                     if (component instanceof BaseInteractionComponent) {
-                        applicationCommands.push(component);
+                        this.applicationCommands.push(component);
                     } else if (component instanceof ModuleLoading) {
                         component.process(null);
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
                             this.client.on(Events.MessageCreate, (input) => { component.exec(input) })
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input) })
-                            messageCommands.push(component);
+                            this.messageCommands.push(component);
                         } else if (!(component instanceof MessageComponentInteractionComponent)) {
                             this.client.on(component.trigger, (input) => { component.exec(input) })
-                            events.push(component);
+                            this.events.push(component);
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
                         component.job = Schedule.scheduleJob(component.module?.name || component.module?.file || "unknown", component.chronSchedule, component.exec)
-                        scheduledJobs.push(component);
+                        this.scheduledJobs.push(component);
 
                     }
                 }
@@ -135,11 +137,11 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
 
             }
         }
-        await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:\n");
-        console.dir(events)
-        console.log("Successfully Registered " + messageCommands + " Message Commands\n");
-        console.dir(messageCommands.map((messageCommand) => {
+        await registerInteractions(this.client, this.applicationCommands);
+        console.log("Successfully Registered " + this.events.length + " Events:\n");
+        console.dir(this.events)
+        console.log("Successfully Registered " + this.messageCommands + " Message Commands\n");
+        console.dir(this.messageCommands.map((messageCommand) => {
             return {
                 name: messageCommand.name,
                 description: messageCommand.description,
