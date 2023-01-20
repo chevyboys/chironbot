@@ -1,7 +1,11 @@
 import { Client } from "discord.js";
-import { IChironModule } from "./Module";
+import { IBaseInteractionComponent, IChironModule, IEventComponent, IMessageCommandComponent, IScheduleComponent } from "./Module";
 export interface IModuleManager extends Array<IChironModule> {
     client: Client;
+    applicationCommands: Array<IBaseInteractionComponent>;
+    events: Array<IEventComponent>;
+    messageCommands: Array<IMessageCommandComponent>;
+    scheduledJobs: Array<IScheduleComponent>;
     register: IModuleManagerRegisterFunction;
     unregister: IModuleManagerRegisterFunction;
     reload: IModuleManagerRegisterFunction;

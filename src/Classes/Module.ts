@@ -1,7 +1,8 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../Headers/Module";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 import path from "path"
+import * as Schedule from 'node-schedule';
 
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
@@ -182,14 +183,21 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
 }
 
 //--------------------------------------------------------------------------
-//------------------------ Clockwork Components ----------------------------
+//------------------------ Schedule Components ----------------------------
 
 
-export class ClockworkComponent extends BaseComponent implements IClockworkComponent {
-    readonly interval: number //the number of seconds to wait between refresh intervals
-    constructor(ClockworkComponentOptions: any) {
-        super(ClockworkComponentOptions)
-        this.interval = ClockworkComponentOptions.interval
+export class ScheduleComponent extends BaseComponent implements IScheduleComponent {
+    readonly chronSchedule: string //the number of seconds to wait between refresh intervals
+    job?: Schedule.Job;
+    exec: Schedule.JobCallback;
+    constructor(ScheduleComponentOptions: IScheduleComponentOptions) {
+        super(ScheduleComponentOptions)
+        this.chronSchedule = ScheduleComponentOptions.chronSchedule
+        this.exec = (date: Date) => {
+            return this.process(this.module?.client, date);
+        }
+
+
     }
 }
 

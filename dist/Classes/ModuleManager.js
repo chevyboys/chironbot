@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { Events } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, SlashCommandComponent } from "./Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ScheduleComponent, SlashCommandComponent } from "./Module";
+import * as Schedule from "node-schedule";
 function readdirSyncRecursive(Directory) {
     let Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
@@ -39,7 +40,6 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
         }
     }
 }
-//testing
 async function resolveRegisterable(registerable) {
     if ((registerable instanceof String || typeof registerable == "string") || (Array.isArray(registerable) && registerable[0] && (typeof registerable[0] == "string" || registerable instanceof String))) {
         let parsedRegisterable;
@@ -79,6 +79,10 @@ async function resolveRegisterable(registerable) {
 }
 export class ModuleManager extends Array {
     client;
+    applicationCommands = [];
+    events = [];
+    messageCommands = [];
+    scheduledJobs = [];
     constructor(ChironClient) {
         super();
         this.client = ChironClient;
@@ -92,16 +96,14 @@ export class ModuleManager extends Array {
             modules = await resolveRegisterable(registerable);
         }
         //take care of onInit functions, and register commands to discord
-        let applicationCommands = [];
-        let events = [];
-        let messageCommands = [];
         for (const module of modules) {
             module.client = this.client;
             this.push(module);
             for (const component of module.components) {
                 if (component.enabled) {
+                    component.module = module;
                     if (component instanceof BaseInteractionComponent) {
-                        applicationCommands.push(component);
+                        this.applicationCommands.push(component);
                     }
                     else if (component instanceof ModuleLoading) {
                         component.process(null);
@@ -110,21 +112,25 @@ export class ModuleManager extends Array {
                         if (component instanceof MessageCommandComponent) {
                             this.client.on(Events.MessageCreate, (input) => { component.exec(input); });
                             this.client.on(Events.MessageUpdate, (input) => { component.exec(input); });
-                            messageCommands.push(component);
+                            this.messageCommands.push(component);
                         }
                         else if (!(component instanceof MessageComponentInteractionComponent)) {
                             this.client.on(component.trigger, (input) => { component.exec(input); });
-                            events.push(component);
+                            this.events.push(component);
                         }
+                    }
+                    else if (component instanceof ScheduleComponent) {
+                        component.job = Schedule.scheduleJob(component.module?.name || component.module?.file || "unknown", component.chronSchedule, component.exec);
+                        this.scheduledJobs.push(component);
                     }
                 }
             }
         }
-        await registerInteractions(this.client, applicationCommands);
-        console.log("Successfully Registered " + events.length + " Events:\n");
-        console.dir(events);
-        console.log("Successfully Registered " + messageCommands + " Message Commands\n");
-        console.dir(messageCommands.map((messageCommand) => {
+        await registerInteractions(this.client, this.applicationCommands);
+        console.log("Successfully Registered " + this.events.length + " Events:\n");
+        console.dir(this.events);
+        console.log("Successfully Registered " + this.messageCommands + " Message Commands\n");
+        console.dir(this.messageCommands.map((messageCommand) => {
             return {
                 name: messageCommand.name,
                 description: messageCommand.description,
