@@ -194,7 +194,7 @@ export class ScheduleComponent extends BaseComponent implements IScheduleCompone
         super(ScheduleComponentOptions)
         this.chronSchedule = ScheduleComponentOptions.chronSchedule
         this.exec = (date: Date) => {
-            return this.process(this.module?.client, date);
+            return this.process(date);
         }
 
 

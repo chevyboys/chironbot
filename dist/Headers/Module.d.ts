@@ -101,7 +101,7 @@ export interface IScheduleComponent extends IBaseComponent {
     readonly chronSchedule: string;
 }
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
-    (client: Client, fireDate: Date): any;
+    (fireDate: Date): any;
 }
 export interface IModuleLoadingOptions extends IBaseComponentOptions {
 }

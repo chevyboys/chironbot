@@ -168,7 +168,7 @@ export class ScheduleComponent extends BaseComponent {
         super(ScheduleComponentOptions);
         this.chronSchedule = ScheduleComponentOptions.chronSchedule;
         this.exec = (date) => {
-            return this.process(this.module?.client, date);
+            return this.process(date);
         };
     }
 }

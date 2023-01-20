@@ -155,8 +155,8 @@ export interface IScheduleComponent extends IBaseComponent {
 }
 
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
-    (client: Client, fireDate: Date): any
-    //the client is the Chiron Client, and the Date is the date the event is supposed to fire.
+    (fireDate: Date): any
+    //the Date is the date the event is supposed to fire.
 }
 
 //-------------------------------------------------------------------------
