@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Events } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../Headers/Module";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
+import * as Schedule from 'node-schedule';
 export declare class ChironModule implements IChironModule {
     name: string;
     components: Array<IBaseComponent>;
@@ -43,9 +44,11 @@ export declare class MessageComponentInteractionComponent extends EventComponent
     permissions: IInteractionPermissionsFunction;
     constructor(MessageComponentInteractionComponentOptions: IMessageComponentInteractionComponentOptions);
 }
-export declare class ClockworkComponent extends BaseComponent implements IClockworkComponent {
-    readonly interval: number;
-    constructor(ClockworkComponentOptions: any);
+export declare class ScheduleComponent extends BaseComponent implements IScheduleComponent {
+    readonly chronSchedule: string;
+    job?: Schedule.Job;
+    exec: Schedule.JobCallback;
+    constructor(ScheduleComponentOptions: IScheduleComponentOptions);
 }
 export declare class ModuleLoading extends BaseComponent implements IModuleLoading {
 }

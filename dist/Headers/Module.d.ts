@@ -1,4 +1,5 @@
 import { Client, CommandInteraction, ContextMenuCommandBuilder, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
+import * as Schedule from "node-schedule";
 export interface IChironModuleOptions {
     readonly name?: string;
     readonly file?: string;
@@ -23,10 +24,10 @@ export interface IBaseComponent {
     exec: IBaseExecFunction;
 }
 export interface IBaseProcessFunction {
-    (input: any, input2?: any): string;
+    (input: any, input2?: any): any;
 }
 export interface IBaseExecFunction extends IBaseProcessFunction {
-    (input: any, InvokerId: Snowflake): string;
+    (input: any, InvokerId?: Snowflake): any;
 }
 export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
@@ -90,11 +91,12 @@ export interface IMessageComponentInteractionComponent extends IEventComponent {
 export interface customIdFunction {
     (interactionCustomId: string): boolean;
 }
-export interface IClockworkComponentOptions extends IBaseComponentOptions {
-    readonly interval: number;
+export interface IScheduleComponentOptions extends IBaseComponentOptions {
+    readonly chronSchedule: string;
 }
-export interface IClockworkComponent extends IBaseComponent {
-    readonly interval: number;
+export interface IScheduleComponent extends IBaseComponent {
+    job?: Schedule.Job;
+    readonly chronSchedule: string;
 }
 export interface IModuleLoadingOptions extends IBaseComponentOptions {
 }

@@ -159,12 +159,17 @@ export class MessageComponentInteractionComponent extends EventComponent {
     }
 }
 //--------------------------------------------------------------------------
-//------------------------ Clockwork Components ----------------------------
-export class ClockworkComponent extends BaseComponent {
-    interval; //the number of seconds to wait between refresh intervals
-    constructor(ClockworkComponentOptions) {
-        super(ClockworkComponentOptions);
-        this.interval = ClockworkComponentOptions.interval;
+//------------------------ Schedule Components ----------------------------
+export class ScheduleComponent extends BaseComponent {
+    chronSchedule; //the number of seconds to wait between refresh intervals
+    job;
+    exec;
+    constructor(ScheduleComponentOptions) {
+        super(ScheduleComponentOptions);
+        this.chronSchedule = ScheduleComponentOptions.chronSchedule;
+        this.exec = (date) => {
+            return this.process(this.module?.client, date);
+        };
     }
 }
 //-------------------------------------------------------------------------
