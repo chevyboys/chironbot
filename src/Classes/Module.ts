@@ -82,7 +82,9 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
                     console.log(interaction.user.username + " Was blocked from using " + this.name + " by Smite System")
                     return interaction.user.username + " Was blocked from using " + this.name + " by Smite System";
                 } else return "Nothing to be done"
-            } else return this.process(interaction);
+            } else if (this.module?.client instanceof ChironClient)
+                return this.process(interaction);
+            else throw new Error("Invalid Client");
 
         }
     }
@@ -140,7 +142,10 @@ export class EventComponent extends BaseComponent implements IEventComponent {
                 }
 
             }
-            return this.process.apply(null, args)
+            if (this.module?.client instanceof ChironClient)
+                return this.process.apply(null, args);
+            else throw new Error("Invalid Client");
+
         }
     }
 }
@@ -176,8 +181,10 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
                     interaction.reply({ content: "You are not authorized to do that", ephemeral: true })
                 }
             }
+            if (this.module?.client instanceof ChironClient)
+                return this.process(interaction)
+            else throw new Error("Invalid Client");
 
-            return this.process(interaction)
         }
     }
 }
@@ -194,7 +201,9 @@ export class ScheduleComponent extends BaseComponent implements IScheduleCompone
         super(ScheduleComponentOptions)
         this.chronSchedule = ScheduleComponentOptions.chronSchedule
         this.exec = (date: Date) => {
-            return this.process(date);
+            if (this.module?.client instanceof ChironClient)
+                return this.process(date)
+            else throw new Error("Invalid Client");
         }
 
 
@@ -234,7 +243,9 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
                 if (this.module.client.config.smiteArray.includes(message.author.id)) return "Dissallowed by smite system"
                 let parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
-                    return this.process(message, parsed.suffix)
+                    if (this.module?.client instanceof ChironClient)
+                        return this.process(message, parsed.suffix)
+                    else throw new Error("Invalid Client");
                 }
                 else return "Not a command";
             }

@@ -3,7 +3,6 @@ import { HexColorString, Client, ClientOptions } from "discord.js";
 import { IModuleManager } from "./ModuleManager";
 import { IChironConfig } from "./Config";
 
-
 export interface IChironClientOptions extends ClientOptions {
     config: IChironConfig
     color: HexColorString; //the color the bot should default to

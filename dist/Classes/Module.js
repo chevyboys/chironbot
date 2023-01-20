@@ -71,8 +71,10 @@ export class BaseInteractionComponent extends BaseComponent {
                 else
                     return "Nothing to be done";
             }
-            else
+            else if (this.module?.client instanceof ChironClient)
                 return this.process(interaction);
+            else
+                throw new Error("Invalid Client");
         };
     }
 }
@@ -118,7 +120,10 @@ export class EventComponent extends BaseComponent {
                     }
                 }
             }
-            return this.process.apply(null, args);
+            if (this.module?.client instanceof ChironClient)
+                return this.process.apply(null, args);
+            else
+                throw new Error("Invalid Client");
         };
     }
 }
@@ -154,7 +159,10 @@ export class MessageComponentInteractionComponent extends EventComponent {
                     interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
                 }
             }
-            return this.process(interaction);
+            if (this.module?.client instanceof ChironClient)
+                return this.process(interaction);
+            else
+                throw new Error("Invalid Client");
         };
     }
 }
@@ -168,7 +176,10 @@ export class ScheduleComponent extends BaseComponent {
         super(ScheduleComponentOptions);
         this.chronSchedule = ScheduleComponentOptions.chronSchedule;
         this.exec = (date) => {
-            return this.process(date);
+            if (this.module?.client instanceof ChironClient)
+                return this.process(date);
+            else
+                throw new Error("Invalid Client");
         };
     }
 }
@@ -202,7 +213,10 @@ export class MessageCommandComponent extends EventComponent {
                     return "Dissallowed by smite system";
                 let parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
-                    return this.process(message, parsed.suffix);
+                    if (this.module?.client instanceof ChironClient)
+                        return this.process(message, parsed.suffix);
+                    else
+                        throw new Error("Invalid Client");
                 }
                 else
                     return "Not a command";
