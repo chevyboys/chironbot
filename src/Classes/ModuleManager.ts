@@ -199,9 +199,9 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                             match = c;
 
                             return true;
-                        } else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent && c.customId(interaction["customId"])) {
-                            match = c;
-                            return true;
+                        } else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent) {
+                            //Handled by normal event registration above,
+                            return false;
                         }
                         else return false;
                     })
