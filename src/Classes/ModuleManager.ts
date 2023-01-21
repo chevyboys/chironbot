@@ -3,7 +3,7 @@ import { IModuleManager, IModuleManagerRegisterable } from "../Headers/ModuleMan
 import fs from "fs";
 import path from "path";
 import { IChironClient } from "../Headers/Client";
-import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
+import { ApplicationCommand, Collection, Events, Interaction, RESTPostAPIChatInputApplicationCommandsJSONBody, RESTPostAPIContextMenuApplicationCommandsJSONBody, Snowflake } from "discord.js";
 import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ModuleUnloading, ScheduleComponent, SlashCommandComponent } from "./Module";
 import * as Schedule from "node-schedule";
 import { EventHandlerCollection } from "./EventHandler";
@@ -27,22 +27,30 @@ function readdirSyncRecursive(Directory: string): Array<string> {
 
 async function registerInteractions(client: IChironClient, ApplicationAndContextMenuCommands: Array<IBaseInteractionComponent>) {
     if (client.user) {
-        let commandsToRegister = ApplicationAndContextMenuCommands.map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
+        let GlobalCommandsToRegister = ApplicationAndContextMenuCommands.filter(component => !component.guildId).map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
+        let GuildCommandsToRegister: Collection<string, Array<RESTPostAPIChatInputApplicationCommandsJSONBody | RESTPostAPIContextMenuApplicationCommandsJSONBody>> = new Collection()
+        ApplicationAndContextMenuCommands.filter(component => component.guildId != undefined).forEach((ChironModuleComponentBaseInteraction) => {
+            if (!GuildCommandsToRegister.has(ChironModuleComponentBaseInteraction.guildId as string)) { GuildCommandsToRegister.set(ChironModuleComponentBaseInteraction.guildId as string, []) }
+            GuildCommandsToRegister.get(ChironModuleComponentBaseInteraction.guildId as string)?.push(ChironModuleComponentBaseInteraction.builder.toJSON())
+        }
+        );
 
         try {
-            console.log(`Started refreshing ${commandsToRegister.length} application (/) commands.`);
+            console.log(`Started refreshing ${GlobalCommandsToRegister.length} global application (/) command${GlobalCommandsToRegister.length > 1 ? 's' : ''}, and Guild commands in ${GuildCommandsToRegister.size} guild${GuildCommandsToRegister.size > 1 ? 's' : ''}.`);
             // Register all commands as guild commands in the test guild if Debug is enabled. Else, register all commands as global
-            let commandData: Collection<Snowflake, ApplicationCommand> | any;
-            if (client.config.DEBUG) {
-                commandData = await client.application?.commands.set(commandsToRegister, client.config.adminServer);
+            let commandData: Collection<Snowflake, ApplicationCommand> = new Collection;
+
+            for (const [guild, value] of GuildCommandsToRegister) {
+                let data = await client.application?.commands.set(value, guild)
+                if (data && data.size > 0) commandData = commandData.concat(data);
             }
-            else commandData = await client.application?.commands.set(commandsToRegister);
+            let data = await client.application?.commands.set(GlobalCommandsToRegister)
+            if (data) commandData = commandData.concat(data);
             console.log(commandData)
             console.log(`Successfully reloaded ${commandData?.size} application (/) commands.`);
 
             return commandData;
         } catch (error) {
-            // And of course, make sure you catch and log any errors!
             throw error
         }
     }
@@ -125,6 +133,9 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                 if (component.enabled) {
                     component.module = module;
                     if (component instanceof BaseInteractionComponent) {
+                        if (this.client.config.DEBUG) {
+                            component.guildId = this.client.config.adminServer;
+                        }
                         this.applicationCommands.set(component.name, component);
                     } else if (component instanceof ModuleLoading) {
                         component.process(storedValues?.get(component.module.name));

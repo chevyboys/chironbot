@@ -61,7 +61,7 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
-    readonly guildId?: string | undefined;
+    guildId?: string | undefined;
 
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption) {
         super(BaseInteractionComponentOptions)
