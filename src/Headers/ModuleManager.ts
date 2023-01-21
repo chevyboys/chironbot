@@ -16,6 +16,4 @@ export interface IModuleManagerRegisterFunction {
    (registerable?: IModuleManagerRegisterable): Promise<IModuleManager> | IModuleManager;
 }
 
-export interface IModuleManagerRegisterable {
-   registerable: Array<IChironModule> | IChironModule | string | Array<string> | null
-}
+export type IModuleManagerRegisterable = Array<IChironModule> | IChironModule | string | string[] | null

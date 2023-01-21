@@ -9,6 +9,9 @@ export interface IChironClientOptions extends ClientOptions {
     errorHandler?: IErrorHandlerFunction;
     parser?: ChironParseFunction;
 }
+export interface IChironClientBuilder {
+    build?: IChironBuildFunction;
+}
 export interface IChironClient extends Client {
     config: IChironConfig;
     color: HexColorString;
@@ -27,4 +30,7 @@ export interface ChironParsedContent {
 }
 export interface ChironParseFunction {
     (msg: Message, client: IChironClient): ChironParsedContent | null;
+}
+export interface IChironBuildFunction {
+    (ChironClientOptions: IChironClientOptions): Promise<IChironClient>;
 }
