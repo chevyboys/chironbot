@@ -22,7 +22,7 @@ export declare class BaseInteractionComponent extends BaseComponent implements I
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
-    readonly guildId?: string | undefined;
+    guildId?: string | undefined;
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption);
 }
 export declare class SlashCommandComponent extends BaseInteractionComponent implements ISlashCommandComponent {

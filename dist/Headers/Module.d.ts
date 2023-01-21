@@ -35,7 +35,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
     readonly process: IInteractionProcessFunction;
-    readonly guildId?: Snowflake;
+    guildId?: Snowflake;
 }
 export interface IBaseInteractionComponent extends IBaseComponent {
     readonly name: string;
@@ -43,7 +43,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
-    readonly guildId?: Snowflake;
+    guildId?: Snowflake;
     process: IInteractionProcessFunction;
 }
 export interface IInteractionPermissionsFunction {

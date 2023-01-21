@@ -21,22 +21,31 @@ function readdirSyncRecursive(Directory) {
 }
 async function registerInteractions(client, ApplicationAndContextMenuCommands) {
     if (client.user) {
-        let commandsToRegister = ApplicationAndContextMenuCommands.map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
-        try {
-            console.log(`Started refreshing ${commandsToRegister.length} application (/) commands.`);
-            // Register all commands as guild commands in the test guild if Debug is enabled. Else, register all commands as global
-            let commandData;
-            if (client.config.DEBUG) {
-                commandData = await client.application?.commands.set(commandsToRegister, client.config.adminServer);
+        let GlobalCommandsToRegister = ApplicationAndContextMenuCommands.filter(component => !component.guildId).map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
+        let GuildCommandsToRegister = new Collection();
+        ApplicationAndContextMenuCommands.filter(component => component.guildId != undefined).forEach((ChironModuleComponentBaseInteraction) => {
+            if (!GuildCommandsToRegister.has(ChironModuleComponentBaseInteraction.guildId)) {
+                GuildCommandsToRegister.set(ChironModuleComponentBaseInteraction.guildId, []);
             }
-            else
-                commandData = await client.application?.commands.set(commandsToRegister);
+            GuildCommandsToRegister.get(ChironModuleComponentBaseInteraction.guildId)?.push(ChironModuleComponentBaseInteraction.builder.toJSON());
+        });
+        try {
+            console.log(`Started refreshing ${GlobalCommandsToRegister.length} global application (/) command${GlobalCommandsToRegister.length > 1 ? 's' : ''}, and Guild commands in ${GuildCommandsToRegister.size} guild${GuildCommandsToRegister.size > 1 ? 's' : ''}.`);
+            // Register all commands as guild commands in the test guild if Debug is enabled. Else, register all commands as global
+            let commandData = new Collection;
+            for (const [guild, value] of GuildCommandsToRegister) {
+                let data = await client.application?.commands.set(value, guild);
+                if (data && data.size > 0)
+                    commandData = commandData.concat(data);
+            }
+            let data = await client.application?.commands.set(GlobalCommandsToRegister);
+            if (data)
+                commandData = commandData.concat(data);
             console.log(commandData);
             console.log(`Successfully reloaded ${commandData?.size} application (/) commands.`);
             return commandData;
         }
         catch (error) {
-            // And of course, make sure you catch and log any errors!
             throw error;
         }
     }
@@ -113,6 +122,9 @@ export class ModuleManager extends Collection {
                 if (component.enabled) {
                     component.module = module;
                     if (component instanceof BaseInteractionComponent) {
+                        if (this.client.config.DEBUG) {
+                            component.guildId = this.client.config.adminServer;
+                        }
                         this.applicationCommands.set(component.name, component);
                     }
                     else if (component instanceof ModuleLoading) {
