@@ -7,7 +7,7 @@ export interface IModuleManager extends Array<IChironModule> {
     messageCommands: Array<IMessageCommandComponent>;
     scheduledJobs: Array<IScheduleComponent>;
     register: IModuleManagerRegisterFunction;
-    unregister: IModuleManagerRegisterFunction;
+    unregister: any;
     reload: IModuleManagerRegisterFunction;
 }
 export interface IModuleManagerRegisterFunction {

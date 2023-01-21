@@ -4,8 +4,10 @@ import fs from "fs";
 import path from "path";
 import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ScheduleComponent, SlashCommandComponent } from "./Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ModuleUnloading, ScheduleComponent, SlashCommandComponent } from "./Module";
 import * as Schedule from "node-schedule";
+
+
 
 
 function readdirSyncRecursive(Directory: string): Array<string> {
@@ -95,6 +97,12 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
         this.client = ChironClient
     }
 
+    private remove(Array: Array<any>, item: any) {
+        let index = Array.indexOf(item);
+        if (index !== -1) {
+            Array.splice(index, 1);
+        }
+    };
 
     async register(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
         let modules: Array<IChironModule>;
@@ -191,10 +199,57 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
 
         return this;
     }
-    async unregister(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
-        //toDo
+    async unregister(registerable?: IModuleManagerRegisterable) {
+        let modules: Array<IChironModule>;
+        let stored = new Collection()
+        if (!registerable) {
+            modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
+        } else {
+            modules = await resolveRegisterable(registerable)
+        }
 
-        return this;
+        //take care of onInit functions, and register commands to discord
+
+
+        for (const module of modules) {
+            let unregisterComponent = module.components.find(c => c instanceof ModuleUnloading)
+            if (unregisterComponent) {
+                let result = unregisterComponent.exec(null);
+                stored.set(module.name, result)
+            }
+            this.remove(this, module);
+            for (const component of module.components) {
+                if (component.enabled) {
+                    component.module = module;
+                    if (component instanceof BaseInteractionComponent) {
+                        this.remove(this.applicationCommands, component);
+                    } else if (component instanceof EventComponent) {
+                        if (component instanceof MessageCommandComponent) {
+                            this.client.removeListener(Events.MessageCreate, (input) => { component.exec(input) });
+                            this.client.removeListener(Events.MessageUpdate, (input) => { component.exec(input) });
+                            this.remove(this.messageCommands, component);
+                        } else if (!(component instanceof MessageComponentInteractionComponent)) {
+                            this.client.removeListener(component.trigger, (input) => { component.exec(input) })
+                            this.remove(this.events, component)
+                        }
+                    }
+                    else if (component instanceof ScheduleComponent) {
+                        let job = this.scheduledJobs.find(j => j == component)?.job;
+                        if (job) {
+                            job.cancel();
+                            this.remove(this.scheduledJobs, component);
+                        }
+
+                    }
+                }
+
+
+            }
+        }
+        //Since the commands have been removed from this.applicationCommands, we should be able to just re-register all the commands with a set.
+        await registerInteractions(this.client, this.applicationCommands);
+
+        return stored;
     }
     reload(registerable?: IModuleManagerRegisterable): IModuleManager {
         //toDo
