@@ -153,9 +153,9 @@ export class ModuleManager extends Collection {
             }
         }
         await registerInteractions(this.client, this.applicationCommands.map((value, key) => value));
-        console.log("Successfully Registered " + this.events.size + " Events:\n");
+        console.log("\nSuccessfully Registered " + this.events.size + " Events:");
         console.dir(this.events);
-        console.log("Successfully Registered " + this.messageCommands.size + " Message Commands\n");
+        console.log("\nSuccessfully Registered " + this.messageCommands.size + " Message Commands");
         console.dir(this.messageCommands.map((messageCommand) => {
             return {
                 name: messageCommand.name,
