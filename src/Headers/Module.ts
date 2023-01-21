@@ -54,6 +54,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly category: string
     readonly permissions: IInteractionPermissionsFunction //A function that receives an interaction object, and returns if the interaction user can do it
     readonly process: IInteractionProcessFunction;
+    readonly guildId?: Snowflake; //only set if it's a guild application command
 }
 
 export interface IBaseInteractionComponent extends IBaseComponent {
@@ -62,6 +63,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
+    readonly guildId?: Snowflake; //only set if it's a guild application command
     process: IInteractionProcessFunction;
 }
 

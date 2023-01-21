@@ -61,6 +61,7 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
+    readonly guildId?: string | undefined;
 
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption) {
         super(BaseInteractionComponentOptions)
@@ -69,8 +70,11 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
         this.description = "";
         this.builder = BaseInteractionComponentOptions.builder;
         this.category = BaseInteractionComponentOptions.category || this.module?.file || "General";
+        this.guildId = BaseInteractionComponentOptions.guildId
         this.permissions = BaseInteractionComponentOptions.permissions;
         this.exec = (interaction: Interaction) => {
+            if (!interaction.isCommand() || interaction.commandName != this.name) return;
+            if (this.guildId && !interaction.commandGuildId || interaction.commandGuildId != this.guildId) return;
             if (!this.enabled || !this.permissions(interaction)) {
                 if (interaction.isRepliable()) interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
                 console.log("I'm sorry, This feature is restricted behind a permissions lock");

@@ -1,12 +1,13 @@
-import { Client } from "discord.js";
-import { IBaseInteractionComponent, IChironModule, IEventComponent, IMessageCommandComponent, IScheduleComponent } from "./Module";
+import { Client, Collection, Events } from "discord.js";
+import { IEventHandlerCollection } from "./EventHandler";
+import { IBaseInteractionComponent, IChironModule, IMessageCommandComponent, IScheduleComponent } from "./Module";
 
-export interface IModuleManager extends Array<IChironModule> {
+export interface IModuleManager extends Collection<string, IChironModule> {
    client: Client
-   applicationCommands: Array<IBaseInteractionComponent>;
-   events: Array<IEventComponent>;
-   messageCommands: Array<IMessageCommandComponent>;
-   scheduledJobs: Array<IScheduleComponent>;
+   applicationCommands: Collection<string, IBaseInteractionComponent>;
+   events: IEventHandlerCollection;
+   messageCommands: Collection<string, IMessageCommandComponent>;
+   scheduledJobs: Collection<string, IScheduleComponent>;
    register: IModuleManagerRegisterFunction;
    unregister: any;
    reload: IModuleManagerRegisterFunction;

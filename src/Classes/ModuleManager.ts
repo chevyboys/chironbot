@@ -6,6 +6,7 @@ import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, MessageComponentInteraction, Snowflake } from "discord.js";
 import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ModuleUnloading, ScheduleComponent, SlashCommandComponent } from "./Module";
 import * as Schedule from "node-schedule";
+import { EventHandlerCollection } from "./EventHandler";
 
 
 
@@ -84,12 +85,12 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
     throw new Error("Unreachable state reached. How did you do this?");
 }
 
-export class ModuleManager extends Array<IChironModule> implements IModuleManager {
+export class ModuleManager extends Collection<string, IChironModule> implements IModuleManager {
     client: IChironClient;
-    applicationCommands: Array<BaseInteractionComponent> = [];
-    events: Array<EventComponent> = [];
-    messageCommands: Array<MessageCommandComponent> = [];
-    scheduledJobs: Array<ScheduleComponent> = [];
+    applicationCommands: Collection<string, BaseInteractionComponent> = new Collection();
+    events: EventHandlerCollection = new EventHandlerCollection();
+    messageCommands: Collection<string, MessageCommandComponent> = new Collection();
+    scheduledJobs: Collection<string, ScheduleComponent> = new Collection();
 
 
     constructor(ChironClient: IChironClient) {
@@ -104,7 +105,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
         }
     };
 
-    async register(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
+    async register(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager> {
         let modules: Array<IChironModule>;
         if (!registerable) {
             modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
@@ -117,27 +118,33 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
 
         for (const module of modules) {
             module.client = this.client;
-            this.push(module)
+            if (this.has(module.name)) throw new Error("Module name " + module.name + " Must be unique!");
+
+            this.set(module.name, module)
             for (const component of module.components) {
                 if (component.enabled) {
                     component.module = module;
                     if (component instanceof BaseInteractionComponent) {
-                        this.applicationCommands.push(component);
+                        this.applicationCommands.set(component.name, component);
                     } else if (component instanceof ModuleLoading) {
-                        component.process(null);
+                        component.process(storedValues?.get(component.module.name));
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
-                            this.client.on(Events.MessageCreate, (input) => { component.exec(input) })
-                            this.client.on(Events.MessageUpdate, (input) => { component.exec(input) })
-                            this.messageCommands.push(component);
-                        } else if (!(component instanceof MessageComponentInteractionComponent)) {
-                            this.client.on(component.trigger, (input) => { component.exec(input) })
-                            this.events.push(component);
+                            this.events.add(this.client, component)
+                            component.trigger = Events.MessageUpdate
+                            this.events.add(this.client, component)
+                            this.messageCommands.set(component.name, component);
+                        } else {
+                            this.events.add(this.client, component);
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
                         component.job = Schedule.scheduleJob(component.module?.name || component.module?.file || "unknown", component.chronSchedule, component.exec)
-                        this.scheduledJobs.push(component);
+                        let i = 0;
+                        while (this.scheduledJobs.has(`${component.module?.name}Scheduled${i}`)) {
+                            i++;
+                        }
+                        this.scheduledJobs.set(`${component.module?.name}Scheduled${i}`, component);
 
                     }
                 }
@@ -145,10 +152,12 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
 
             }
         }
-        await registerInteractions(this.client, this.applicationCommands);
-        console.log("Successfully Registered " + this.events.length + " Events:\n");
+        await registerInteractions(this.client, this.applicationCommands.map((value, key) =>
+            value
+        ));
+        console.log("Successfully Registered " + this.events.size + " Events:\n");
         console.dir(this.events)
-        console.log("Successfully Registered " + this.messageCommands + " Message Commands\n");
+        console.log("Successfully Registered " + this.messageCommands.size + " Message Commands\n");
         console.dir(this.messageCommands.map((messageCommand) => {
             return {
                 name: messageCommand.name,
@@ -159,6 +168,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                 process: messageCommand.process
             };
         }))
+
 
         this.client.on(Events.InteractionCreate, (interaction: Interaction) => {
             //Handle receiving command interactions
@@ -201,7 +211,7 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
     }
     async unregister(registerable?: IModuleManagerRegisterable) {
         let modules: Array<IChironModule>;
-        let stored = new Collection()
+        let stored: Collection<string, any> = new Collection()
         if (!registerable) {
             modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
         } else {
@@ -217,27 +227,25 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
                 let result = unregisterComponent.exec(null);
                 stored.set(module.name, result)
             }
-            this.remove(this, module);
+            this.delete(module.name);
             for (const component of module.components) {
                 if (component.enabled) {
-                    component.module = module;
                     if (component instanceof BaseInteractionComponent) {
-                        this.remove(this.applicationCommands, component);
+                        this.applicationCommands.delete(component.name);
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
-                            this.client.removeListener(Events.MessageCreate, (input) => { component.exec(input) });
-                            this.client.removeListener(Events.MessageUpdate, (input) => { component.exec(input) });
-                            this.remove(this.messageCommands, component);
+                            component.trigger = Events.MessageCreate
+                            this.events.remove(component);
+                            component.trigger = Events.MessageUpdate;
+                            this.events.remove(component);
                         } else if (!(component instanceof MessageComponentInteractionComponent)) {
-                            this.client.removeListener(component.trigger, (input) => { component.exec(input) })
-                            this.remove(this.events, component)
+                            this.events.remove(component)
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
                         let job = this.scheduledJobs.find(j => j == component)?.job;
                         if (job) {
                             job.cancel();
-                            this.remove(this.scheduledJobs, component);
                         }
 
                     }
@@ -245,16 +253,17 @@ export class ModuleManager extends Array<IChironModule> implements IModuleManage
 
 
             }
+            this.scheduledJobs = this.scheduledJobs.filter(comp => comp.module?.name != module.name)
         }
         //Since the commands have been removed from this.applicationCommands, we should be able to just re-register all the commands with a set.
-        await registerInteractions(this.client, this.applicationCommands);
+        await registerInteractions(this.client, this.applicationCommands.map((v, k) => v));
 
         return stored;
     }
-    reload(registerable?: IModuleManagerRegisterable): IModuleManager {
+    async reload(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
         //toDo
-
-        return this;
+        let stored = await this.unregister(registerable);
+        return await (this.register(registerable, stored));
     }
 
 }
