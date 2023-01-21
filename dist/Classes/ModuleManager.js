@@ -3,6 +3,7 @@ import path from "path";
 import { Collection, Events } from "discord.js";
 import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ModuleUnloading, ScheduleComponent, SlashCommandComponent } from "./Module";
 import * as Schedule from "node-schedule";
+import { EventHandlerCollection } from "./EventHandler";
 function readdirSyncRecursive(Directory) {
     let Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
@@ -77,12 +78,12 @@ async function resolveRegisterable(registerable) {
     }
     throw new Error("Unreachable state reached. How did you do this?");
 }
-export class ModuleManager extends Array {
+export class ModuleManager extends Collection {
     client;
-    applicationCommands = [];
-    events = [];
-    messageCommands = [];
-    scheduledJobs = [];
+    applicationCommands = new Collection();
+    events = new EventHandlerCollection();
+    messageCommands = new Collection();
+    scheduledJobs = new Collection();
     constructor(ChironClient) {
         super();
         this.client = ChironClient;
@@ -94,7 +95,7 @@ export class ModuleManager extends Array {
         }
     }
     ;
-    async register(registerable) {
+    async register(registerable, storedValues) {
         let modules;
         if (!registerable) {
             modules = await resolveRegisterable(this.client.modulePath);
@@ -105,38 +106,44 @@ export class ModuleManager extends Array {
         //take care of onInit functions, and register commands to discord
         for (const module of modules) {
             module.client = this.client;
-            this.push(module);
+            if (this.has(module.name))
+                throw new Error("Module name " + module.name + " Must be unique!");
+            this.set(module.name, module);
             for (const component of module.components) {
                 if (component.enabled) {
                     component.module = module;
                     if (component instanceof BaseInteractionComponent) {
-                        this.applicationCommands.push(component);
+                        this.applicationCommands.set(component.name, component);
                     }
                     else if (component instanceof ModuleLoading) {
-                        component.process(null);
+                        component.process(storedValues?.get(component.module.name));
                     }
                     else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
-                            this.client.on(Events.MessageCreate, (input) => { component.exec(input); });
-                            this.client.on(Events.MessageUpdate, (input) => { component.exec(input); });
-                            this.messageCommands.push(component);
+                            this.events.add(this.client, component);
+                            component.trigger = Events.MessageUpdate;
+                            this.events.add(this.client, component);
+                            this.messageCommands.set(component.name, component);
                         }
-                        else if (!(component instanceof MessageComponentInteractionComponent)) {
-                            this.client.on(component.trigger, (input) => { component.exec(input); });
-                            this.events.push(component);
+                        else {
+                            this.events.add(this.client, component);
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
                         component.job = Schedule.scheduleJob(component.module?.name || component.module?.file || "unknown", component.chronSchedule, component.exec);
-                        this.scheduledJobs.push(component);
+                        let i = 0;
+                        while (this.scheduledJobs.has(`${component.module?.name}Scheduled${i}`)) {
+                            i++;
+                        }
+                        this.scheduledJobs.set(`${component.module?.name}Scheduled${i}`, component);
                     }
                 }
             }
         }
-        await registerInteractions(this.client, this.applicationCommands);
-        console.log("Successfully Registered " + this.events.length + " Events:\n");
+        await registerInteractions(this.client, this.applicationCommands.map((value, key) => value));
+        console.log("Successfully Registered " + this.events.size + " Events:\n");
         console.dir(this.events);
-        console.log("Successfully Registered " + this.messageCommands + " Message Commands\n");
+        console.log("Successfully Registered " + this.messageCommands.size + " Message Commands\n");
         console.dir(this.messageCommands.map((messageCommand) => {
             return {
                 name: messageCommand.name,
@@ -197,41 +204,41 @@ export class ModuleManager extends Array {
                 let result = unregisterComponent.exec(null);
                 stored.set(module.name, result);
             }
-            this.remove(this, module);
+            this.delete(module.name);
             for (const component of module.components) {
                 if (component.enabled) {
-                    component.module = module;
                     if (component instanceof BaseInteractionComponent) {
-                        this.remove(this.applicationCommands, component);
+                        this.applicationCommands.delete(component.name);
                     }
                     else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
-                            this.client.removeListener(Events.MessageCreate, (input) => { component.exec(input); });
-                            this.client.removeListener(Events.MessageUpdate, (input) => { component.exec(input); });
-                            this.remove(this.messageCommands, component);
+                            component.trigger = Events.MessageCreate;
+                            this.events.remove(component);
+                            component.trigger = Events.MessageUpdate;
+                            this.events.remove(component);
                         }
                         else if (!(component instanceof MessageComponentInteractionComponent)) {
-                            this.client.removeListener(component.trigger, (input) => { component.exec(input); });
-                            this.remove(this.events, component);
+                            this.events.remove(component);
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
                         let job = this.scheduledJobs.find(j => j == component)?.job;
                         if (job) {
                             job.cancel();
-                            this.remove(this.scheduledJobs, component);
                         }
                     }
                 }
             }
+            this.scheduledJobs = this.scheduledJobs.filter(comp => comp.module?.name != module.name);
         }
         //Since the commands have been removed from this.applicationCommands, we should be able to just re-register all the commands with a set.
-        await registerInteractions(this.client, this.applicationCommands);
+        await registerInteractions(this.client, this.applicationCommands.map((v, k) => v));
         return stored;
     }
-    reload(registerable) {
+    async reload(registerable) {
         //toDo
-        return this;
+        let stored = await this.unregister(registerable);
+        return await (this.register(registerable, stored));
     }
 }
 //# sourceMappingURL=ModuleManager.js.map

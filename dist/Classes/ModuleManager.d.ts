@@ -2,16 +2,17 @@ import { IChironModule } from "../Headers/Module";
 import { IModuleManager, IModuleManagerRegisterable } from "../Headers/ModuleManager";
 import { IChironClient } from "../Headers/Client";
 import { Collection } from "discord.js";
-import { BaseInteractionComponent, EventComponent, MessageCommandComponent, ScheduleComponent } from "./Module";
-export declare class ModuleManager extends Array<IChironModule> implements IModuleManager {
+import { BaseInteractionComponent, MessageCommandComponent, ScheduleComponent } from "./Module";
+import { EventHandlerCollection } from "./EventHandler";
+export declare class ModuleManager extends Collection<string, IChironModule> implements IModuleManager {
     client: IChironClient;
-    applicationCommands: Array<BaseInteractionComponent>;
-    events: Array<EventComponent>;
-    messageCommands: Array<MessageCommandComponent>;
-    scheduledJobs: Array<ScheduleComponent>;
+    applicationCommands: Collection<string, BaseInteractionComponent>;
+    events: EventHandlerCollection;
+    messageCommands: Collection<string, MessageCommandComponent>;
+    scheduledJobs: Collection<string, ScheduleComponent>;
     constructor(ChironClient: IChironClient);
     private remove;
-    register(registerable?: IModuleManagerRegisterable): Promise<IModuleManager>;
-    unregister(registerable?: IModuleManagerRegisterable): Promise<Collection<unknown, unknown>>;
-    reload(registerable?: IModuleManagerRegisterable): IModuleManager;
+    register(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager>;
+    unregister(registerable?: IModuleManagerRegisterable): Promise<Collection<string, any>>;
+    reload(registerable?: IModuleManagerRegisterable): Promise<IModuleManager>;
 }
