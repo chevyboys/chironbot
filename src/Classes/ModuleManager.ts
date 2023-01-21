@@ -145,7 +145,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                             component.trigger = Events.MessageUpdate
                             this.events.add(this.client, component)
                             this.messageCommands.set(component.name, component);
-                        } else {
+                        } else if (!(component instanceof MessageComponentInteractionComponent)) {
                             this.events.add(this.client, component);
                         }
                     }
@@ -199,9 +199,9 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                             match = c;
 
                             return true;
-                        } else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent) {
-                            //Handled by normal event registration above,
-                            return false;
+                        } else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent && c.customId(interaction["customId"])) {
+                            match = c;
+                            return true;
                         }
                         else return false;
                     })
