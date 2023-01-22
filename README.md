@@ -95,15 +95,17 @@ Properties of the ChironClient class:
 
 * `config` (object): The config object passed to the client upon initialization.
 
-* `clockwork`: Coming soon
+* `modules` (extends Collection):
 
-* `DEBUG` (boolean): weather or not debugging is enabled
-
-* `modules` (ModuleManager extends Array):
-
-  An Array of all known modules.
+  A Collection of all known modules, keyed by module name.
   * `client` (ChironClient): The client.
-  * `register(IModuleMAnagerRegisterable)` (function): Registers all modules. It needs an Array of Modules, A module, or a relative directory in a string.
+  * `applicationCommands` A Colection of all registered slash and context menu Commands, keyed by command name (with numerical identifiers added in case of collisions). Commands that are not enabled are not included
+  * `events`: A collection of event component arrays. Each array is keyed to the event that triggers it. The bot then only needs to register one handler per event type, rather than many. Message Commands are stored in both the MessageUpdate and MessageCreate arrays in this collection. Events does NOT include interaction handlers (They have seperate registration requirements). Events that are not enabled are not included.
+  * `messageCommands`:  A collection of message commands, keyed by message command name. Message Commands that are disabled are not included
+  * `sheduledJobs`: A collection of enabled jobs scheduled, keyed by a string in the following pattern "[Job Module Name]Scheduled[Job Id]". Job Ids are determined at run time and are not static
+  * `register(IModuleManagerRegisterable)` (function): Registers all modules. It needs an Array of Modules, A module, or a relative directory in a string. If the argument is left empty, it defaults to the client module path
+  * `unregister(IModuleManagerRegisterable)` (function): unregisters a given module, or unregisters all modules if no arguments are provided. Returns the results of any ModuleOnUnloadComponent components in a collection keyed by the module name.
+  * `reload(IModuleManagerRegisterable)` (function): unregisters, then re-registers each module, taking the ouput of each ModuleOnUnloadComponent component, and passing it into the coresponding ModuleOnLoadComponent Component. NOTE: Because import() caching is stupid, only your module files themselves will be updated, everything else will use a cached version created at start up. There's not a good way around this, so just be mindful of it as you update
 
 
 ### ChironClient Methods
@@ -152,58 +154,58 @@ export const Module = new ChironModule({
 })
 ```
 
-In between, you can add one or more commands and event handlers, as well as a clockwork and unload function.
+In between, you can add one or more commands and event handlers, as well as schedule and unload components.
 
 `Module` properties include:
 
-* `name`: The friendly name of the Module
+* `name`: The friendly name of the Module, which must be unique. If not provided, it will default to the file name of the file the module is based in.
 
 * `client`: The Chiron client which loaded the command module.
 
 * `components`: (Array) an array of Components the module owns
+
+* `file`: (string) The name of the file this module is based in
 
 ### Components
 The `new [ComponentClass]()` method defines a new bot Component.
 
 ### `Slash Commands`
 ```
-        new SlashCommandComponent({
-            builder: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
-            enabled: true,
-            category: "main",
-            permissions: (interaction) => { return true },
-            process: (interaction) => {
-                //YOUR CODE HERE
-
-
-                //Example:
-                //interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
-            }
-        }),
+new SlashCommandComponent({
+    builder: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
+    enabled: true,
+    category: "main",
+    guildId?: "" //Optional, if added, this will only be registered to a specific guild
+    permissions: (interaction) => { return true },
+    process: (interaction) => {
+        interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
+    }
+})
 ```
 `builder`: A Discord Slash Command Builder with at least the name and description
 `enabled`: (boolean) weather or not the command should be processed or registered (disabling it will unregister it with discord)
 `category`: (string) the command category, for your use
+`guildId`: (Snowflake) the id of the guild to register this to. The command will be global if this is left out
 `permissions`: (Function) a function that receives an interaction, and returns true if the interaction has permission to be executed, or flase if not.
 `process`: (Function) a function that takes in an interaction.
 
 ### Text Commands
 ```
-        new MessageCommandComponent({
-            name: "hello",
-            description: "replies with 'world'",
-            category: "main",
-            enabled: true,
-            permissions: (msg) => true,
-            process: (msg: Message, suffix: string) => {
-                msg.reply("world! " + suffix)
-                return "";
-            }
-        }),
+new MessageCommandComponent({
+    name: "hello",
+    description: "replies with 'world'",
+    category: "main",
+    enabled: true,
+    permissions: (msg) => true,
+    process: (msg, suffix) => {
+        msg.reply("world! " + suffix);
+        return "";
+    }
+});
 
 ```
 * `name` (string): Required. A string for the name of the command.
-* `process` (function): Required. The function to run when the command is invoked. This accepts (message, suffix); a `Discord.Message` object and a `suffix` string of the remainder of the command supplied by the user
+* `process` (function): Required. The function to run when the command is invoked. This accepts (message, suffix); a `Discord.Message` object and a `suffix` string of the remainder of the command supplied by the user.
 * `category` (string): A category name, for convenience in organizing commands.
 * `description` (string): A short string for a brief overview of the command.
 * `enabled` (boolean): Whether the command is able to run. Defaults to `true`.
@@ -211,10 +213,7 @@ The `new [ComponentClass]()` method defines a new bot Component.
 
 ### Events
 ```
-import { EventComponent } from "chiron";
-import { Events, MessageReaction, User } from "discord.js";
-
-export let HelloWorldEventComponent = new EventComponent({
+new EventComponent({
     trigger: Events.MessageReactionAdd,
     enabled: true,
     process: async (MessageReaction: MessageReaction, user: User) => {
@@ -223,22 +222,19 @@ export let HelloWorldEventComponent = new EventComponent({
 })
 
 ```
-* `trigger` (Discord Client Events Enum Instance): The Event that triggers this
-* `enabled` (boolean): If this trigger should be enabled
-* `process` (The function to run when the trigger is invoked. It recieves whatever the discord client gives on that event)
+* `trigger` (Discord Client Events Enum Instance): The Event that triggers this.
+* `enabled` (boolean): If this trigger should be enabled.
+* `process` (The function to run when the trigger is invoked. It recieves whatever the discord client gives on that event).
 
 ### Context Menu Interactions
 ```
-import { ContextMenuCommandComponent } from "chiron";
-import { ApplicationCommandType, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction } from "discord.js";
-
-
-export const HelloWorldContextMenu = new ContextMenuCommandComponent(
+new ContextMenuCommandComponent(
     {
         builder: new ContextMenuCommandBuilder().setName("Hello World").setType(ApplicationCommandType.Message),
         description: "Replies 'Hello World!' to any message it is used on",
         category: "general",
         enabled: true,
+        guildId: null
         permissions: (interaction) => { return true },
         process(interaction) {
             if (interaction instanceof MessageContextMenuCommandInteraction) {
@@ -249,12 +245,13 @@ export const HelloWorldContextMenu = new ContextMenuCommandComponent(
 )
 
 ```
-* `builder`: A Discord Context Menu Builder
-* `description`: a string for you to describe it by
+* `builder`: A Discord Context Menu Builder.
+* `description`: a string for you to describe it by.
 * `category` (string): A category name, for convenience in organizing commands.
 * `enabled`: (boolean) weather or not the command should be processed or registered (disabling it will unregister it with discord)
 * `permissions` (function): A function used to determine whether the user has permission to run the command. Accepts a `Discord.Interaction` object.
-* `process` (function): A function that is run when the Context Menu Command of the appropriate name is called
+* `process` (function): A function that is run when the Context Menu Command of the appropriate name is called.
+* `guildId`: (Snowflake) the id of the guild to register this to. The command will be global if this is left out.
 
 ### Message Component Interactions
 ```
@@ -280,9 +277,7 @@ export const HelloWorldMessageComponentInteraction = new MessageComponentInterac
 This component refers to a task that follows Chron scheduling. (see https://www.npmjs.com/package/node-schedule)
 It can run every few minuts, or once every few months. You can specify specific dates or otherwise do crazy fun things with it.
 ```
-import { ChironClient, ScheduleComponent } from "chiron";
-import { ChannelType, PermissionFlagsBits } from "discord.js";
-export const HelloWorldScheduleComponent = new ScheduleComponent({
+new ScheduleComponent({
     chronSchedule: '0 * * * * *',
     /*
         *    *    *    *    *    *
@@ -325,9 +320,33 @@ export const HelloWorldScheduleComponent = new ScheduleComponent({
 * `process`: a function that can recieve a date object
 
 
-### Initialization
-* Coming soon
+### Module On Load Component
+Only one of these components is allowed per module. When the component is initially registered to the client (before slash command registration), this function will be called.
+It will receive either undefined, or the return value from the module's On Unload Component (if the module was just reloaded by the moduleManager.reload() function)
+```
+new ModuleOnLoadComponent({
+    enabled: true,
+    process: (input) => {
+        console.log(input || "initialized");
+        //outputs "initialized" when starting up, or the result of the unload component otherwise
+    }
+})
+```
+* `enabled`: If this should be run
+* `process`: a function that can recieve an object from the return of an unload function
 
-### Unloading
-* Coming soon
+### Module On Unload Component
+Only one of these components is allowed per module.
+When reloading the file using moduleManager.reload(), this return value of this function will be passed to the OnLoadComponent if it exists
+```
+new ModuleOnUnloadComponent({
+    enabled: true,
+    process: () => {
+        console.log("unloading");
+        return "Reloaded";
+    }
+})
+```
+* `enabled`: If this should be run
+* `process`: a function that can recieve an object from the return of an unload function
 

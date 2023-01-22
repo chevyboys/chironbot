@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Events } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IClockworkComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponentOptions, IModuleOnLoadComponent, ISlashCommandComponent, ISlashCommandComponentOptions } from "../../Headers/Module";
 import { ChironClient } from "../ChironClient";
 export declare class ChironModule implements IChironModule {
     name: string;
@@ -46,9 +46,9 @@ export declare class ClockworkComponent extends BaseComponent implements IClockw
     readonly interval: number;
     constructor(ClockworkComponentOptions: any);
 }
-export declare class ModuleLoading extends BaseComponent implements IModuleLoading {
+export declare class ModuleOnLoadComponent extends BaseComponent implements IModuleOnLoadComponent {
 }
-export declare class ModuleUnloading extends BaseComponent {
+export declare class ModuleOnUnloadComponent extends BaseComponent {
 }
 export declare class MessageCommandComponent extends EventComponent implements IMessageCommandComponent {
     readonly name: string;

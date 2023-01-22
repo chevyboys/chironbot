@@ -23,7 +23,6 @@ export interface IErrorHandlerFunction {
 export interface ChironParsedContent {
     command: string;
     suffix: string;
-    params: Array<string>;
 }
 export interface ChironParseFunction {
     (msg: Message, client: IChironClient): ChironParsedContent | null;

@@ -35,6 +35,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
     readonly process: IInteractionProcessFunction;
+    guildId?: Snowflake;
 }
 export interface IBaseInteractionComponent extends IBaseComponent {
     readonly name: string;
@@ -42,6 +43,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
+    guildId?: Snowflake;
     process: IInteractionProcessFunction;
 }
 export interface IInteractionPermissionsFunction {
@@ -103,13 +105,13 @@ export interface IScheduleComponent extends IBaseComponent {
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
     (fireDate: Date): any;
 }
-export interface IModuleLoadingOptions extends IBaseComponentOptions {
+export interface IModuleOnLoadComponentOptions extends IBaseComponentOptions {
 }
-export interface IModuleUnloadingOptions extends IBaseComponentOptions {
+export interface IModuleOnUnloadComponentOptions extends IBaseComponentOptions {
 }
-export interface IModuleLoading extends IBaseComponent {
+export interface IModuleOnLoadComponent extends IBaseComponent {
 }
-export interface IModuleUnloading extends IBaseComponent {
+export interface IModuleOnUnloadComponent extends IBaseComponent {
 }
 export interface IMessageCommandComponentOptions extends IEventComponentOptions {
     trigger?: null;

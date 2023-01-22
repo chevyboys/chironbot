@@ -1,11 +1,11 @@
 import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message } from "discord.js";
-import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleLoading, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
+import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleOnLoadComponent, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 import path from "path"
 import * as Schedule from 'node-schedule';
 
 import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
+
 
 
 export class ChironModule implements IChironModule {
@@ -15,10 +15,12 @@ export class ChironModule implements IChironModule {
     file?: string
 
     constructor(ModuleOptions: IChironModuleOptions) {
+        const __filename = fileURLToPath(import.meta.url);
         let fileName = path.basename(__filename);
         if (ModuleOptions.client instanceof ChironClient) {
             this.client = ModuleOptions.client;
         }
+        this.file = __filename
         this.name = ModuleOptions.name || fileName;
         this.components = ModuleOptions.components.map(component => {
             component.module = this
@@ -61,6 +63,7 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
+    guildId?: string | undefined;
 
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption) {
         super(BaseInteractionComponentOptions)
@@ -69,8 +72,11 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
         this.description = "";
         this.builder = BaseInteractionComponentOptions.builder;
         this.category = BaseInteractionComponentOptions.category || this.module?.file || "General";
+        this.guildId = BaseInteractionComponentOptions.guildId
         this.permissions = BaseInteractionComponentOptions.permissions;
         this.exec = (interaction: Interaction) => {
+            if (!interaction.isCommand() || interaction.commandName != this.name) return;
+            if (this.guildId && !interaction.commandGuildId || interaction.commandGuildId != this.guildId) return;
             if (!this.enabled || !this.permissions(interaction)) {
                 if (interaction.isRepliable()) interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
                 console.log("I'm sorry, This feature is restricted behind a permissions lock");
@@ -213,11 +219,11 @@ export class ScheduleComponent extends BaseComponent implements IScheduleCompone
 //-------------------------------------------------------------------------
 //---------------- Module Loading and unloading components ----------------
 
-export class ModuleLoading extends BaseComponent implements IModuleLoading {
+export class ModuleOnLoadComponent extends BaseComponent implements IModuleOnLoadComponent {
 
 }
 
-export class ModuleUnloading extends BaseComponent {
+export class ModuleOnUnloadComponent extends BaseComponent {
 
 }
 

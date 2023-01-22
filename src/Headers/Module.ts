@@ -54,6 +54,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly category: string
     readonly permissions: IInteractionPermissionsFunction //A function that receives an interaction object, and returns if the interaction user can do it
     readonly process: IInteractionProcessFunction;
+    guildId?: Snowflake; //only set if it's a guild application command
 }
 
 export interface IBaseInteractionComponent extends IBaseComponent {
@@ -62,6 +63,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
+    guildId?: Snowflake; //only set if it's a guild application command
     process: IInteractionProcessFunction;
 }
 
@@ -161,19 +163,19 @@ export interface IScheduleProccessFunction extends IBaseProcessFunction {
 
 //-------------------------------------------------------------------------
 //---------------- Module Loading and unloading components ----------------
-export interface IModuleLoadingOptions extends IBaseComponentOptions {
+export interface IModuleOnLoadComponentOptions extends IBaseComponentOptions {
 
 }
 
-export interface IModuleUnloadingOptions extends IBaseComponentOptions {
+export interface IModuleOnUnloadComponentOptions extends IBaseComponentOptions {
 
 }
 
-export interface IModuleLoading extends IBaseComponent {
+export interface IModuleOnLoadComponent extends IBaseComponent {
 
 }
 
-export interface IModuleUnloading extends IBaseComponent {
+export interface IModuleOnUnloadComponent extends IBaseComponent {
 
 }
 
