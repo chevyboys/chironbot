@@ -10,6 +10,7 @@ export declare class ModuleManager extends Collection<string, IChironModule> imp
     events: EventHandlerCollection;
     messageCommands: Collection<string, MessageCommandComponent>;
     scheduledJobs: Collection<string, ScheduleComponent>;
+    private ModuleManagerInitialized;
     constructor(ChironClient: IChironClient);
     register: (registerable?: IModuleManagerRegisterable) => Promise<IModuleManager>;
     private registerPrivate;

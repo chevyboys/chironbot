@@ -99,6 +99,7 @@ export class ModuleManager extends Collection {
     events = new EventHandlerCollection();
     messageCommands = new Collection();
     scheduledJobs = new Collection();
+    ModuleManagerInitialized = false;
     constructor(ChironClient) {
         super();
         this.client = ChironClient;
@@ -190,38 +191,42 @@ export class ModuleManager extends Collection {
                 process: messageCommand.process
             };
         }));
-        this.client.on(Events.InteractionCreate, (interaction) => {
-            //Handle receiving command interactions
-            //find any matching interactions
-            (() => {
-                let match = null;
-                let module = this.find(module => {
-                    return module.components.filter(c => c.enabled).find((c) => {
-                        if (((interaction.isChatInputCommand() && c instanceof SlashCommandComponent)
-                            || (interaction.isContextMenuCommand() && c instanceof ContextMenuCommandComponent))
-                            && interaction.commandName == c.name) {
-                            match = c;
-                            return true;
-                        }
-                        else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent && c.customId(interaction["customId"])) {
-                            match = c;
-                            return true;
-                        }
-                        else
-                            return false;
+        if (!this.ModuleManagerInitialized) {
+            //set up interaction special handler, but only do so once each launch
+            this.client.on(Events.InteractionCreate, (interaction) => {
+                //Handle receiving command interactions
+                //find any matching interactions
+                (() => {
+                    let match = null;
+                    let module = this.find(module => {
+                        return module.components.filter(c => c.enabled).find((c) => {
+                            if (((interaction.isChatInputCommand() && c instanceof SlashCommandComponent)
+                                || (interaction.isContextMenuCommand() && c instanceof ContextMenuCommandComponent))
+                                && interaction.commandName == c.name) {
+                                match = c;
+                                return true;
+                            }
+                            else if (interaction.isMessageComponent() && c instanceof MessageComponentInteractionComponent && c.customId(interaction["customId"])) {
+                                match = c;
+                                return true;
+                            }
+                            else
+                                return false;
+                        });
                     });
-                });
-                if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) {
-                    match.exec(interaction);
-                }
-                else {
-                    if (interaction.isRepliable())
-                        interaction.reply("I don't know how to handle that!");
-                    else
-                        throw new Error("I don't know how to handle that!");
-                }
-            })();
-        });
+                    if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) {
+                        match.exec(interaction);
+                    }
+                    else {
+                        if (interaction.isRepliable())
+                            interaction.reply("I don't know how to handle that!");
+                        else
+                            throw new Error("I don't know how to handle that!");
+                    }
+                })();
+            });
+            this.ModuleManagerInitialized = true;
+        }
         return this;
     }
     async unregister(registerable) {
