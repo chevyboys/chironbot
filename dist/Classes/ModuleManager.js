@@ -103,14 +103,7 @@ export class ModuleManager extends Collection {
         super();
         this.client = ChironClient;
     }
-    remove(Array, item) {
-        let index = Array.indexOf(item);
-        if (index !== -1) {
-            Array.splice(index, 1);
-        }
-    }
-    ;
-    register = async (registerable) => { return await this.registerPrivate(); };
+    register = async (registerable) => { return await this.registerPrivate(registerable); };
     async registerPrivate(registerable, storedValues) {
         let modules;
         if (!registerable) {
@@ -136,6 +129,10 @@ export class ModuleManager extends Collection {
             module.client = this.client;
             if (this.has(module.name))
                 throw new Error("Module name " + module.name + " Must be unique!");
+            let onLoad = module.components.find(c => c instanceof ModuleOnLoadComponent);
+            let onLoadInput = storedValues?.get(module.name);
+            if (onLoad)
+                onLoad.exec(onLoadInput);
             this.set(module.name, module);
             for (const component of module.components) {
                 if (component.enabled) {

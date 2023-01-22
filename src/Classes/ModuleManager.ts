@@ -111,14 +111,8 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         this.client = ChironClient
     }
 
-    private remove(Array: Array<any>, item: any) {
-        let index = Array.indexOf(item);
-        if (index !== -1) {
-            Array.splice(index, 1);
-        }
-    };
 
-    public register = async (registerable?: IModuleManagerRegisterable) => { return await this.registerPrivate() }
+    public register = async (registerable?: IModuleManagerRegisterable) => { return await this.registerPrivate(registerable) }
     private async registerPrivate(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager> {
         let modules: Array<IChironModule>;
         if (!registerable) {
@@ -143,7 +137,9 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         for (let module of modules) {
             module.client = this.client;
             if (this.has(module.name)) throw new Error("Module name " + module.name + " Must be unique!");
-
+            let onLoad = module.components.find(c => c instanceof ModuleOnLoadComponent)
+            let onLoadInput = storedValues?.get(module.name);
+            if (onLoad) onLoad.exec(onLoadInput);
             this.set(module.name, module)
             for (const component of module.components) {
                 if (component.enabled) {
