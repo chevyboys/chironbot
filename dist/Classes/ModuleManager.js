@@ -158,8 +158,7 @@ export class ModuleManager extends Collection {
                                 throw new Error("You cannot have two message commands named " + component.name);
                             }
                             this.events.add(this.client, component);
-                            component.trigger = Events.MessageUpdate;
-                            this.events.add(this.client, component);
+                            this.events.add(this.client, component, Events.MessageUpdate);
                             this.messageCommands.set(component.name, component);
                         }
                         else if (!(component instanceof MessageComponentInteractionComponent)) {
@@ -254,10 +253,8 @@ export class ModuleManager extends Collection {
                     else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
                             this.messageCommands.delete(component.name);
-                            component.trigger = Events.MessageCreate;
-                            this.events.remove(component);
-                            component.trigger = Events.MessageUpdate;
-                            this.events.remove(component);
+                            this.events.remove(component, Events.MessageCreate);
+                            this.events.remove(component, Events.MessageUpdate);
                         }
                         else if (!(component instanceof MessageComponentInteractionComponent)) {
                             this.events.remove(component);
