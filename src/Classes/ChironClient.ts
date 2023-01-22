@@ -25,6 +25,13 @@ export class ChironClient extends Client implements IChironClient {
         this.errorHandler = ChironClientOptions.errorHandler || DefaultErrorHandler;
         this.parser = ChironClientOptions.parser || DefaultParseMessage
         this.modules = new ModuleManager(this);
-
+        process.on('SIGTERM', async () => {
+            await this.modules.unregister();
+            process.exit()
+        });
+        process.on("beforeExit", async () => {
+            await this.modules.unregister();
+            process.exit()
+        })
     }
 }
