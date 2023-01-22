@@ -5,7 +5,7 @@ import path from "path"
 import * as Schedule from 'node-schedule';
 
 import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
+
 
 
 export class ChironModule implements IChironModule {
@@ -15,10 +15,12 @@ export class ChironModule implements IChironModule {
     file?: string
 
     constructor(ModuleOptions: IChironModuleOptions) {
+        const __filename = fileURLToPath(import.meta.url);
         let fileName = path.basename(__filename);
         if (ModuleOptions.client instanceof ChironClient) {
             this.client = ModuleOptions.client;
         }
+        this.file = __filename
         this.name = ModuleOptions.name || fileName;
         this.components = ModuleOptions.components.map(component => {
             component.module = this

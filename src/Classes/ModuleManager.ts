@@ -57,21 +57,27 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
 }
 async function resolveRegisterable(registerable: IModuleManagerRegisterable): Promise<Array<IChironModule>> {
     if ((registerable instanceof String || typeof registerable == "string") || (Array.isArray(registerable) && registerable[0] && (typeof registerable[0] == "string" || registerable instanceof String))) {
-        let parsedRegisterable;
-        if ((Array.isArray(registerable))) parsedRegisterable = registerable[0];
-        else parsedRegisterable = registerable;
-        let possibleModules =
-            readdirSyncRecursive(parsedRegisterable as unknown as string)
+
+        let possibleModules;
+        if ((Array.isArray(registerable))) possibleModules = registerable as string[];
+        else possibleModules = readdirSyncRecursive(registerable as unknown as string)
         //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
         let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
                 return import(moduleFile);
             }))
-        let filteredModules = modules.map(m => {
-            let mod = m.Module ? m.Module : m.module ? m.module : m.command ? m.command : m.Command ? m.Command : m;
-            return mod;
+        let filteredModules: Array<IChironModule> = [];
+        for (let m of modules) {
+            for (let key in m) {
+                if (Object.prototype.hasOwnProperty.call(m, key)) {
+                    let val = m[key];
+                    if (val instanceof ChironModule) {
+                        filteredModules.push(m);
+                    }
+                }
+            }
         }
-        ).filter((possibleModule) => possibleModule instanceof ChironModule);
+        //).filter((possibleModule) => possibleModule instanceof ChironModule);
         return filteredModules;
 
     } else if (Array.isArray(registerable)) {
@@ -81,7 +87,7 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
         else if (!(registerable[0] instanceof ChironModule)) {
             throw new Error("Cannot resolve unknown object type to registerable Module");
         }
-        else return registerable
+        else return registerable as ChironModule[];
     } else if (registerable instanceof ChironModule) {
         return [registerable]
     }
@@ -113,11 +119,22 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         }
     };
 
-    async register(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager> {
+    public register = async (registerable?: IModuleManagerRegisterable) => { return await this.registerPrivate() }
+    private async registerPrivate(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager> {
         let modules: Array<IChironModule>;
         if (!registerable) {
             modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
         } else {
+            if (registerable instanceof ChironModule || (Array.isArray(registerable) && registerable[0] instanceof ChironModule)) {
+                if (Array.isArray(registerable)) {
+                    let reg = registerable.map(r => r instanceof ChironModule ? r.file : r);
+                    if (reg) registerable = reg as ChironModule[] | string[];
+                }
+                else {
+                    let reg = registerable.file;
+                    if (reg) registerable = reg;
+                }
+            }
             modules = await resolveRegisterable(registerable)
         }
 
@@ -136,11 +153,23 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                         if (this.client.config.DEBUG) {
                             component.guildId = this.client.config.adminServer;
                         }
-                        this.applicationCommands.set(component.name, component);
+                        //ensure no collisions
+                        if (this.applicationCommands.has(component.name)) {
+                            let i = 0;
+                            while (this.applicationCommands.has(`${component.name}${i}`)) {
+                                i++
+                            }
+                            this.applicationCommands.set(`${component.name}${i}`, component);
+                        } else this.applicationCommands.set(component.name, component);
+
+
                     } else if (component instanceof ModuleLoading) {
                         component.process(storedValues?.get(component.module.name));
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
+                            if (this.messageCommands.has(component.name)) {
+                                throw new Error("You cannot have two message commands named " + component.name)
+                            }
                             this.events.add(this.client, component)
                             component.trigger = Events.MessageUpdate
                             this.events.add(this.client, component)
@@ -224,7 +253,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         let modules: Array<IChironModule>;
         let stored: Collection<string, any> = new Collection()
         if (!registerable) {
-            modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
+            modules = Array.from(this.values())
         } else {
             modules = await resolveRegisterable(registerable)
         }
@@ -274,8 +303,9 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
     }
     async reload(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
         //toDo
+
         let stored = await this.unregister(registerable);
-        return await (this.register(registerable, stored));
+        return await (this.registerPrivate(registerable, stored));
     }
 
 }

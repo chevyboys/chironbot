@@ -95,15 +95,17 @@ Properties of the ChironClient class:
 
 * `config` (object): The config object passed to the client upon initialization.
 
-* `clockwork`: Coming soon
+* `modules` (extends Collection):
 
-* `DEBUG` (boolean): weather or not debugging is enabled
-
-* `modules` (ModuleManager extends Array):
-
-  An Array of all known modules.
+  A Collection of all known modules, keyed by module name.
   * `client` (ChironClient): The client.
-  * `register(IModuleMAnagerRegisterable)` (function): Registers all modules. It needs an Array of Modules, A module, or a relative directory in a string.
+  * `applicationCommands` A Colection of all registered slash and context menu Commands, keyed by command name (with numerical identifiers added in case of collisions). Commands that are not enabled are not included
+  * `events`: A collection of event component arrays. Each array is keyed to the event that triggers it. The bot then only needs to register one handler per event type, rather than many. Message Commands are stored in both the MessageUpdate and MessageCreate arrays in this collection. Events does NOT include interaction handlers (They have seperate registration requirements). Events that are not enabled are not included.
+  * `messageCommands`:  A collection of message commands, keyed by message command name. Message Commands that are disabled are not included
+  * `sheduledJobs`: A collection of enabled jobs scheduled, keyed by a string in the following pattern "[Job Module Name]Scheduled[Job Id]". Job Ids are determined at run time and are not static
+  * `register(IModuleManagerRegisterable)` (function): Registers all modules. It needs an Array of Modules, A module, or a relative directory in a string. If the argument is left empty, it defaults to the client module path
+  * `unregister(IModuleManagerRegisterable)` (function): unregisters a given module, or unregisters all modules if no arguments are provided. Returns the results of any ModuleUnloading components in a collection keyed by the module name.
+  * `reload(IModuleManagerRegisterable)` (function): unregisters, then re-registers each module, taking the ouput of each ModuleUnloading component, and passing it into the coresponding ModuleLoading Component
 
 
 ### ChironClient Methods
@@ -152,34 +154,32 @@ export const Module = new ChironModule({
 })
 ```
 
-In between, you can add one or more commands and event handlers, as well as a clockwork and unload function.
+In between, you can add one or more commands and event handlers, as well as schedule and unload components.
 
 `Module` properties include:
 
-* `name`: The friendly name of the Module
+* `name`: The friendly name of the Module, which must be unique. If not provided, it will default to the file name of the file the module is based in.
 
 * `client`: The Chiron client which loaded the command module.
 
 * `components`: (Array) an array of Components the module owns
+
+* `file`: (string) The name of the file this module is based in
 
 ### Components
 The `new [ComponentClass]()` method defines a new bot Component.
 
 ### `Slash Commands`
 ```
-        new SlashCommandComponent({
-            builder: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
-            enabled: true,
-            category: "main",
-            permissions: (interaction) => { return true },
-            process: (interaction) => {
-                //YOUR CODE HERE
-
-
-                //Example:
-                //interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
-            }
-        }),
+new SlashCommandComponent({
+    builder: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
+    enabled: true,
+    category: "main",
+    permissions: (interaction) => { return true },
+    process: (interaction) => {
+        interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
+    }
+})
 ```
 `builder`: A Discord Slash Command Builder with at least the name and description
 `enabled`: (boolean) weather or not the command should be processed or registered (disabling it will unregister it with discord)
@@ -189,17 +189,17 @@ The `new [ComponentClass]()` method defines a new bot Component.
 
 ### Text Commands
 ```
-        new MessageCommandComponent({
-            name: "hello",
-            description: "replies with 'world'",
-            category: "main",
-            enabled: true,
-            permissions: (msg) => true,
-            process: (msg: Message, suffix: string) => {
-                msg.reply("world! " + suffix)
-                return "";
-            }
-        }),
+new MessageCommandComponent({
+    name: "hello",
+    description: "replies with 'world'",
+    category: "main",
+    enabled: true,
+    permissions: (msg) => true,
+    process: (msg, suffix) => {
+        msg.reply("world! " + suffix);
+        return "";
+    }
+});
 
 ```
 * `name` (string): Required. A string for the name of the command.
@@ -211,10 +211,7 @@ The `new [ComponentClass]()` method defines a new bot Component.
 
 ### Events
 ```
-import { EventComponent } from "chiron";
-import { Events, MessageReaction, User } from "discord.js";
-
-export let HelloWorldEventComponent = new EventComponent({
+new EventComponent({
     trigger: Events.MessageReactionAdd,
     enabled: true,
     process: async (MessageReaction: MessageReaction, user: User) => {
@@ -229,11 +226,7 @@ export let HelloWorldEventComponent = new EventComponent({
 
 ### Context Menu Interactions
 ```
-import { ContextMenuCommandComponent } from "chiron";
-import { ApplicationCommandType, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction } from "discord.js";
-
-
-export const HelloWorldContextMenu = new ContextMenuCommandComponent(
+new ContextMenuCommandComponent(
     {
         builder: new ContextMenuCommandBuilder().setName("Hello World").setType(ApplicationCommandType.Message),
         description: "Replies 'Hello World!' to any message it is used on",
@@ -280,9 +273,7 @@ export const HelloWorldMessageComponentInteraction = new MessageComponentInterac
 This component refers to a task that follows Chron scheduling. (see https://www.npmjs.com/package/node-schedule)
 It can run every few minuts, or once every few months. You can specify specific dates or otherwise do crazy fun things with it.
 ```
-import { ChironClient, ScheduleComponent } from "chiron";
-import { ChannelType, PermissionFlagsBits } from "discord.js";
-export const HelloWorldScheduleComponent = new ScheduleComponent({
+new ScheduleComponent({
     chronSchedule: '0 * * * * *',
     /*
         *    *    *    *    *    *
