@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { IChironClient } from "../Headers/Client";
 import { ApplicationCommand, Collection, Events, Interaction, RESTPostAPIChatInputApplicationCommandsJSONBody, RESTPostAPIContextMenuApplicationCommandsJSONBody, Snowflake } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ModuleUnloading, ScheduleComponent, SlashCommandComponent } from "./Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleOnLoadComponent, ModuleOnUnloadComponent, ScheduleComponent, SlashCommandComponent } from "./Module";
 import * as Schedule from "node-schedule";
 import { EventHandlerCollection } from "./EventHandler";
 
@@ -141,7 +141,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         //take care of onInit functions, and register commands to discord
 
 
-        for (const module of modules) {
+        for (let module of modules) {
             module.client = this.client;
             if (this.has(module.name)) throw new Error("Module name " + module.name + " Must be unique!");
 
@@ -163,7 +163,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                         } else this.applicationCommands.set(component.name, component);
 
 
-                    } else if (component instanceof ModuleLoading) {
+                    } else if (component instanceof ModuleOnLoadComponent) {
                         component.process(storedValues?.get(component.module.name));
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
@@ -262,7 +262,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
 
 
         for (const module of modules) {
-            let unregisterComponent = module.components.find(c => c instanceof ModuleUnloading)
+            let unregisterComponent = module.components.find(c => c instanceof ModuleOnUnloadComponent)
             if (unregisterComponent) {
                 let result = unregisterComponent.exec(null);
                 stored.set(module.name, result)

@@ -104,8 +104,8 @@ Properties of the ChironClient class:
   * `messageCommands`:  A collection of message commands, keyed by message command name. Message Commands that are disabled are not included
   * `sheduledJobs`: A collection of enabled jobs scheduled, keyed by a string in the following pattern "[Job Module Name]Scheduled[Job Id]". Job Ids are determined at run time and are not static
   * `register(IModuleManagerRegisterable)` (function): Registers all modules. It needs an Array of Modules, A module, or a relative directory in a string. If the argument is left empty, it defaults to the client module path
-  * `unregister(IModuleManagerRegisterable)` (function): unregisters a given module, or unregisters all modules if no arguments are provided. Returns the results of any ModuleUnloading components in a collection keyed by the module name.
-  * `reload(IModuleManagerRegisterable)` (function): unregisters, then re-registers each module, taking the ouput of each ModuleUnloading component, and passing it into the coresponding ModuleLoading Component
+  * `unregister(IModuleManagerRegisterable)` (function): unregisters a given module, or unregisters all modules if no arguments are provided. Returns the results of any ModuleOnUnloadComponent components in a collection keyed by the module name.
+  * `reload(IModuleManagerRegisterable)` (function): unregisters, then re-registers each module, taking the ouput of each ModuleOnUnloadComponent component, and passing it into the coresponding ModuleOnLoadComponent Component
 
 
 ### ChironClient Methods

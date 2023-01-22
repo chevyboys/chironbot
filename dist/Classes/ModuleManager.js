@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Collection, Events } from "discord.js";
-import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleLoading, ModuleUnloading, ScheduleComponent, SlashCommandComponent } from "./Module";
+import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, EventComponent, MessageCommandComponent, MessageComponentInteractionComponent, ModuleOnLoadComponent, ModuleOnUnloadComponent, ScheduleComponent, SlashCommandComponent } from "./Module";
 import * as Schedule from "node-schedule";
 import { EventHandlerCollection } from "./EventHandler";
 function readdirSyncRecursive(Directory) {
@@ -133,7 +133,7 @@ export class ModuleManager extends Collection {
             modules = await resolveRegisterable(registerable);
         }
         //take care of onInit functions, and register commands to discord
-        for (const module of modules) {
+        for (let module of modules) {
             module.client = this.client;
             if (this.has(module.name))
                 throw new Error("Module name " + module.name + " Must be unique!");
@@ -156,7 +156,7 @@ export class ModuleManager extends Collection {
                         else
                             this.applicationCommands.set(component.name, component);
                     }
-                    else if (component instanceof ModuleLoading) {
+                    else if (component instanceof ModuleOnLoadComponent) {
                         component.process(storedValues?.get(component.module.name));
                     }
                     else if (component instanceof EventComponent) {
@@ -243,7 +243,7 @@ export class ModuleManager extends Collection {
         }
         //take care of onInit functions, and register commands to discord
         for (const module of modules) {
-            let unregisterComponent = module.components.find(c => c instanceof ModuleUnloading);
+            let unregisterComponent = module.components.find(c => c instanceof ModuleOnUnloadComponent);
             if (unregisterComponent) {
                 let result = unregisterComponent.exec(null);
                 stored.set(module.name, result);

@@ -192,9 +192,9 @@ export class ScheduleComponent extends BaseComponent {
 }
 //-------------------------------------------------------------------------
 //---------------- Module Loading and unloading components ----------------
-export class ModuleLoading extends BaseComponent {
+export class ModuleOnLoadComponent extends BaseComponent {
 }
-export class ModuleUnloading extends BaseComponent {
+export class ModuleOnUnloadComponent extends BaseComponent {
 }
 //-------------------------------------------------------------------------
 //------------------ Message Command --------------------------------------
