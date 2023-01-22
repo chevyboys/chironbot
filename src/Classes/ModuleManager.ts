@@ -245,13 +245,13 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                         this.applicationCommands.delete(component.name);
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
-                            this.messageCommands.delete(component)
-                            component.trigger = Events.MessageCreate
+                            this.messageCommands.delete(component.name);
+                            component.trigger = Events.MessageCreate;
                             this.events.remove(component);
                             component.trigger = Events.MessageUpdate;
                             this.events.remove(component);
                         } else if (!(component instanceof MessageComponentInteractionComponent)) {
-                            this.events.remove(component)
+                            this.events.remove(component);
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
