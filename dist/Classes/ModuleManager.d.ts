@@ -12,7 +12,8 @@ export declare class ModuleManager extends Collection<string, IChironModule> imp
     scheduledJobs: Collection<string, ScheduleComponent>;
     constructor(ChironClient: IChironClient);
     private remove;
-    register(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager>;
+    register: (registerable?: IModuleManagerRegisterable) => Promise<IModuleManager>;
+    private registerPrivate;
     unregister(registerable?: IModuleManagerRegisterable): Promise<Collection<string, any>>;
     reload(registerable?: IModuleManagerRegisterable): Promise<IModuleManager>;
 }

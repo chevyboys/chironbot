@@ -2,17 +2,18 @@ import { Events } from "discord.js";
 import { ChironClient } from "./ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
 export class ChironModule {
     name;
     components;
     client;
     file;
     constructor(ModuleOptions) {
+        const __filename = fileURLToPath(import.meta.url);
         let fileName = path.basename(__filename);
         if (ModuleOptions.client instanceof ChironClient) {
             this.client = ModuleOptions.client;
         }
+        this.file = __filename;
         this.name = ModuleOptions.name || fileName;
         this.components = ModuleOptions.components.map(component => {
             component.module = this;
