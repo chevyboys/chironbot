@@ -60,8 +60,7 @@ async function resolveRegisterable(registerable) {
         //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
         let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
-            delete require.cache[require.resolve(moduleFile)];
-            return import(moduleFile);
+            return import(`${moduleFile}?update=${Date.now()}`);
         }));
         let filteredModules = [];
         for (let m of modules) {
