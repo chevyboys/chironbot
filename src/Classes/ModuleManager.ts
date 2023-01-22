@@ -137,9 +137,6 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         for (let module of modules) {
             module.client = this.client;
             if (this.has(module.name)) throw new Error("Module name " + module.name + " Must be unique!");
-            let onLoad = module.components.find(c => c instanceof ModuleOnLoadComponent)
-            let onLoadInput = storedValues?.get(module.name);
-            if (onLoad) onLoad.exec(onLoadInput);
             this.set(module.name, module)
             for (const component of module.components) {
                 if (component.enabled) {
@@ -159,7 +156,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
 
 
                     } else if (component instanceof ModuleOnLoadComponent) {
-                        component.process(storedValues?.get(component.module.name));
+                        component.exec(storedValues?.get(component.module.name));
                     } else if (component instanceof EventComponent) {
                         if (component instanceof MessageCommandComponent) {
                             if (this.messageCommands.has(component.name)) {
