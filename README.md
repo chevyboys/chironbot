@@ -105,7 +105,7 @@ Properties of the ChironClient class:
   * `sheduledJobs`: A collection of enabled jobs scheduled, keyed by a string in the following pattern "[Job Module Name]Scheduled[Job Id]". Job Ids are determined at run time and are not static
   * `register(IModuleManagerRegisterable)` (function): Registers all modules. It needs an Array of Modules, A module, or a relative directory in a string. If the argument is left empty, it defaults to the client module path
   * `unregister(IModuleManagerRegisterable)` (function): unregisters a given module, or unregisters all modules if no arguments are provided. Returns the results of any ModuleOnUnloadComponent components in a collection keyed by the module name.
-  * `reload(IModuleManagerRegisterable)` (function): unregisters, then re-registers each module, taking the ouput of each ModuleOnUnloadComponent component, and passing it into the coresponding ModuleOnLoadComponent Component
+  * `reload(IModuleManagerRegisterable)` (function): unregisters, then re-registers each module, taking the ouput of each ModuleOnUnloadComponent component, and passing it into the coresponding ModuleOnLoadComponent Component. NOTE: Because import() caching is stupid, only your module files themselves will be updated, everything else will use a cached version created at start up. There's not a good way around this, so just be mindful of it as you update
 
 
 ### ChironClient Methods
@@ -175,6 +175,7 @@ new SlashCommandComponent({
     builder: new SlashCommandBuilder().setName('ping').setDescription('Replies with Pong!'),
     enabled: true,
     category: "main",
+    guildId?: "" //Optional, if added, this will only be registered to a specific guild
     permissions: (interaction) => { return true },
     process: (interaction) => {
         interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
@@ -184,6 +185,7 @@ new SlashCommandComponent({
 `builder`: A Discord Slash Command Builder with at least the name and description
 `enabled`: (boolean) weather or not the command should be processed or registered (disabling it will unregister it with discord)
 `category`: (string) the command category, for your use
+`guildId`: (Snowflake) the id of the guild to register this to. The command will be global if this is left out
 `permissions`: (Function) a function that receives an interaction, and returns true if the interaction has permission to be executed, or flase if not.
 `process`: (Function) a function that takes in an interaction.
 
@@ -203,7 +205,7 @@ new MessageCommandComponent({
 
 ```
 * `name` (string): Required. A string for the name of the command.
-* `process` (function): Required. The function to run when the command is invoked. This accepts (message, suffix); a `Discord.Message` object and a `suffix` string of the remainder of the command supplied by the user
+* `process` (function): Required. The function to run when the command is invoked. This accepts (message, suffix); a `Discord.Message` object and a `suffix` string of the remainder of the command supplied by the user.
 * `category` (string): A category name, for convenience in organizing commands.
 * `description` (string): A short string for a brief overview of the command.
 * `enabled` (boolean): Whether the command is able to run. Defaults to `true`.
@@ -220,9 +222,9 @@ new EventComponent({
 })
 
 ```
-* `trigger` (Discord Client Events Enum Instance): The Event that triggers this
-* `enabled` (boolean): If this trigger should be enabled
-* `process` (The function to run when the trigger is invoked. It recieves whatever the discord client gives on that event)
+* `trigger` (Discord Client Events Enum Instance): The Event that triggers this.
+* `enabled` (boolean): If this trigger should be enabled.
+* `process` (The function to run when the trigger is invoked. It recieves whatever the discord client gives on that event).
 
 ### Context Menu Interactions
 ```
@@ -232,6 +234,7 @@ new ContextMenuCommandComponent(
         description: "Replies 'Hello World!' to any message it is used on",
         category: "general",
         enabled: true,
+        guildId: null
         permissions: (interaction) => { return true },
         process(interaction) {
             if (interaction instanceof MessageContextMenuCommandInteraction) {
@@ -242,12 +245,13 @@ new ContextMenuCommandComponent(
 )
 
 ```
-* `builder`: A Discord Context Menu Builder
-* `description`: a string for you to describe it by
+* `builder`: A Discord Context Menu Builder.
+* `description`: a string for you to describe it by.
 * `category` (string): A category name, for convenience in organizing commands.
 * `enabled`: (boolean) weather or not the command should be processed or registered (disabling it will unregister it with discord)
 * `permissions` (function): A function used to determine whether the user has permission to run the command. Accepts a `Discord.Interaction` object.
-* `process` (function): A function that is run when the Context Menu Command of the appropriate name is called
+* `process` (function): A function that is run when the Context Menu Command of the appropriate name is called.
+* `guildId`: (Snowflake) the id of the guild to register this to. The command will be global if this is left out.
 
 ### Message Component Interactions
 ```
@@ -316,9 +320,33 @@ new ScheduleComponent({
 * `process`: a function that can recieve a date object
 
 
-### Initialization
-* Coming soon
+### Module On Load Component
+Only one of these components is allowed per module. When the component is initially registered to the client (before slash command registration), this function will be called.
+It will receive either undefined, or the return value from the module's On Unload Component (if the module was just reloaded by the moduleManager.reload() function)
+```
+new ModuleOnLoadComponent({
+    enabled: true,
+    process: (input) => {
+        console.log(input || "initialized");
+        //outputs "initialized" when starting up, or the result of the unload component otherwise
+    }
+})
+```
+* `enabled`: If this should be run
+* `process`: a function that can recieve an object from the return of an unload function
 
-### Unloading
-* Coming soon
+### Module On Unload Component
+Only one of these components is allowed per module.
+When reloading the file using moduleManager.reload(), this return value of this function will be passed to the OnLoadComponent if it exists
+```
+new ModuleOnUnloadComponent({
+    enabled: true,
+    process: () => {
+        console.log("unloading");
+        return "Reloaded";
+    }
+})
+```
+* `enabled`: If this should be run
+* `process`: a function that can recieve an object from the return of an unload function
 
