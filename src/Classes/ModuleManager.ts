@@ -70,9 +70,8 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
         for (let m of modules) {
             for (let key in m) {
                 if (Object.prototype.hasOwnProperty.call(m, key)) {
-                    let val = m[key];
-                    if (val instanceof ChironModule) {
-                        filteredModules.push(m);
+                    if (m[key] instanceof ChironModule) {
+                        filteredModules.push(m[key]);
                     }
                 }
             }
