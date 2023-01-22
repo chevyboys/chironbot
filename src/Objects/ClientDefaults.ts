@@ -20,19 +20,20 @@ export let DefaultErrorHandler: IErrorHandlerFunction = function (error, msg) {
 
 
 export let DefaultParseMessage: ChironParseFunction = (msg: Message, client: IChironClient) => {
-    //This function was provided by @gaiwecoor from Augurbot
+    //This function was provided by @gaiwecoor from Augurbot, and was updated by chevyboys
     let content = msg.content;
     let setPrefix = client.config.prefix || "!";
     if (msg.author.bot) return null;
-    for (let prefix of [setPrefix, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`]) {
+    for (let prefix of [setPrefix, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`]) {
         if (!content.startsWith(prefix)) continue;
         let trimmed = content.substr(prefix.length).trim();
-        let [command, ...params] = content.substr(prefix.length).split(" ");
+        let endOfFirstWord = Math.min(...[trimmed.indexOf(" "), trimmed.indexOf("\n")].filter(index => index > -1))
+        let command = trimmed.substring(0, endOfFirstWord).trim();
+        let suffix = trimmed.substring(endOfFirstWord).trim();
         if (command) {
             return {
                 command: command.toLowerCase(),
-                suffix: params.join(" "),
-                params
+                suffix: suffix
             };
         }
     }

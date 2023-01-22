@@ -27,7 +27,6 @@ export interface IErrorHandlerFunction {
 export interface ChironParsedContent {
     command: string,
     suffix: string,
-    params: Array<string>
 }
 
 export interface ChironParseFunction {
