@@ -16,10 +16,10 @@ export class EventHandlerCollection extends Collection<Events, Array<[string, IE
     }
     add(Client: ChironClient, Component: IEventComponent, EventOverride?: Events) {
         if (Component.enabled) {
-            const trigger = EventOverride || Component.trigger
+            const trigger = EventOverride || Component.trigger as Events
             if (!this.has(trigger)) {
                 this.set(trigger, [])
-                Client.on(trigger as Events | string , (arg1, arg2) => {
+                Client.on(trigger as Events | string, (arg1, arg2) => {
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     this.get(trigger)?.forEach(([name, comp]) => {
                         comp.exec(arg1, arg2);
@@ -32,7 +32,7 @@ export class EventHandlerCollection extends Collection<Events, Array<[string, IE
         }
     }
     remove(Component: IEventComponent, EventOverride?: Events) {
-        const trigger = EventOverride || Component.trigger
+        const trigger = EventOverride || Component.trigger as Events
         if (!this.has(trigger)) {
             return;
         }

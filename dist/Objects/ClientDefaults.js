@@ -1,8 +1,8 @@
 import { DMChannel, GuildChannel, Message } from "discord.js";
-export let DefaultErrorHandler = function (error, msg) {
+export const DefaultErrorHandler = function (error, msg) {
     console.error(Date());
     if (msg instanceof Message) {
-        let channelName = !(msg.channel instanceof GuildChannel) ?
+        const channelName = !(msg.channel instanceof GuildChannel) ?
             msg.channel instanceof DMChannel ?
                 msg.channel.recipient :
                 "Unknown Private Thread Channel" :
@@ -14,19 +14,19 @@ export let DefaultErrorHandler = function (error, msg) {
     }
     console.error(error);
 };
-export let DefaultParseMessage = (msg, client) => {
+export const DefaultParseMessage = (msg, client) => {
     //This function was provided by @gaiwecoor from Augurbot, and was updated by chevyboys
-    let content = msg.content;
-    let setPrefix = client.config.prefix || "!";
+    const content = msg.content;
+    const setPrefix = client.config.prefix || "!";
     if (msg.author.bot)
         return null;
-    for (let prefix of [setPrefix, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`]) {
+    for (const prefix of [setPrefix, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`, `<@${msg.client.user.id}>`, `<@!${msg.client.user.id}>`]) {
         if (!content.startsWith(prefix))
             continue;
-        let trimmed = content.substr(prefix.length).trim();
-        let endOfFirstWord = Math.min(...[trimmed.indexOf(" "), trimmed.indexOf("\n")].filter(index => index > -1));
-        let command = trimmed.substring(0, endOfFirstWord).trim();
-        let suffix = trimmed.substring(endOfFirstWord).trim();
+        const trimmed = content.substr(prefix.length).trim();
+        const endOfFirstWord = Math.min(...[trimmed.indexOf(" "), trimmed.indexOf("\n")].filter(index => index > -1));
+        const command = trimmed.substring(0, endOfFirstWord).trim();
+        const suffix = trimmed.substring(endOfFirstWord).trim();
         if (command) {
             return {
                 command: command.toLowerCase(),

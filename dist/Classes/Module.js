@@ -1,4 +1,4 @@
-import { Events } from "discord.js";
+import { Events, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction } from "discord.js";
 import { ChironClient } from "./ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -9,7 +9,7 @@ export class ChironModule {
     file;
     constructor(ModuleOptions) {
         const __filename = fileURLToPath(import.meta.url);
-        let fileName = path.basename(__filename);
+        const fileName = path.basename(__filename);
         if (ModuleOptions.client instanceof ChironClient) {
             this.client = ModuleOptions.client;
         }
@@ -117,11 +117,12 @@ export class EventComponent extends BaseComponent {
         super(EventComponentOptions);
         this.trigger = EventComponentOptions.trigger;
         this.process = EventComponentOptions.process;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.exec = (...args) => {
-            let argFinder = Array.isArray(args) ? args : [args];
+            const argFinder = Array.isArray(args) ? args : [args];
             for (const arg of argFinder) {
                 if (arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id) {
-                    let id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
+                    const id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
                     if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
                         return "Smite System Blocked Event Triggered by " + id;
                     }
@@ -154,22 +155,26 @@ export class MessageComponentInteractionComponent extends EventComponent {
             }
         };
         this.exec = (interaction) => {
-            if (!this.customId(interaction.customId))
-                return;
-            if (interaction?.member?.id || interaction?.user?.id || interaction.author?.id) {
-                let id = interaction?.member?.id || interaction?.user?.id || interaction.author?.id;
-                if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
-                    interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
-                    return "Smite System Blocked Event Triggered by " + id;
-                }
-                if (!this.permissions(interaction)) {
-                    interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
-                }
-            }
-            if (this.module?.client instanceof ChironClient)
-                return this.process(interaction);
-            else
+            if (!(this.module?.client instanceof ChironClient))
                 throw new Error("Invalid Client");
+            if (!(interaction instanceof (ChatInputCommandInteraction) ||
+                interaction instanceof (MessageContextMenuCommandInteraction) ||
+                interaction instanceof (UserContextMenuCommandInteraction) ||
+                interaction instanceof (AutocompleteInteraction))) {
+                if (!this.customId(interaction.customId))
+                    return;
+                const id = interaction?.member?.user.id || interaction?.user?.id;
+                if (id) {
+                    if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
+                        interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
+                        return "Smite System Blocked Event Triggered by " + id;
+                    }
+                    if (!this.permissions(interaction)) {
+                        interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
+                    }
+                }
+                return this.process(interaction);
+            }
         };
     }
 }
@@ -218,7 +223,7 @@ export class MessageCommandComponent extends EventComponent {
             if (this.module?.client && this.module?.client instanceof ChironClient) {
                 if (this.module.client.config.smiteArray.includes(message.author.id))
                     return "Dissallowed by smite system";
-                let parsed = this.module.client.parser(message, this.module.client);
+                const parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
                     if (this.module?.client instanceof ChironClient)
                         return this.process(message, parsed.suffix);

@@ -8,10 +8,10 @@ export interface IModuleManager extends Collection<string, IChironModule> {
     messageCommands: Collection<string, IMessageCommandComponent>;
     scheduledJobs: Collection<string, IScheduleComponent>;
     register: IModuleManagerRegisterFunction;
-    unregister: any;
+    unregister: IModuleManagerRegisterFunction;
     reload: IModuleManagerRegisterFunction;
 }
 export interface IModuleManagerRegisterFunction {
-    (registerable?: IModuleManagerRegisterable): Promise<IModuleManager> | IModuleManager;
+    (registerable?: IModuleManagerRegisterable): Promise<Collection<string, object>>;
 }
 export type IModuleManagerRegisterable = Array<IChironModule> | IChironModule | string | Array<string> | null;

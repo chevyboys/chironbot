@@ -5,7 +5,7 @@ import { BaseInteractionComponent, ChironModule, ContextMenuCommandComponent, Ev
 import * as Schedule from "node-schedule";
 import { EventHandlerCollection } from "./EventHandler";
 function readdirSyncRecursive(Directory) {
-    let Files = [];
+    const Files = [];
     const commandPath = path.resolve(process.cwd(), Directory);
     fs.readdirSync(commandPath).forEach(File => {
         const Absolute = path.join(commandPath, File);
@@ -21,8 +21,8 @@ function readdirSyncRecursive(Directory) {
 }
 async function registerInteractions(client, ApplicationAndContextMenuCommands) {
     if (client.user) {
-        let GlobalCommandsToRegister = ApplicationAndContextMenuCommands.filter(component => !component.guildId).map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
-        let GuildCommandsToRegister = new Collection();
+        const GlobalCommandsToRegister = ApplicationAndContextMenuCommands.filter(component => !component.guildId).map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
+        const GuildCommandsToRegister = new Collection();
         ApplicationAndContextMenuCommands.filter(component => component.guildId != undefined).forEach((ChironModuleComponentBaseInteraction) => {
             if (!GuildCommandsToRegister.has(ChironModuleComponentBaseInteraction.guildId)) {
                 GuildCommandsToRegister.set(ChironModuleComponentBaseInteraction.guildId, []);
@@ -34,11 +34,11 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
             // Register all commands as guild commands in the test guild if Debug is enabled. Else, register all commands as global
             let commandData = new Collection;
             for (const [guild, value] of GuildCommandsToRegister) {
-                let data = await client.application?.commands.set(value, guild);
+                const data = await client.application?.commands.set(value, guild);
                 if (data && data.size > 0)
                     commandData = commandData.concat(data);
             }
-            let data = await client.application?.commands.set(GlobalCommandsToRegister);
+            const data = await client.application?.commands.set(GlobalCommandsToRegister);
             if (data)
                 commandData = commandData.concat(data);
             console.log(commandData);
@@ -46,7 +46,11 @@ async function registerInteractions(client, ApplicationAndContextMenuCommands) {
             return commandData;
         }
         catch (error) {
-            throw error;
+            if (error?.toString().indexOf("503 Service Unavailable")) {
+                throw new Error("Discord error: Could not register commands");
+            }
+            else
+                throw error;
         }
     }
 }
@@ -58,14 +62,14 @@ async function resolveRegisterable(registerable) {
         else
             possibleModules = readdirSyncRecursive(registerable);
         //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
-        let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
+        const modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
             //we have to append this random bit of URL in order to bypass the import cache. For the record, this is stupid.
             return import(`${moduleFile}?update=${Date.now()}`);
         }));
-        let filteredModules = [];
-        for (let m of modules) {
-            for (let key in m) {
+        const filteredModules = [];
+        for (const m of modules) {
+            for (const key in m) {
                 if (Object.prototype.hasOwnProperty.call(m, key)) {
                     if (m[key] instanceof ChironModule) {
                         filteredModules.push(m[key]);
@@ -114,12 +118,12 @@ export class ModuleManager extends Collection {
         else {
             if (registerable instanceof ChironModule || (Array.isArray(registerable) && registerable[0] instanceof ChironModule)) {
                 if (Array.isArray(registerable)) {
-                    let reg = registerable.map(r => r instanceof ChironModule ? r.file : r);
+                    const reg = registerable.map(r => r instanceof ChironModule ? r.file : r);
                     if (reg)
                         registerable = reg;
                 }
                 else {
-                    let reg = registerable.file;
+                    const reg = registerable.file;
                     if (reg)
                         registerable = reg;
                 }
@@ -127,7 +131,7 @@ export class ModuleManager extends Collection {
             modules = await resolveRegisterable(registerable);
         }
         //take care of onInit functions, and register commands to discord
-        for (let module of modules) {
+        for (const module of modules) {
             module.client = this.client;
             if (this.has(module.name))
                 throw new Error("Module name " + module.name + " Must be unique!");
@@ -177,7 +181,8 @@ export class ModuleManager extends Collection {
                 }
             }
         }
-        await registerInteractions(this.client, this.applicationCommands.map((value, key) => value));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        await registerInteractions(this.client, this.applicationCommands.map((value, _key) => value));
         console.log("\nSuccessfully Registered " + this.events.size + " Events:");
         console.dir(this.events);
         console.log("\nSuccessfully Registered " + this.messageCommands.size + " Message Commands");
@@ -197,8 +202,8 @@ export class ModuleManager extends Collection {
                 //Handle receiving command interactions
                 //find any matching interactions
                 (() => {
-                    let match = null;
-                    let module = this.find(module => {
+                    let match;
+                    this.find(module => {
                         return module.components.filter(c => c.enabled).find((c) => {
                             if (((interaction.isChatInputCommand() && c instanceof SlashCommandComponent)
                                 || (interaction.isContextMenuCommand() && c instanceof ContextMenuCommandComponent))
@@ -214,7 +219,7 @@ export class ModuleManager extends Collection {
                                 return false;
                         });
                     });
-                    if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) {
+                    if (match !== undefined && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) {
                         match.exec(interaction);
                     }
                     else {
@@ -231,7 +236,7 @@ export class ModuleManager extends Collection {
     }
     async unregister(registerable) {
         let modules;
-        let stored = new Collection();
+        const stored = new Collection();
         if (!registerable) {
             modules = Array.from(this.values());
         }
@@ -240,9 +245,9 @@ export class ModuleManager extends Collection {
         }
         //take care of onInit functions, and register commands to discord
         for (const module of modules) {
-            let unregisterComponent = module.components.find(c => c instanceof ModuleOnUnloadComponent);
+            const unregisterComponent = module.components.find(c => c instanceof ModuleOnUnloadComponent);
             if (unregisterComponent) {
-                let result = unregisterComponent.exec(null);
+                const result = unregisterComponent.exec(null);
                 stored.set(module.name, result);
             }
             this.delete(module.name);
@@ -262,7 +267,7 @@ export class ModuleManager extends Collection {
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
-                        let job = this.scheduledJobs.find(j => j == component)?.job;
+                        const job = this.scheduledJobs.find(j => j == component)?.job;
                         if (job) {
                             job.cancel();
                         }
@@ -272,12 +277,13 @@ export class ModuleManager extends Collection {
             this.scheduledJobs = this.scheduledJobs.filter(comp => comp.module?.name != module.name);
         }
         //Since the commands have been removed from this.applicationCommands, we should be able to just re-register all the commands with a set.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         await registerInteractions(this.client, this.applicationCommands.map((v, k) => v));
         return stored;
     }
     async reload(registerable) {
         //toDo
-        let stored = await this.unregister(registerable);
+        const stored = await this.unregister(registerable);
         return await (this.registerPrivate(registerable, stored));
     }
 }

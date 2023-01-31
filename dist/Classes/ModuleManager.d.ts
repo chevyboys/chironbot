@@ -14,6 +14,6 @@ export declare class ModuleManager extends Collection<string, IChironModule> imp
     constructor(ChironClient: IChironClient);
     register: (registerable?: IModuleManagerRegisterable) => Promise<IModuleManager>;
     private registerPrivate;
-    unregister(registerable?: IModuleManagerRegisterable): Promise<Collection<string, any>>;
+    unregister(registerable?: IModuleManagerRegisterable): Promise<Collection<string, object>>;
     reload(registerable?: IModuleManagerRegisterable): Promise<IModuleManager>;
 }

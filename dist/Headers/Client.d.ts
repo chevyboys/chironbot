@@ -18,7 +18,7 @@ export interface IChironClient extends Client {
     parser: ChironParseFunction;
 }
 export interface IErrorHandlerFunction {
-    (error: any, msg: Message | Interaction | string): any;
+    (error: Error, msg: Message | Interaction | string): unknown;
 }
 export interface ChironParsedContent {
     command: string;

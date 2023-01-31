@@ -1,4 +1,4 @@
-import { Client, CommandInteraction, ContextMenuCommandBuilder, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
+import { Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
 import * as Schedule from "node-schedule";
 export interface IChironModuleOptions {
     readonly name?: string;
@@ -49,8 +49,8 @@ export interface IBaseInteractionComponent extends IBaseComponent {
 export interface IInteractionPermissionsFunction {
     (interaction: Interaction): boolean;
 }
-export interface IInteractionProcessFunction {
-    (interaction: Interaction): any;
+export interface IInteractionProcessFunction extends IEventProcessFunction {
+    (interaction: Interaction): object | void | null;
 }
 export interface ISlashCommandComponentOptions extends IBaseInteractionComponentOption {
     readonly builder: SlashCommandBuilder;
@@ -59,7 +59,7 @@ export interface ISlashCommandComponent extends IBaseInteractionComponent {
     readonly builder: SlashCommandBuilder;
 }
 export interface ISlashCommandInteractionProcessFunction {
-    (interaction: CommandInteraction): any;
+    (interaction: CommandInteraction): object | void | null;
 }
 export interface IContextMenuCommandComponentOptions extends IBaseInteractionComponentOption {
     readonly builder: ContextMenuCommandBuilder;
@@ -70,15 +70,15 @@ export interface IContextMenuCommandComponent extends IBaseInteractionComponent 
     readonly description: string;
 }
 export interface IEventComponentOptions extends IBaseComponentOptions {
-    readonly trigger?: any;
-    process: IEventProcessFunction | IMessageCommandProcessFunction | any;
+    readonly trigger: Events | string;
+    process: IEventProcessFunction | IMessageCommandProcessFunction;
 }
 export interface IEventComponent extends IBaseComponent {
-    readonly trigger: any;
-    process: IEventProcessFunction | IMessageCommandProcessFunction | any;
+    readonly trigger: Events | string;
+    process: IEventProcessFunction | IMessageCommandProcessFunction;
 }
 export interface IEventProcessFunction {
-    (arg1?: any, arg2?: any, arg3?: any): any;
+    (arg1?: object, arg2?: object, arg3?: object): object | void;
 }
 export interface IMessageComponentInteractionComponentOptions extends IEventComponentOptions {
     customId: string | customIdFunction;
@@ -103,34 +103,30 @@ export interface IScheduleComponent extends IBaseComponent {
     readonly chronSchedule: string;
 }
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
-    (fireDate: Date): any;
+    (fireDate: Date): object | void;
 }
-export interface IModuleOnLoadComponentOptions extends IBaseComponentOptions {
-}
-export interface IModuleOnUnloadComponentOptions extends IBaseComponentOptions {
-}
-export interface IModuleOnLoadComponent extends IBaseComponent {
-}
-export interface IModuleOnUnloadComponent extends IBaseComponent {
-}
+export type IModuleOnLoadComponentOptions = IBaseComponentOptions;
+export type IModuleOnUnloadComponentOptions = IBaseComponentOptions;
+export type IModuleOnLoadComponent = IBaseComponent;
+export type IModuleOnUnloadComponent = IBaseComponent;
 export interface IMessageCommandComponentOptions extends IEventComponentOptions {
-    trigger?: null;
+    trigger: string | Events;
     readonly name: string;
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction;
-    process: IMessageCommandProcessFunction | any;
+    process: IMessageCommandProcessFunction;
 }
 export interface IMessageCommandComponent extends IEventComponent {
     readonly name: string;
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction;
-    process: IMessageCommandProcessFunction | any;
+    process: IMessageCommandProcessFunction;
 }
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
-    (msg: Message, suffix: string): any;
+    (msg: Message, suffix: string): object | void;
 }
 export interface IMessageCommandPermissionsFunction {
-    (msg: Message): any;
+    (msg: Message): object | void;
 }

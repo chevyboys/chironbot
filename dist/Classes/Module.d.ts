@@ -35,7 +35,7 @@ export declare class ContextMenuCommandComponent extends BaseInteractionComponen
     constructor(ContextMenuCommandComponentOptions: IContextMenuCommandComponentOptions);
 }
 export declare class EventComponent extends BaseComponent implements IEventComponent {
-    trigger: Events | any;
+    trigger: Events | string;
     process: IEventProcessFunction;
     constructor(EventComponentOptions: IEventComponentOptions);
 }

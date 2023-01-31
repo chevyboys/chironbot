@@ -1,11 +1,10 @@
 import { Collection } from "discord.js";
 function removeFromArray(Array, item) {
-    let index = Array.indexOf(item);
+    const index = Array.indexOf(item);
     if (index !== -1) {
         Array.splice(index, 1);
     }
 }
-;
 //this will handle everything except interactionCreate Events, since those have their own special way of being found
 export class EventHandlerCollection extends Collection {
     constructor(options) {
@@ -13,10 +12,11 @@ export class EventHandlerCollection extends Collection {
     }
     add(Client, Component, EventOverride) {
         if (Component.enabled) {
-            let trigger = EventOverride || Component.trigger;
+            const trigger = EventOverride || Component.trigger;
             if (!this.has(trigger)) {
                 this.set(trigger, []);
                 Client.on(trigger, (arg1, arg2) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     this.get(trigger)?.forEach(([name, comp]) => {
                         comp.exec(arg1, arg2);
                     });
@@ -28,14 +28,13 @@ export class EventHandlerCollection extends Collection {
                 throw new Error("Cannot register event without it being attached to a module");
         }
     }
-    ;
     remove(Component, EventOverride) {
-        let trigger = EventOverride || Component.trigger;
+        const trigger = EventOverride || Component.trigger;
         if (!this.has(trigger)) {
             return;
         }
         if (Component.module) {
-            let EventArray = this.get(trigger);
+            const EventArray = this.get(trigger);
             if (EventArray)
                 removeFromArray(EventArray, EventArray.find(([name, comp]) => name == Component.module?.name && comp == Component));
         }
