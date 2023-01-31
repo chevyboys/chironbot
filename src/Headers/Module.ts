@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
+import { Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
 import * as Schedule from "node-schedule";
 
 export interface IChironModuleOptions {
@@ -74,7 +75,7 @@ export interface IInteractionPermissionsFunction {
 }
 
 export interface IInteractionProcessFunction extends IEventProcessFunction {
-    (interaction: Interaction): object | void | null
+    (interaction: Interaction): any
 }
 
 //--------------------------------------------------------------------------
@@ -90,7 +91,7 @@ export interface ISlashCommandComponent extends IBaseInteractionComponent {
 }
 
 export interface ISlashCommandInteractionProcessFunction {
-    (interaction: CommandInteraction): object | void | null
+    (interaction: CommandInteraction): any
 }
 
 //--------------------------------------------------------------------------
@@ -122,7 +123,7 @@ export interface IEventComponent extends IBaseComponent {
 
 
 export interface IEventProcessFunction {
-    (arg1?: object, arg2?: object, arg3?: object): object | void
+    (arg1?: any, arg2?: any, arg3?: any): any
 }
 
 
@@ -190,12 +191,12 @@ export interface IMessageCommandComponent extends IEventComponent {
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
-    process: IMessageCommandProcessFunction ;
+    process: IMessageCommandProcessFunction;
 }
 
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
-    (msg: Message, suffix: string): object | void;
+    (msg: Message, suffix: string): any;
 }
 export interface IMessageCommandPermissionsFunction {
-    (msg: Message): object | void;
+    (msg: Message): any;
 }

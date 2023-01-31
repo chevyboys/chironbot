@@ -50,7 +50,7 @@ export interface IInteractionPermissionsFunction {
     (interaction: Interaction): boolean;
 }
 export interface IInteractionProcessFunction extends IEventProcessFunction {
-    (interaction: Interaction): object | void | null;
+    (interaction: Interaction): any;
 }
 export interface ISlashCommandComponentOptions extends IBaseInteractionComponentOption {
     readonly builder: SlashCommandBuilder;
@@ -59,7 +59,7 @@ export interface ISlashCommandComponent extends IBaseInteractionComponent {
     readonly builder: SlashCommandBuilder;
 }
 export interface ISlashCommandInteractionProcessFunction {
-    (interaction: CommandInteraction): object | void | null;
+    (interaction: CommandInteraction): any;
 }
 export interface IContextMenuCommandComponentOptions extends IBaseInteractionComponentOption {
     readonly builder: ContextMenuCommandBuilder;
@@ -78,7 +78,7 @@ export interface IEventComponent extends IBaseComponent {
     process: IEventProcessFunction | IMessageCommandProcessFunction;
 }
 export interface IEventProcessFunction {
-    (arg1?: object, arg2?: object, arg3?: object): object | void;
+    (arg1?: any, arg2?: any, arg3?: any): any;
 }
 export interface IMessageComponentInteractionComponentOptions extends IEventComponentOptions {
     customId: string | customIdFunction;
@@ -125,8 +125,8 @@ export interface IMessageCommandComponent extends IEventComponent {
     process: IMessageCommandProcessFunction;
 }
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
-    (msg: Message, suffix: string): object | void;
+    (msg: Message, suffix: string): any;
 }
 export interface IMessageCommandPermissionsFunction {
-    (msg: Message): object | void;
+    (msg: Message): any;
 }
