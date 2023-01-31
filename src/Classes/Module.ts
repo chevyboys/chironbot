@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message } from "discord.js";
+import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message, ChatInputCommandInteraction, CacheType, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction } from "discord.js";
 import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleOnLoadComponent, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 import path from "path"
@@ -16,7 +16,7 @@ export class ChironModule implements IChironModule {
 
     constructor(ModuleOptions: IChironModuleOptions) {
         const __filename = fileURLToPath(import.meta.url);
-        let fileName = path.basename(__filename);
+        const fileName = path.basename(__filename);
         if (ModuleOptions.client instanceof ChironClient) {
             this.client = ModuleOptions.client;
         }
@@ -131,17 +131,18 @@ export class ContextMenuCommandComponent extends BaseInteractionComponent implem
 //event handler
 
 export class EventComponent extends BaseComponent implements IEventComponent {
-    trigger: Events | any
+    trigger: Events | string
     process: IEventProcessFunction
     constructor(EventComponentOptions: IEventComponentOptions) {
         super(EventComponentOptions)
         this.trigger = EventComponentOptions.trigger;
         this.process = EventComponentOptions.process;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.exec = (...args: any) => {
-            let argFinder = Array.isArray(args) ? args : [args];
+            const argFinder = Array.isArray(args) ? args : [args];
             for (const arg of argFinder) {
                 if (arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id) {
-                    let id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
+                    const id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
                     if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
                         return "Smite System Blocked Event Triggered by " + id;
                     }
@@ -175,21 +176,26 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
                 return string == MessageComponentInteractionComponentOptions.customId;
             }
         }
-        this.exec = (interaction: Interaction | any) => {
-            if (!this.customId(interaction.customId)) return;
-            if (interaction?.member?.id || interaction?.user?.id || interaction.author?.id) {
-                let id = interaction?.member?.id || interaction?.user?.id || interaction.author?.id;
-                if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
-                    interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" })
-                    return "Smite System Blocked Event Triggered by " + id;
+        this.exec = (interaction: Interaction) => {
+            if(!(this.module?.client instanceof ChironClient)) throw new Error("Invalid Client");
+            if (!(interaction instanceof ChatInputCommandInteraction<CacheType> ||
+                interaction instanceof MessageContextMenuCommandInteraction<CacheType> ||
+                interaction instanceof UserContextMenuCommandInteraction<CacheType> ||
+                interaction instanceof AutocompleteInteraction<CacheType>
+            )) {
+                if (!this.customId(interaction.customId)) return;
+                const id = interaction?.member?.user.id || interaction?.user?.id;
+                if (id) {
+                    if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
+                        interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" })
+                        return "Smite System Blocked Event Triggered by " + id;
+                    }
+                    if (!this.permissions(interaction)) {
+                        interaction.reply({ content: "You are not authorized to do that", ephemeral: true })
+                    }
                 }
-                if (!this.permissions(interaction)) {
-                    interaction.reply({ content: "You are not authorized to do that", ephemeral: true })
-                }
+                    return this.process(interaction)
             }
-            if (this.module?.client instanceof ChironClient)
-                return this.process(interaction)
-            else throw new Error("Invalid Client");
 
         }
     }
@@ -247,7 +253,7 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
             if (!this.enabled) return "disabled";
             if (this.module?.client && this.module?.client instanceof ChironClient) {
                 if (this.module.client.config.smiteArray.includes(message.author.id)) return "Dissallowed by smite system"
-                let parsed = this.module.client.parser(message, this.module.client);
+                const parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
                     if (this.module?.client instanceof ChironClient)
                         return this.process(message, parsed.suffix)

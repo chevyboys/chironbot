@@ -9,9 +9,9 @@ export interface IEventHandlerCollection extends Collection<Events, Array<[strin
 }
 
 export interface IEventAddFunc {
-    (Client: IChironClient, Component: IEventComponent, EventOverride?: Events): any
+    (Client: IChironClient, Component: IEventComponent, EventOverride?: Events): object | void
 }
 
 export interface IEventRemoveFunc {
-    (Component: IEventComponent, EventOverride?: Events): any
+    (Component: IEventComponent, EventOverride?: Events): object | void
 }

@@ -1,4 +1,4 @@
-import { Interaction, Message, Snowflake } from "discord.js";
+import { Interaction, Message } from "discord.js";
 import { HexColorString, Client, ClientOptions } from "discord.js";
 import { IModuleManager } from "./ModuleManager";
 import { IChironConfig } from "./Config";
@@ -21,7 +21,7 @@ export interface IChironClient extends Client {
 }
 
 export interface IErrorHandlerFunction {
-    (error: any, msg: Message | Interaction | string): any
+    (error: Error, msg: Message | Interaction | string): unknown
 }
 
 export interface ChironParsedContent {

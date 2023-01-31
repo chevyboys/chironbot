@@ -1,4 +1,4 @@
-import { IBaseInteractionComponent, IChironModule } from "../Headers/Module";
+import { IBaseComponent, IBaseInteractionComponent, IChironModule } from "../Headers/Module";
 import { IModuleManager, IModuleManagerRegisterable } from "../Headers/ModuleManager";
 import fs from "fs";
 import path from "path";
@@ -12,7 +12,7 @@ import { EventHandlerCollection } from "./EventHandler";
 
 
 function readdirSyncRecursive(Directory: string): Array<string> {
-    let Files: Array<string> = [];
+    const Files: Array<string> = [];
     const commandPath = path.resolve(process.cwd(), Directory)
     fs.readdirSync(commandPath).forEach(File => {
         const Absolute = path.join(commandPath, File);
@@ -27,8 +27,8 @@ function readdirSyncRecursive(Directory: string): Array<string> {
 
 async function registerInteractions(client: IChironClient, ApplicationAndContextMenuCommands: Array<IBaseInteractionComponent>) {
     if (client.user) {
-        let GlobalCommandsToRegister = ApplicationAndContextMenuCommands.filter(component => !component.guildId).map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
-        let GuildCommandsToRegister: Collection<string, Array<RESTPostAPIChatInputApplicationCommandsJSONBody | RESTPostAPIContextMenuApplicationCommandsJSONBody>> = new Collection()
+        const GlobalCommandsToRegister = ApplicationAndContextMenuCommands.filter(component => !component.guildId).map((ChironModuleComponentBaseInteraction) => ChironModuleComponentBaseInteraction.builder.toJSON());
+        const GuildCommandsToRegister: Collection<string, Array<RESTPostAPIChatInputApplicationCommandsJSONBody | RESTPostAPIContextMenuApplicationCommandsJSONBody>> = new Collection()
         ApplicationAndContextMenuCommands.filter(component => component.guildId != undefined).forEach((ChironModuleComponentBaseInteraction) => {
             if (!GuildCommandsToRegister.has(ChironModuleComponentBaseInteraction.guildId as string)) { GuildCommandsToRegister.set(ChironModuleComponentBaseInteraction.guildId as string, []) }
             GuildCommandsToRegister.get(ChironModuleComponentBaseInteraction.guildId as string)?.push(ChironModuleComponentBaseInteraction.builder.toJSON())
@@ -41,17 +41,20 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
             let commandData: Collection<Snowflake, ApplicationCommand> = new Collection;
 
             for (const [guild, value] of GuildCommandsToRegister) {
-                let data = await client.application?.commands.set(value, guild)
+                const data = await client.application?.commands.set(value, guild)
                 if (data && data.size > 0) commandData = commandData.concat(data);
             }
-            let data = await client.application?.commands.set(GlobalCommandsToRegister)
+            const data = await client.application?.commands.set(GlobalCommandsToRegister)
             if (data) commandData = commandData.concat(data);
             console.log(commandData)
             console.log(`Successfully reloaded ${commandData?.size} application (/) commands.`);
 
             return commandData;
         } catch (error) {
-            throw error
+            if(error?.toString().indexOf("503 Service Unavailable")){
+                throw new Error("Discord error: Could not register commands");
+            }
+            else throw error
         }
     }
 }
@@ -62,14 +65,14 @@ async function resolveRegisterable(registerable: IModuleManagerRegisterable): Pr
         if ((Array.isArray(registerable))) possibleModules = registerable as string[];
         else possibleModules = readdirSyncRecursive(registerable as unknown as string)
         //once we have all possible modules, filter them for only what is acutally a module. This allows us to export different things for tests
-        let modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
+        const modules = await Promise.all(possibleModules.filter(file => file.endsWith('.js'))
             .map(async (moduleFile) => {
                 //we have to append this random bit of URL in order to bypass the import cache. For the record, this is stupid.
                 return import(`${moduleFile}?update=${Date.now()}`);
             }))
-        let filteredModules: Array<IChironModule> = [];
-        for (let m of modules) {
-            for (let key in m) {
+        const filteredModules: Array<IChironModule> = [];
+        for (const m of modules) {
+            for (const key in m) {
                 if (Object.prototype.hasOwnProperty.call(m, key)) {
                     if (m[key] instanceof ChironModule) {
                         filteredModules.push(m[key]);
@@ -115,18 +118,18 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
 
 
     public register = async (registerable?: IModuleManagerRegisterable) => { return await this.registerPrivate(registerable) }
-    private async registerPrivate(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, any>): Promise<IModuleManager> {
+    private async registerPrivate(registerable?: IModuleManagerRegisterable, storedValues?: Collection<string, object>): Promise<IModuleManager> {
         let modules: Array<IChironModule>;
         if (!registerable) {
             modules = await resolveRegisterable(this.client.modulePath as unknown as IModuleManagerRegisterable)
         } else {
             if (registerable instanceof ChironModule || (Array.isArray(registerable) && registerable[0] instanceof ChironModule)) {
                 if (Array.isArray(registerable)) {
-                    let reg = registerable.map(r => r instanceof ChironModule ? r.file : r);
+                    const reg = registerable.map(r => r instanceof ChironModule ? r.file : r);
                     if (reg) registerable = reg as ChironModule[] | string[];
                 }
                 else {
-                    let reg = registerable.file;
+                    const reg = registerable.file;
                     if (reg) registerable = reg;
                 }
             }
@@ -136,7 +139,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
         //take care of onInit functions, and register commands to discord
 
 
-        for (let module of modules) {
+        for (const module of modules) {
             module.client = this.client;
             if (this.has(module.name)) throw new Error("Module name " + module.name + " Must be unique!");
             this.set(module.name, module)
@@ -185,7 +188,8 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
 
             }
         }
-        await registerInteractions(this.client, this.applicationCommands.map((value, key) =>
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        await registerInteractions(this.client, this.applicationCommands.map((value, _key) =>
             value
         ));
         console.log("\nSuccessfully Registered " + this.events.size + " Events:");
@@ -210,8 +214,8 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
 
                 //find any matching interactions
                 (() => {
-                    let match: any = null;
-                    let module = this.find(module => {
+                    let match: IBaseComponent | undefined;
+                    this.find(module => {
                         return module.components.filter(c => c.enabled).find((c) => {
                             if (
                                 (
@@ -230,7 +234,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                             else return false;
                         })
                     })
-                    if (match && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) { match.exec(interaction); }
+                    if (match !== undefined && match instanceof SlashCommandComponent || match instanceof ContextMenuCommandComponent || match instanceof MessageComponentInteractionComponent) { match.exec(interaction); }
                     else {
                         if (interaction.isRepliable()) interaction.reply("I don't know how to handle that!")
                         else throw new Error("I don't know how to handle that!");
@@ -247,7 +251,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
     }
     async unregister(registerable?: IModuleManagerRegisterable) {
         let modules: Array<IChironModule>;
-        let stored: Collection<string, any> = new Collection()
+        const stored: Collection<string, object> = new Collection()
         if (!registerable) {
             modules = Array.from(this.values())
         } else {
@@ -258,9 +262,9 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
 
 
         for (const module of modules) {
-            let unregisterComponent = module.components.find(c => c instanceof ModuleOnUnloadComponent)
+            const unregisterComponent = module.components.find(c => c instanceof ModuleOnUnloadComponent)
             if (unregisterComponent) {
-                let result = unregisterComponent.exec(null);
+                const result = unregisterComponent.exec(null);
                 stored.set(module.name, result)
             }
             this.delete(module.name);
@@ -278,7 +282,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
                         }
                     }
                     else if (component instanceof ScheduleComponent) {
-                        let job = this.scheduledJobs.find(j => j == component)?.job;
+                        const job = this.scheduledJobs.find(j => j == component)?.job;
                         if (job) {
                             job.cancel();
                         }
@@ -291,6 +295,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
             this.scheduledJobs = this.scheduledJobs.filter(comp => comp.module?.name != module.name)
         }
         //Since the commands have been removed from this.applicationCommands, we should be able to just re-register all the commands with a set.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         await registerInteractions(this.client, this.applicationCommands.map((v, k) => v));
 
         return stored;
@@ -298,7 +303,7 @@ export class ModuleManager extends Collection<string, IChironModule> implements 
     async reload(registerable?: IModuleManagerRegisterable): Promise<IModuleManager> {
         //toDo
 
-        let stored = await this.unregister(registerable);
+        const stored = await this.unregister(registerable);
         return await (this.registerPrivate(registerable, stored));
     }
 

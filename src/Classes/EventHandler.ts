@@ -3,12 +3,12 @@ import { IEventHandlerCollection } from "../Headers/EventHandler";
 import { IEventComponent } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 
-function removeFromArray(Array: Array<any>, item: any) {
-    let index = Array.indexOf(item);
+function removeFromArray(Array: Array<unknown>, item: unknown) {
+    const index = Array.indexOf(item);
     if (index !== -1) {
         Array.splice(index, 1);
     }
-};
+}
 //this will handle everything except interactionCreate Events, since those have their own special way of being found
 export class EventHandlerCollection extends Collection<Events, Array<[string, IEventComponent]>> implements IEventHandlerCollection {
     constructor(options?: null | Array<[Events, Array<[string, IEventComponent]>]>) {
@@ -16,10 +16,11 @@ export class EventHandlerCollection extends Collection<Events, Array<[string, IE
     }
     add(Client: ChironClient, Component: IEventComponent, EventOverride?: Events) {
         if (Component.enabled) {
-            let trigger = EventOverride || Component.trigger
+            const trigger = EventOverride || Component.trigger
             if (!this.has(trigger)) {
                 this.set(trigger, [])
-                Client.on(trigger as unknown as any, (arg1, arg2) => {
+                Client.on(trigger as Events | string , (arg1, arg2) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     this.get(trigger)?.forEach(([name, comp]) => {
                         comp.exec(arg1, arg2);
                     })
@@ -29,14 +30,14 @@ export class EventHandlerCollection extends Collection<Events, Array<[string, IE
             else throw new Error("Cannot register event without it being attached to a module");
 
         }
-    };
+    }
     remove(Component: IEventComponent, EventOverride?: Events) {
-        let trigger = EventOverride || Component.trigger
+        const trigger = EventOverride || Component.trigger
         if (!this.has(trigger)) {
             return;
         }
         if (Component.module) {
-            let EventArray = this.get(trigger)
+            const EventArray = this.get(trigger)
             if (EventArray) removeFromArray(EventArray, EventArray.find(([name, comp]) => name == Component.module?.name && comp == Component));
         }
         else throw new Error("Cannot remove event without it being attached to a module");

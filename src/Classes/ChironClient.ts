@@ -1,4 +1,3 @@
-import { Snowflake } from "discord.js";
 import { HexColorString, Client } from "discord.js";
 import { ChironParseFunction, IChironClient, IChironClientOptions, IErrorHandlerFunction } from "../Headers/Client";
 import { IChironConfig } from "../Headers/Config";

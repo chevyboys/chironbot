@@ -1,5 +1,5 @@
 
-import { ApplicationCommand, Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
+import {Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, Snowflake } from "discord.js";
 import * as Schedule from "node-schedule";
 
 export interface IChironModuleOptions {
@@ -37,10 +37,12 @@ export interface IBaseComponent {
 }
 
 export interface IBaseProcessFunction {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (input: any, input2?: any): any
 }
 
 export interface IBaseExecFunction extends IBaseProcessFunction {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (input: any, InvokerId?: Snowflake): any
 }
 
@@ -71,8 +73,8 @@ export interface IInteractionPermissionsFunction {
     (interaction: Interaction): boolean
 }
 
-export interface IInteractionProcessFunction {
-    (interaction: Interaction): any
+export interface IInteractionProcessFunction extends IEventProcessFunction {
+    (interaction: Interaction): object | void | null
 }
 
 //--------------------------------------------------------------------------
@@ -88,7 +90,7 @@ export interface ISlashCommandComponent extends IBaseInteractionComponent {
 }
 
 export interface ISlashCommandInteractionProcessFunction {
-    (interaction: CommandInteraction): any
+    (interaction: CommandInteraction): object | void | null
 }
 
 //--------------------------------------------------------------------------
@@ -108,19 +110,19 @@ export interface IContextMenuCommandComponent extends IBaseInteractionComponent 
 //--------------------------------------------------------------------------
 //event handler
 export interface IEventComponentOptions extends IBaseComponentOptions {
-    readonly trigger?: any
-    process: IEventProcessFunction | IMessageCommandProcessFunction | any
+    readonly trigger: Events | string
+    process: IEventProcessFunction | IMessageCommandProcessFunction
 }
 
 export interface IEventComponent extends IBaseComponent {
-    readonly trigger: any
-    process: IEventProcessFunction | IMessageCommandProcessFunction | any
+    readonly trigger: Events | string
+    process: IEventProcessFunction | IMessageCommandProcessFunction
 }
 
 
 
 export interface IEventProcessFunction {
-    (arg1?: any, arg2?: any, arg3?: any): any
+    (arg1?: object, arg2?: object, arg3?: object): object | void
 }
 
 
@@ -157,37 +159,29 @@ export interface IScheduleComponent extends IBaseComponent {
 }
 
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
-    (fireDate: Date): any
+    (fireDate: Date): object | void
     //the Date is the date the event is supposed to fire.
 }
 
 //-------------------------------------------------------------------------
 //---------------- Module Loading and unloading components ----------------
-export interface IModuleOnLoadComponentOptions extends IBaseComponentOptions {
+export type IModuleOnLoadComponentOptions = IBaseComponentOptions
 
-}
+export type IModuleOnUnloadComponentOptions = IBaseComponentOptions
 
-export interface IModuleOnUnloadComponentOptions extends IBaseComponentOptions {
+export type IModuleOnLoadComponent = IBaseComponent
 
-}
-
-export interface IModuleOnLoadComponent extends IBaseComponent {
-
-}
-
-export interface IModuleOnUnloadComponent extends IBaseComponent {
-
-}
+export type IModuleOnUnloadComponent = IBaseComponent
 
 //-------------------------------------------------------------------------
 // ------------------ Message Command Hanlder ---------------------------
 export interface IMessageCommandComponentOptions extends IEventComponentOptions {
-    trigger?: null;
+    trigger: string | Events;
     readonly name: string;
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
-    process: IMessageCommandProcessFunction | any;
+    process: IMessageCommandProcessFunction;
 
 }
 
@@ -196,12 +190,12 @@ export interface IMessageCommandComponent extends IEventComponent {
     readonly description: string;
     readonly category: string;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an message and returns if the function is allowed to be executed
-    process: IMessageCommandProcessFunction | any;
+    process: IMessageCommandProcessFunction ;
 }
 
 export interface IMessageCommandProcessFunction extends IBaseProcessFunction {
-    (msg: Message, suffix: string): any;
+    (msg: Message, suffix: string): object | void;
 }
 export interface IMessageCommandPermissionsFunction {
-    (msg: Message): any;
+    (msg: Message): object | void;
 }
