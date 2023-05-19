@@ -52,7 +52,7 @@ export interface IBaseExecFunction extends IBaseProcessFunction {
 // The base for all other Interaction Components
 
 export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder    //Contains our name and description, and is the builder for our interaction
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">    //Contains our name and description, and is the builder for our interaction
     readonly description?: string
     readonly category: string
     readonly permissions: IInteractionPermissionsFunction //A function that receives an interaction object, and returns if the interaction user can do it
@@ -63,7 +63,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
 export interface IBaseInteractionComponent extends IBaseComponent {
     readonly name: string; //derived from the builder
     readonly description: string; //derived from the builder if not directly defined
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
     guildId?: Snowflake; //only set if it's a guild application command
@@ -82,12 +82,12 @@ export interface IInteractionProcessFunction extends IEventProcessFunction {
 //------------------- Slash Command Component ------------------------------
 // Slash command Component
 export interface ISlashCommandComponentOptions extends IBaseInteractionComponentOption {
-    readonly builder: SlashCommandBuilder //Contains our name and description
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">//Contains our name and description
 
 }
 
 export interface ISlashCommandComponent extends IBaseInteractionComponent {
-    readonly builder: SlashCommandBuilder;
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
 }
 
 export interface ISlashCommandInteractionProcessFunction {
