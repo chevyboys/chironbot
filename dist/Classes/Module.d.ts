@@ -19,14 +19,14 @@ export declare class BaseComponent implements IBaseComponent {
 export declare class BaseInteractionComponent extends BaseComponent implements IBaseInteractionComponent {
     readonly name: string;
     description: string;
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
     guildId?: string | undefined;
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption);
 }
 export declare class SlashCommandComponent extends BaseInteractionComponent implements ISlashCommandComponent {
-    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     constructor(SlashCommandComponentOptions: ISlashCommandComponentOptions);
 }
 export declare class ContextMenuCommandComponent extends BaseInteractionComponent implements IContextMenuCommandComponent {
