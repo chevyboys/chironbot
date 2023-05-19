@@ -19,14 +19,14 @@ export declare class BaseComponent implements IBaseComponent {
 export declare class BaseInteractionComponent extends BaseComponent implements IBaseInteractionComponent {
     readonly name: string;
     description: string;
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
     guildId?: string | undefined;
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption);
 }
 export declare class SlashCommandComponent extends BaseInteractionComponent implements ISlashCommandComponent {
-    readonly builder: SlashCommandBuilder;
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     constructor(SlashCommandComponentOptions: ISlashCommandComponentOptions);
 }
 export declare class ContextMenuCommandComponent extends BaseInteractionComponent implements IContextMenuCommandComponent {

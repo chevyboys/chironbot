@@ -3,6 +3,10 @@ import { ChironClient } from "./ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
 export class ChironModule {
+    name;
+    components;
+    client;
+    file;
     constructor(ModuleOptions) {
         const __filename = fileURLToPath(import.meta.url);
         const fileName = path.basename(__filename);
@@ -23,6 +27,10 @@ export class ChironModule {
 //------------------- Base Component ------------------------------
 // All components are derived from this
 export class BaseComponent {
+    enabled;
+    process;
+    module;
+    exec;
     constructor(BaseComponentOptions) {
         this.enabled = BaseComponentOptions.enabled;
         this.process = BaseComponentOptions.process;
@@ -35,6 +43,12 @@ export class BaseComponent {
 //------------------- Base Interact Component ------------------------------
 // The base for all other Interaction Components
 export class BaseInteractionComponent extends BaseComponent {
+    name; //derived from the builder
+    description; //derived from the builder if not directly defined
+    builder; //Contains our name and description, and is the builder for our interaction;
+    category;
+    permissions; // a function that receives an interaction and returns if the function is allowed to be executed
+    guildId;
     constructor(BaseInteractionComponentOptions) {
         super(BaseInteractionComponentOptions);
         this.name = BaseInteractionComponentOptions.builder.name;
@@ -75,6 +89,7 @@ export class BaseInteractionComponent extends BaseComponent {
 //------------------- Slash Command Component ------------------------------
 // Slash command Component
 export class SlashCommandComponent extends BaseInteractionComponent {
+    builder; //Contains our name and description, and is the builder for our interaction;
     constructor(SlashCommandComponentOptions) {
         super(SlashCommandComponentOptions);
         this.description = SlashCommandComponentOptions.description || SlashCommandComponentOptions.builder.description || "";
@@ -85,6 +100,8 @@ export class SlashCommandComponent extends BaseInteractionComponent {
 //------------------- Context Menu Command Component ------------------------------
 // The base for all other Interaction Components
 export class ContextMenuCommandComponent extends BaseInteractionComponent {
+    builder; //Contains our name and description
+    description;
     constructor(ContextMenuCommandComponentOptions) {
         super(ContextMenuCommandComponentOptions);
         this.description = ContextMenuCommandComponentOptions.description || "";
@@ -94,6 +111,8 @@ export class ContextMenuCommandComponent extends BaseInteractionComponent {
 //--------------------------------------------------------------------------
 //event handler
 export class EventComponent extends BaseComponent {
+    trigger;
+    process;
     constructor(EventComponentOptions) {
         super(EventComponentOptions);
         this.trigger = EventComponentOptions.trigger;
@@ -119,6 +138,9 @@ export class EventComponent extends BaseComponent {
 //-------------------------------------------------------------------------
 // Message Component interaction
 export class MessageComponentInteractionComponent extends EventComponent {
+    customId;
+    process;
+    permissions;
     constructor(MessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions);
         this.permissions = MessageComponentInteractionComponentOptions.permissions || (() => true);
@@ -135,30 +157,33 @@ export class MessageComponentInteractionComponent extends EventComponent {
         this.exec = (interaction) => {
             if (!(this.module?.client instanceof ChironClient))
                 throw new Error("Invalid Client");
-            if (!(interaction instanceof ChatInputCommandInteraction( ||
-                interaction instanceof MessageContextMenuCommandInteraction( ||
-                    interaction instanceof UserContextMenuCommandInteraction( ||
-                        interaction instanceof AutocompleteInteraction()), {
-                    : .customId(interaction.customId)
-                }))))
-                return;
-            const id = interaction?.member?.user.id || interaction?.user?.id;
-            if (id) {
-                if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
-                    interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
-                    return "Smite System Blocked Event Triggered by " + id;
+            if (!(interaction instanceof (ChatInputCommandInteraction) ||
+                interaction instanceof (MessageContextMenuCommandInteraction) ||
+                interaction instanceof (UserContextMenuCommandInteraction) ||
+                interaction instanceof (AutocompleteInteraction))) {
+                if (!this.customId(interaction.customId))
+                    return;
+                const id = interaction?.member?.user.id || interaction?.user?.id;
+                if (id) {
+                    if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
+                        interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
+                        return "Smite System Blocked Event Triggered by " + id;
+                    }
+                    if (!this.permissions(interaction)) {
+                        interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
+                    }
                 }
-                if (!this.permissions(interaction)) {
-                    interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
-                }
+                return this.process(interaction);
             }
-            return this.process(interaction);
         };
     }
 }
 //--------------------------------------------------------------------------
 //------------------------ Schedule Components ----------------------------
 export class ScheduleComponent extends BaseComponent {
+    chronSchedule; //the number of seconds to wait between refresh intervals
+    job;
+    exec;
     constructor(ScheduleComponentOptions) {
         super(ScheduleComponentOptions);
         this.chronSchedule = ScheduleComponentOptions.chronSchedule;
@@ -179,6 +204,11 @@ export class ModuleOnUnloadComponent extends BaseComponent {
 //-------------------------------------------------------------------------
 //------------------ Message Command --------------------------------------
 export class MessageCommandComponent extends EventComponent {
+    name;
+    description;
+    category;
+    permissions; // a function that receives an interaction and returns if the function is allowed to be executed
+    process;
     constructor(MessageCommandOptions) {
         super(MessageCommandOptions);
         this.trigger = Events.MessageCreate;

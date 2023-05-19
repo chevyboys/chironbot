@@ -60,7 +60,7 @@ export class BaseComponent implements IBaseComponent {
 export class BaseInteractionComponent extends BaseComponent implements IBaseInteractionComponent {
     readonly name: string; //derived from the builder
     description: string; //derived from the builder if not directly defined
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> //Contains our name and description, and is the builder for our interaction;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
     guildId?: string | undefined;
@@ -101,7 +101,7 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
 //------------------- Slash Command Component ------------------------------
 // Slash command Component
 export class SlashCommandComponent extends BaseInteractionComponent implements ISlashCommandComponent {
-    readonly builder: SlashCommandBuilder;
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> //Contains our name and description, and is the builder for our interaction;
 
     constructor(SlashCommandComponentOptions: ISlashCommandComponentOptions) {
         super(SlashCommandComponentOptions)
