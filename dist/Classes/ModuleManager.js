@@ -99,17 +99,16 @@ async function resolveRegisterable(registerable) {
     throw new Error("Unreachable state reached. How did you do this?");
 }
 export class ModuleManager extends Collection {
-    client;
-    applicationCommands = new Collection();
-    events = new EventHandlerCollection();
-    messageCommands = new Collection();
-    scheduledJobs = new Collection();
-    ModuleManagerInitialized = false;
     constructor(ChironClient) {
         super();
+        this.applicationCommands = new Collection();
+        this.events = new EventHandlerCollection();
+        this.messageCommands = new Collection();
+        this.scheduledJobs = new Collection();
+        this.ModuleManagerInitialized = false;
+        this.register = async (registerable) => { return await this.registerPrivate(registerable); };
         this.client = ChironClient;
     }
-    register = async (registerable) => { return await this.registerPrivate(registerable); };
     async registerPrivate(registerable, storedValues) {
         let modules;
         if (!registerable) {

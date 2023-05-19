@@ -30,7 +30,7 @@ export interface IBaseExecFunction extends IBaseProcessFunction {
     (input: any, InvokerId?: Snowflake): any;
 }
 export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     readonly description?: string;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
@@ -40,7 +40,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
 export interface IBaseInteractionComponent extends IBaseComponent {
     readonly name: string;
     readonly description: string;
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
     guildId?: Snowflake;
@@ -53,10 +53,10 @@ export interface IInteractionProcessFunction extends IEventProcessFunction {
     (interaction: Interaction): any;
 }
 export interface ISlashCommandComponentOptions extends IBaseInteractionComponentOption {
-    readonly builder: SlashCommandBuilder;
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
 }
 export interface ISlashCommandComponent extends IBaseInteractionComponent {
-    readonly builder: SlashCommandBuilder;
+    readonly builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
 }
 export interface ISlashCommandInteractionProcessFunction {
     (interaction: CommandInteraction): any;
@@ -105,10 +105,10 @@ export interface IScheduleComponent extends IBaseComponent {
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
     (fireDate: Date): object | void;
 }
-export type IModuleOnLoadComponentOptions = IBaseComponentOptions;
-export type IModuleOnUnloadComponentOptions = IBaseComponentOptions;
-export type IModuleOnLoadComponent = IBaseComponent;
-export type IModuleOnUnloadComponent = IBaseComponent;
+export declare type IModuleOnLoadComponentOptions = IBaseComponentOptions;
+export declare type IModuleOnUnloadComponentOptions = IBaseComponentOptions;
+export declare type IModuleOnLoadComponent = IBaseComponent;
+export declare type IModuleOnUnloadComponent = IBaseComponent;
 export interface IMessageCommandComponentOptions extends IEventComponentOptions {
     trigger: string | Events;
     readonly name: string;
