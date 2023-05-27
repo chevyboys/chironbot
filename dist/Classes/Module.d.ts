@@ -44,6 +44,7 @@ export declare class ChironModule implements IChironModule {
  */
 export declare class BaseComponent implements IBaseComponent {
     readonly enabled: boolean;
+    readonly bypassSmite: boolean;
     readonly process: IBaseProcessFunction;
     module?: IChironModule;
     guildId?: Snowflake | Array<Snowflake>;
@@ -69,6 +70,7 @@ export declare class ContextMenuCommandComponent extends BaseInteractionComponen
     constructor(ContextMenuCommandComponentOptions: IContextMenuCommandComponentOptions);
 }
 export declare class EventComponent extends BaseComponent implements IEventComponent {
+    bypassSmite: boolean;
     trigger: Events | string;
     process: IEventProcessFunction;
     constructor(EventComponentOptions: IEventComponentOptions);
@@ -97,5 +99,8 @@ export declare class MessageCommandComponent extends EventComponent implements I
     trigger: Events.MessageCreate;
     readonly permissions: IMessageCommandPermissionsFunction;
     process: IMessageCommandProcessFunction;
+    bypassSmite: boolean;
+    enabled: boolean;
+    exec: IBaseExecFunction;
     constructor(MessageCommandOptions: IMessageCommandComponentOptions);
 }

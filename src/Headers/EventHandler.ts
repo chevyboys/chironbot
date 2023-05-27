@@ -19,9 +19,9 @@ export interface IEventRemoveFunc {
 
 type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 
-export type EventArgument1 = PropType<EventArguments, "arg1">
-export type EventArgument2 = PropType<EventArguments, "arg2">
-export type EventArgument3 = PropType<EventArguments, "arg3">
+export type EventArgument1 = PropType<EventArgumentsAlias, "arg1">
+export type EventArgument2 = PropType<EventArgumentsAlias, "arg2">
+export type EventArgument3 = PropType<EventArgumentsAlias, "arg3">
 
 export type EventArgument_ApplicationCommandPermissionsUpdate = {
     event: Events.ApplicationCommandPermissionsUpdate,

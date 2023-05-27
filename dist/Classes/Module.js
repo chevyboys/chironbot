@@ -1,7 +1,12 @@
-import { Events, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction } from "discord.js";
+import { Events, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction, Guild, User, GuildMember } from "discord.js";
 import { ChironClient } from "./ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
+function smiteLog(triggeringUserId, ModuleName, ComponentType, ComponentName) {
+    const string = `${ModuleName} ${ComponentType} ${ComponentName} did not run because ${triggeringUserId} was hit by a divine smite`;
+    console.log(string);
+    return string;
+}
 /**
  * @classdesc The base class for all modules`
  * @class ChironModule
@@ -61,11 +66,13 @@ export class ChironModule {
  */
 export class BaseComponent {
     enabled;
+    bypassSmite;
     process;
     module;
     guildId;
     exec;
     constructor(BaseComponentOptions) {
+        this.bypassSmite = BaseComponentOptions.bypassSmite || false;
         this.enabled = BaseComponentOptions.enabled;
         this.process = BaseComponentOptions.process;
         this.guildId = BaseComponentOptions.guildId;
@@ -104,11 +111,10 @@ export class BaseInteractionComponent extends BaseComponent {
                 console.log("I'm sorry," + this.name + "is restricted behind a permissions lock");
                 return "I'm sorry, This feature is restricted behind a permissions lock";
             }
-            else if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(interaction.user.id)) {
+            else if (!this.bypassSmite && this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(interaction.user.id)) {
                 if (interaction.isRepliable()) {
                     interaction.reply({ content: "This feature is unavailable to you.", ephemeral: true });
-                    console.log(interaction.user.username + " Was blocked from using " + this.name + " by Smite System");
-                    return interaction.user.username + " Was blocked from using " + this.name + " by Smite System";
+                    return smiteLog(interaction.user.id, this.module.name, "Interaction", this.name);
                 }
                 else
                     return "Nothing to be done";
@@ -131,9 +137,6 @@ export class SlashCommandComponent extends BaseInteractionComponent {
         this.builder = SlashCommandComponentOptions.builder;
     }
 }
-//--------------------------------------------------------------------------
-//------------------- Context Menu Command Component ------------------------------
-// The base for all other Interaction Components
 export class ContextMenuCommandComponent extends BaseInteractionComponent {
     builder; //Contains our name and description
     description;
@@ -146,26 +149,66 @@ export class ContextMenuCommandComponent extends BaseInteractionComponent {
 //--------------------------------------------------------------------------
 //event handler
 export class EventComponent extends BaseComponent {
+    bypassSmite;
     trigger;
     process;
     constructor(EventComponentOptions) {
         super(EventComponentOptions);
         this.trigger = EventComponentOptions.trigger;
+        this.bypassSmite = EventComponentOptions.bypassSmite || false;
         this.process = EventComponentOptions.process;
         this.guildId = EventComponentOptions.guildId;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.exec = (...args) => {
-            const argFinder = Array.isArray(args) ? args : [args];
-            for (const arg of argFinder) {
-                if (arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id) {
-                    const id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
-                    if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
-                        return "Smite System Blocked Event Triggered by " + id;
-                    }
+        this.exec = ([arg1, arg2, arg3]) => {
+            //Handle Guild limiting
+            if (this.guildId) {
+                //Try to find the guild id connected to the event if the event is limited to a specific guild
+                const foundGuildId = (arg1 instanceof Guild) ? arg1.id :
+                    (arg2 instanceof Guild) ? arg2.id :
+                        (arg3 instanceof Guild) ? arg3.id :
+                            arg1 ? (arg1?.guild?.id ||
+                                arg1?.guildId ||
+                                arg1?.first()?.guild.id ||
+                                arg1?.message?.guildId ||
+                                arg1?.first()?.guildMember?.guild.id) :
+                                arg2 ? (arg2?.guildId ||
+                                    arg2?.guild?.id ||
+                                    arg2?.first()?.message.guildId) :
+                                    arg3 ? (arg3?.guild?.id ||
+                                        arg3?.guildId) :
+                                        null;
+                if (!foundGuildId || foundGuildId != this.guildId)
+                    return;
+            }
+            //Find the User ID of the person who triggered the event, and check if they are smited,
+            if (!this.bypassSmite && this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.length > 0) {
+                const triggeringUser = (arg1 instanceof User || arg1 instanceof GuildMember) ? arg1.id :
+                    (arg2 instanceof User || arg2 instanceof GuildMember) ? arg2.id :
+                        (arg3 instanceof User || arg3 instanceof GuildMember) ? arg3.id :
+                            arg1?.member?.id ||
+                                arg1?.user?.id ||
+                                arg1?.creatorId ||
+                                arg1?.recipient?.id ||
+                                arg1?.author?.id ||
+                                arg1?.executor?.id ||
+                                arg1?.user?.id ||
+                                arg1?.creatorId ||
+                                arg1?.inviter?.id ||
+                                arg2?.member?.id ||
+                                arg2?.user?.id ||
+                                arg2?.creatorId ||
+                                arg2?.recipient?.id ||
+                                arg2?.author?.id ||
+                                arg2?.creatorId ||
+                                arg3?.member?.id ||
+                                arg3?.user?.id ||
+                                null;
+                if (triggeringUser && this.module?.client.config.smiteArray.includes(triggeringUser)) {
+                    return smiteLog(triggeringUser, this.module.name, this.trigger, "event");
                 }
             }
             if (this.module?.client instanceof ChironClient)
-                return this.process.apply(null, args);
+                return this.process([arg1, arg2, arg3]);
             else
                 throw new Error("Invalid Client");
         };
@@ -247,8 +290,13 @@ export class MessageCommandComponent extends EventComponent {
     trigger;
     permissions; // a function that receives an interaction and returns if the function is allowed to be executed
     process;
+    bypassSmite = false;
+    enabled = true;
+    exec;
     constructor(MessageCommandOptions) {
         super(MessageCommandOptions);
+        this.bypassSmite = MessageCommandOptions.bypassSmite || false;
+        this.enabled = MessageCommandOptions.enabled || true;
         this.trigger = Events.MessageCreate;
         this.name = MessageCommandOptions.name;
         this.description = MessageCommandOptions.description;
@@ -259,8 +307,9 @@ export class MessageCommandComponent extends EventComponent {
             if (!this.enabled)
                 return "disabled";
             if (this.module?.client && this.module?.client instanceof ChironClient) {
-                if (this.module.client.config.smiteArray.includes(message.author.id))
-                    return "Dissallowed by smite system";
+                if (!this.bypassSmite && this.module.client.config.smiteArray.includes(message.author.id)) {
+                    return smiteLog(message.author.id, this.module.name, this.trigger, this.name);
+                }
                 const parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
                     if (this.module?.client instanceof ChironClient)

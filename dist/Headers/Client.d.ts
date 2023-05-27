@@ -6,6 +6,11 @@ export interface IChironClientOptions extends ClientOptions {
     config: IChironConfig;
     color: HexColorString;
     modulePath: string | Array<string>;
+    /**
+     * the function that will be called when an error occurs. If not provied, a default will be used
+     * it is recommended to not use async functions as error event handlers. See the Node.js docs  for details.
+     * https://nodejs.org/api/events.html#capture-rejections-of-promises
+     */
     errorHandler?: IErrorHandlerFunction;
     parser?: ChironParseFunction;
 }
@@ -13,10 +18,20 @@ export interface IChironClient extends Client {
     config: IChironConfig;
     color: HexColorString;
     modulePath: string | Array<string>;
+    /**
+     * the function that will be called when an error occurs. If not provied, a default will be used
+     * it is recommended to not use async functions as error event handlers. See the Node.js docs  for details.
+     * https://nodejs.org/api/events.html#capture-rejections-of-promises
+     */
     errorHandler?: IErrorHandlerFunction;
     modules: IModuleManager;
     parser: ChironParseFunction;
 }
+/**
+     * the function that will be called when an error occurs. If not provied, a default will be used
+     * it is recommended to not use async functions as error event handlers. See the Node.js docs  for details.
+     * https://nodejs.org/api/events.html#capture-rejections-of-promises
+     */
 export interface IErrorHandlerFunction {
     (error: Error, msg: Message | Interaction | string): unknown;
 }
