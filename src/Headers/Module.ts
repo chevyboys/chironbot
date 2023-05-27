@@ -2,6 +2,7 @@
 
 import { Client, CommandInteraction, ContextMenuCommandBuilder, Events, Interaction, Message, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder, Snowflake } from "discord.js";
 import * as Schedule from "node-schedule";
+import { EventArgument1, EventArgument2, EventArgument3 } from "./EventHandler";
 
 export interface IChironModuleOptions {
     readonly name?: string
@@ -28,10 +29,12 @@ export interface IBaseComponentOptions {
     readonly enabled: boolean
     readonly process: IBaseProcessFunction
     readonly guildId?: Snowflake | Array<Snowflake>;
+    readonly bypassSmite?: boolean;
     module?: IChironModule
 }
 
 export interface IBaseComponent {
+    readonly bypassSmite: boolean;
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
     readonly guildId?: Snowflake | Array<Snowflake>;
@@ -125,7 +128,7 @@ export interface IEventComponent extends IBaseComponent {
 
 
 export interface IEventProcessFunction {
-    (arg1?: any, arg2?: any, arg3?: any): any
+    (args: [EventArgument1, EventArgument2, EventArgument3]): any
 }
 
 
