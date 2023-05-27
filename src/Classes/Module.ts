@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message, ChatInputCommandInteraction, CacheType, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction } from "discord.js";
+import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message, ChatInputCommandInteraction, CacheType, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction, Snowflake } from "discord.js";
 import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleOnLoadComponent, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 import path from "path"
@@ -31,7 +31,7 @@ import { fileURLToPath } from "url";
  * ]
  * })
  * 
- * @
+ *
  */
 export class ChironModule implements IChironModule {
     /**
@@ -65,15 +65,20 @@ export class ChironModule implements IChironModule {
 
 //------------------- Base Component ------------------------------
 // All components are derived from this
+/**
+ * @classdesc The base class for all components
+ */
 export class BaseComponent implements IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
     module?: IChironModule;
+    guildId: Snowflake | Array<Snowflake>;
     exec: IBaseExecFunction;
 
     constructor(BaseComponentOptions: IBaseComponentOptions) {
-        this.enabled = BaseComponentOptions.enabled
-        this.process = BaseComponentOptions.process
+        this.enabled = BaseComponentOptions.enabled;
+        this.process = BaseComponentOptions.process;
+        this.guildId = BaseComponentOptions.guildId;
         if (BaseComponentOptions.module)
             this.module = BaseComponentOptions.module;
         this.exec = this.process
@@ -92,7 +97,7 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">  //Contains our name and description, and is the builder for our interaction;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
-    guildId?: string | undefined;
+    guildId: Snowflake | Array<Snowflake>;
 
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption) {
         super(BaseInteractionComponentOptions)
@@ -101,14 +106,14 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
         this.description = "";
         this.builder = BaseInteractionComponentOptions.builder;
         this.category = BaseInteractionComponentOptions.category || this.module?.file || "General";
-        this.guildId = BaseInteractionComponentOptions.guildId
+        this.guildId = BaseInteractionComponentOptions.guildId;
         this.permissions = BaseInteractionComponentOptions.permissions;
         this.exec = (interaction: Interaction) => {
             if (!interaction.isCommand() || interaction.commandName != this.name) return;
             if (this.guildId && !interaction.commandGuildId || interaction.commandGuildId != this.guildId) return;
             if (!this.enabled || !this.permissions(interaction)) {
                 if (interaction.isRepliable()) interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
-                console.log("I'm sorry, This feature is restricted behind a permissions lock");
+                console.log("I'm sorry," + this.name + "is restricted behind a permissions lock");
                 return "I'm sorry, This feature is restricted behind a permissions lock"
             }
             else if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(interaction.user.id)) {
@@ -166,6 +171,7 @@ export class EventComponent extends BaseComponent implements IEventComponent {
         super(EventComponentOptions)
         this.trigger = EventComponentOptions.trigger;
         this.process = EventComponentOptions.process;
+        this.guildId = EventComponentOptions.guildId;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.exec = (...args: any) => {
             const argFinder = Array.isArray(args) ? args : [args];
