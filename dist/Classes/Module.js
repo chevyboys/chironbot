@@ -26,7 +26,7 @@ import { fileURLToPath } from "url";
  * ]
  * })
  *
- * @
+ *
  */
 export class ChironModule {
     /**
@@ -56,14 +56,19 @@ export class ChironModule {
  */
 //------------------- Base Component ------------------------------
 // All components are derived from this
+/**
+ * @classdesc The base class for all components
+ */
 export class BaseComponent {
     enabled;
     process;
     module;
+    guildId;
     exec;
     constructor(BaseComponentOptions) {
         this.enabled = BaseComponentOptions.enabled;
         this.process = BaseComponentOptions.process;
+        this.guildId = BaseComponentOptions.guildId;
         if (BaseComponentOptions.module)
             this.module = BaseComponentOptions.module;
         this.exec = this.process;
@@ -96,7 +101,7 @@ export class BaseInteractionComponent extends BaseComponent {
             if (!this.enabled || !this.permissions(interaction)) {
                 if (interaction.isRepliable())
                     interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
-                console.log("I'm sorry, This feature is restricted behind a permissions lock");
+                console.log("I'm sorry," + this.name + "is restricted behind a permissions lock");
                 return "I'm sorry, This feature is restricted behind a permissions lock";
             }
             else if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(interaction.user.id)) {
@@ -147,6 +152,7 @@ export class EventComponent extends BaseComponent {
         super(EventComponentOptions);
         this.trigger = EventComponentOptions.trigger;
         this.process = EventComponentOptions.process;
+        this.guildId = EventComponentOptions.guildId;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.exec = (...args) => {
             const argFinder = Array.isArray(args) ? args : [args];

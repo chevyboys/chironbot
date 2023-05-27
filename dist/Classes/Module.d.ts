@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ContextMenuCommandBuilder, Events } from "discord.js";
+import { SlashCommandBuilder, ContextMenuCommandBuilder, Events, Snowflake } from "discord.js";
 import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleOnLoadComponent, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 import * as Schedule from 'node-schedule';
@@ -26,7 +26,7 @@ import * as Schedule from 'node-schedule';
  * ]
  * })
  *
- * @
+ *
  */
 export declare class ChironModule implements IChironModule {
     /**
@@ -39,10 +39,14 @@ export declare class ChironModule implements IChironModule {
     readonly file?: string;
     constructor(ModuleOptions: IChironModuleOptions);
 }
+/**
+ * @classdesc The base class for all components
+ */
 export declare class BaseComponent implements IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
     module?: IChironModule;
+    guildId?: Snowflake | Array<Snowflake>;
     exec: IBaseExecFunction;
     constructor(BaseComponentOptions: IBaseComponentOptions);
 }
@@ -52,7 +56,7 @@ export declare class BaseInteractionComponent extends BaseComponent implements I
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
-    guildId?: string | undefined;
+    guildId?: Snowflake | Array<Snowflake>;
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption);
 }
 export declare class SlashCommandComponent extends BaseInteractionComponent implements ISlashCommandComponent {

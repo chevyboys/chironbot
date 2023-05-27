@@ -72,7 +72,7 @@ export class BaseComponent implements IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
     module?: IChironModule;
-    guildId: Snowflake | Array<Snowflake>;
+    guildId?: Snowflake | Array<Snowflake>;
     exec: IBaseExecFunction;
 
     constructor(BaseComponentOptions: IBaseComponentOptions) {
@@ -97,7 +97,7 @@ export class BaseInteractionComponent extends BaseComponent implements IBaseInte
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">  //Contains our name and description, and is the builder for our interaction;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
-    guildId: Snowflake | Array<Snowflake>;
+    guildId?: Snowflake | Array<Snowflake>;
 
     constructor(BaseInteractionComponentOptions: IBaseInteractionComponentOption) {
         super(BaseInteractionComponentOptions)

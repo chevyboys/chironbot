@@ -15,11 +15,13 @@ export interface IChironModule {
 export interface IBaseComponentOptions {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
+    readonly guildId?: Snowflake | Array<Snowflake>;
     module?: IChironModule;
 }
 export interface IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
+    readonly guildId?: Snowflake | Array<Snowflake>;
     module?: IChironModule;
     exec: IBaseExecFunction;
 }
@@ -33,9 +35,9 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     readonly description?: string;
     readonly category: string;
+    readonly guildId?: Snowflake | Array<Snowflake>;
     readonly permissions: IInteractionPermissionsFunction;
     readonly process: IInteractionProcessFunction;
-    guildId?: Snowflake;
 }
 export interface IBaseInteractionComponent extends IBaseComponent {
     readonly name: string;
@@ -43,7 +45,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction;
-    guildId?: Snowflake;
+    readonly guildId?: Snowflake | Array<Snowflake>;
     process: IInteractionProcessFunction;
 }
 export interface IInteractionPermissionsFunction {
