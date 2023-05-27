@@ -7,12 +7,41 @@ import * as Schedule from 'node-schedule';
 import { fileURLToPath } from "url";
 
 
-
+/**
+ * @classdesc The base class for all modules`
+ * @class ChironModule 
+ * @implements {IChironModule}
+ * @param {IChironModuleOptions} ModuleOptions - The options for the module
+ * @param {string} ModuleOptions.name - The name of the module. It *MUST* be unique.
+ * @param {Array<IBaseComponent>} ModuleOptions.components - The components of the module
+ * @param {ChironClient} [ModuleOptions.client] - The client of the module
+ * @param {string} [ModuleOptions.file] - The file the module is located in
+ * @example
+ *  import { ChironModule } from "chironbot"
+ *  export default const module = new ChironModule({
+ *    name: "Example Module",
+ *    components: [
+ *       new SlashCommandComponent({
+ *          builder: new SlashCommandBuilder().setName("ping").setDescription("Pong!"),
+ *          enabled: true,
+ *          process: (interaction) => {
+ *             interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
+ *         }
+ *    })
+ * ]
+ * })
+ * 
+ * @
+ */
 export class ChironModule implements IChironModule {
-    name: string;
-    components: Array<IBaseComponent>;
-    client?: ChironClient;
-    file?: string
+    /**
+     * The name of the module. Used for logging and debugging, and for tracking registered modules
+     * @name ChironModule#name
+     */
+    public readonly name: string;
+    public readonly components: Array<IBaseComponent>;
+    public readonly client?: ChironClient;
+    public readonly file?: string
 
     constructor(ModuleOptions: IChironModuleOptions) {
         const __filename = fileURLToPath(import.meta.url);

@@ -2,7 +2,37 @@ import { Events, ChatInputCommandInteraction, MessageContextMenuCommandInteracti
 import { ChironClient } from "./ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
+/**
+ * @classdesc The base class for all modules`
+ * @class ChironModule
+ * @implements {IChironModule}
+ * @param {IChironModuleOptions} ModuleOptions - The options for the module
+ * @param {string} ModuleOptions.name - The name of the module. It *MUST* be unique.
+ * @param {Array<IBaseComponent>} ModuleOptions.components - The components of the module
+ * @param {ChironClient} [ModuleOptions.client] - The client of the module
+ * @param {string} [ModuleOptions.file] - The file the module is located in
+ * @example
+ *  import { ChironModule } from "chironbot"
+ *  export default const module = new ChironModule({
+ *    name: "Example Module",
+ *    components: [
+ *       new SlashCommandComponent({
+ *          builder: new SlashCommandBuilder().setName("ping").setDescription("Pong!"),
+ *          enabled: true,
+ *          process: (interaction) => {
+ *             interaction.isRepliable() ? interaction.reply("Pong!") : console.error("could not reply");
+ *         }
+ *    })
+ * ]
+ * })
+ *
+ * @
+ */
 export class ChironModule {
+    /**
+     * The name of the module. Used for logging and debugging, and for tracking registered modules
+     * @name ChironModule#name
+     */
     name;
     components;
     client;
@@ -141,6 +171,7 @@ export class MessageComponentInteractionComponent extends EventComponent {
     customId;
     process;
     permissions;
+    trigger = Events.InteractionCreate;
     constructor(MessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions);
         this.permissions = MessageComponentInteractionComponentOptions.permissions || (() => true);
@@ -207,6 +238,7 @@ export class MessageCommandComponent extends EventComponent {
     name;
     description;
     category;
+    trigger;
     permissions; // a function that receives an interaction and returns if the function is allowed to be executed
     process;
     constructor(MessageCommandOptions) {
