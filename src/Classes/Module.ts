@@ -60,7 +60,7 @@ export class BaseComponent implements IBaseComponent {
 export class BaseInteractionComponent extends BaseComponent implements IBaseInteractionComponent {
     readonly name: string; //derived from the builder
     description: string; //derived from the builder if not directly defined
-    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">|Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">  //Contains our name and description, and is the builder for our interaction;
+    readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">  //Contains our name and description, and is the builder for our interaction;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
     guildId?: string | undefined;
@@ -163,7 +163,8 @@ export class EventComponent extends BaseComponent implements IEventComponent {
 export class MessageComponentInteractionComponent extends EventComponent implements IMessageComponentInteractionComponent {
     customId: customIdFunction;
     process: IInteractionProcessFunction;
-    permissions: IInteractionPermissionsFunction
+    permissions: IInteractionPermissionsFunction;
+    trigger = Events.InteractionCreate;
     constructor(MessageComponentInteractionComponentOptions: IMessageComponentInteractionComponentOptions) {
         super(MessageComponentInteractionComponentOptions)
         this.permissions = MessageComponentInteractionComponentOptions.permissions || (() => true);
@@ -177,7 +178,7 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
             }
         }
         this.exec = (interaction: Interaction) => {
-            if(!(this.module?.client instanceof ChironClient)) throw new Error("Invalid Client");
+            if (!(this.module?.client instanceof ChironClient)) throw new Error("Invalid Client");
             if (!(interaction instanceof ChatInputCommandInteraction<CacheType> ||
                 interaction instanceof MessageContextMenuCommandInteraction<CacheType> ||
                 interaction instanceof UserContextMenuCommandInteraction<CacheType> ||
@@ -194,7 +195,7 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
                         interaction.reply({ content: "You are not authorized to do that", ephemeral: true })
                     }
                 }
-                    return this.process(interaction)
+                return this.process(interaction)
             }
 
         }
@@ -239,6 +240,7 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
     readonly name: string;
     readonly description: string;
     readonly category: string;
+    trigger: Events.MessageCreate;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
     process: IMessageCommandProcessFunction;
     constructor(MessageCommandOptions: IMessageCommandComponentOptions) {
