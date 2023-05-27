@@ -344,8 +344,13 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
     trigger: Events.MessageCreate;
     readonly permissions: IMessageCommandPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
     process: IMessageCommandProcessFunction;
+    bypassSmite = false;
+    enabled = true;
+    exec: IBaseExecFunction;
     constructor(MessageCommandOptions: IMessageCommandComponentOptions) {
         super(MessageCommandOptions)
+        this.bypassSmite = MessageCommandOptions.bypassSmite || false;
+        this.enabled = MessageCommandOptions.enabled || true;
         this.trigger = Events.MessageCreate;
         this.name = MessageCommandOptions.name;
         this.description = MessageCommandOptions.description;
@@ -369,5 +374,6 @@ export class MessageCommandComponent extends EventComponent implements IMessageC
             else throw new Error("No Client found. Make sure your Client.modules.register() is after Client.login()");
         }
     }
+
 
 }
