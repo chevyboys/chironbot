@@ -27,14 +27,14 @@ export interface IChironModule {
 export interface IBaseComponentOptions {
     readonly enabled: boolean
     readonly process: IBaseProcessFunction
-    readonly guildId: Snowflake | Array<Snowflake>;
+    readonly guildId?: Snowflake | Array<Snowflake>;
     module?: IChironModule
 }
 
 export interface IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
-    readonly guildId: Snowflake | Array<Snowflake>;
+    readonly guildId?: Snowflake | Array<Snowflake>;
     module?: IChironModule;
     exec: IBaseExecFunction; //added by the component manager
 }
@@ -57,7 +57,7 @@ export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">   //Contains our name and description, and is the builder for our interaction
     readonly description?: string
     readonly category: string
-    readonly guildId: Snowflake | Array<Snowflake>; //only set if you want to restrict the component's process function to a single guild
+    readonly guildId?: Snowflake | Array<Snowflake>; //only set if you want to restrict the component's process function to a single guild
     readonly permissions: IInteractionPermissionsFunction //A function that receives an interaction object, and returns if the interaction user can do it
     readonly process: IInteractionProcessFunction;
 }
@@ -68,7 +68,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
     readonly category: string;
     readonly permissions: IInteractionPermissionsFunction // a function that receives an interaction and returns if the function is allowed to be executed
-    guildId: Snowflake | Array<Snowflake>; //only set if it's a guild application command
+    readonly guildId?: Snowflake | Array<Snowflake>; //only set if it's a guild application command
     process: IInteractionProcessFunction;
 }
 
