@@ -102,12 +102,12 @@ export class BaseInteractionComponent extends BaseComponent {
         this.category = BaseInteractionComponentOptions.category || this.module?.file || "General";
         this.guildId = BaseInteractionComponentOptions.guildId;
         this.permissions = BaseInteractionComponentOptions.permissions;
-        this.exec = (interaction) => {
+        this.exec = async (interaction) => {
             if (!interaction.isCommand() || interaction.commandName != this.name)
                 return;
             if (this.guildId && !interaction.commandGuildId || interaction.commandGuildId != this.guildId)
                 return;
-            if (!this.enabled || !this.permissions(interaction)) {
+            if (!this.enabled || !(await this.permissions(interaction))) {
                 if (interaction.isRepliable())
                     interaction.reply({ content: "I'm sorry, but you aren't allowed to do that.", ephemeral: true });
                 console.log("I'm sorry," + this.name + "is restricted behind a permissions lock");
@@ -236,7 +236,7 @@ export class MessageComponentInteractionComponent extends EventComponent {
                 return string == MessageComponentInteractionComponentOptions.customId;
             }
         };
-        this.exec = (interaction) => {
+        this.exec = async (interaction) => {
             if (!(this.module?.client instanceof ChironClient))
                 throw new Error("Invalid Client");
             if (!(interaction instanceof ChatInputCommandInteraction ||
@@ -251,8 +251,9 @@ export class MessageComponentInteractionComponent extends EventComponent {
                         interaction.reply({ ephemeral: true, content: "I'm sorry, I can't do that for you. (Response code SM173)" });
                         return "Smite System Blocked Event Triggered by " + id;
                     }
-                    if (!this.permissions(interaction)) {
+                    if (!(await this.permissions(interaction))) {
                         interaction.reply({ content: "You are not authorized to do that", ephemeral: true });
+                        return "User " + id + " was not authorized to trigger event " + this.trigger;
                     }
                 }
                 return this.process(interaction);
@@ -305,7 +306,7 @@ export class MessageCommandComponent extends EventComponent {
         this.category = MessageCommandOptions.category || path.basename(__filename);
         this.permissions = MessageCommandOptions.permissions;
         this.process = MessageCommandOptions.process;
-        this.exec = (message) => {
+        this.exec = async (message) => {
             if (!this.enabled)
                 return "disabled";
             if (this.module?.client && this.module?.client instanceof ChironClient) {
@@ -315,7 +316,7 @@ export class MessageCommandComponent extends EventComponent {
                 const parsed = this.module.client.parser(message, this.module.client);
                 if (parsed && parsed.command == this.name) {
                     if (this.module?.client instanceof ChironClient)
-                        return this.process(message, parsed.suffix);
+                        return await this.process(message, parsed.suffix);
                     else
                         throw new Error("Invalid Client");
                 }

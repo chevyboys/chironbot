@@ -53,7 +53,7 @@ export interface IBaseInteractionComponent extends IBaseComponent {
     process: IInteractionProcessFunction;
 }
 export interface IInteractionPermissionsFunction {
-    (interaction: Interaction): boolean;
+    (interaction: Interaction): boolean | Promise<boolean>;
 }
 export interface IInteractionProcessFunction extends IEventProcessFunction {
     (interaction: Interaction): any;
