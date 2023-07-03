@@ -95,9 +95,10 @@ export interface ISlashCommandComponentOptions extends IBaseInteractionComponent
 
 export interface ISlashCommandComponent extends IBaseInteractionComponent {
     readonly builder: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
+    readonly process: ISlashCommandInteractionProcessFunction;
 }
 
-export interface ISlashCommandInteractionProcessFunction {
+export interface ISlashCommandInteractionProcessFunction extends IInteractionProcessFunction {
     (interaction: CommandInteraction): any
 }
 
