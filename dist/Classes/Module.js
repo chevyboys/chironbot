@@ -71,7 +71,9 @@ export class BaseComponent {
     module;
     guildId;
     exec;
+    feature;
     constructor(BaseComponentOptions) {
+        this.feature = BaseComponentOptions.feature;
         this.bypassSmite = BaseComponentOptions.bypassSmite || false;
         this.enabled = BaseComponentOptions.enabled;
         this.process = BaseComponentOptions.process;
@@ -237,10 +239,10 @@ export class MessageComponentInteractionComponent extends EventComponent {
         this.exec = (interaction) => {
             if (!(this.module?.client instanceof ChironClient))
                 throw new Error("Invalid Client");
-            if (!(interaction instanceof (ChatInputCommandInteraction) ||
-                interaction instanceof (MessageContextMenuCommandInteraction) ||
-                interaction instanceof (UserContextMenuCommandInteraction) ||
-                interaction instanceof (AutocompleteInteraction))) {
+            if (!(interaction instanceof ChatInputCommandInteraction ||
+                interaction instanceof MessageContextMenuCommandInteraction ||
+                interaction instanceof UserContextMenuCommandInteraction ||
+                interaction instanceof AutocompleteInteraction)) {
                 if (!this.customId(interaction.customId))
                     return;
                 const id = interaction?.member?.user.id || interaction?.user?.id;

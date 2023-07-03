@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message, ChatInputCommandInteraction, CacheType, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction, Snowflake, Guild, DMChannel, User, Collection, GuildMember, GuildAuditLogsEntry, MessageReaction, ThreadMember, AutoModerationRule, GuildBan, GuildScheduledEvent, Invite } from "discord.js";
+import { SlashCommandBuilder, ContextMenuCommandBuilder, Interaction, Events, Message, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction, Snowflake, Guild, DMChannel, User, Collection, GuildMember, GuildAuditLogsEntry, MessageReaction, ThreadMember, AutoModerationRule, GuildBan, GuildScheduledEvent, Invite } from "discord.js";
 import { customIdFunction, IBaseComponent, IBaseComponentOptions, IBaseExecFunction, IBaseInteractionComponent, IBaseInteractionComponentOption, IBaseProcessFunction, IChironModule, IChironModuleOptions, IScheduleComponent, IContextMenuCommandComponent, IContextMenuCommandComponentOptions, IEventComponent, IEventComponentOptions, IEventProcessFunction, IInteractionPermissionsFunction, IInteractionProcessFunction, IMessageCommandComponent, IMessageCommandComponentOptions, IMessageCommandPermissionsFunction, IMessageCommandProcessFunction, IMessageComponentInteractionComponent, IMessageComponentInteractionComponentOptions, IModuleOnLoadComponent, ISlashCommandComponent, ISlashCommandComponentOptions, IScheduleComponentOptions } from "../Headers/Module";
 import { ChironClient } from "./ChironClient";
 import path from "path"
@@ -83,8 +83,10 @@ export class BaseComponent implements IBaseComponent {
     module?: IChironModule;
     guildId?: Snowflake | Array<Snowflake>;
     exec: IBaseExecFunction;
+    feature?: string;
 
     constructor(BaseComponentOptions: IBaseComponentOptions) {
+        this.feature = BaseComponentOptions.feature;
         this.bypassSmite = BaseComponentOptions.bypassSmite || false;
         this.enabled = BaseComponentOptions.enabled;
         this.process = BaseComponentOptions.process;
@@ -280,10 +282,10 @@ export class MessageComponentInteractionComponent extends EventComponent impleme
         }
         this.exec = (interaction: Interaction) => {
             if (!(this.module?.client instanceof ChironClient)) throw new Error("Invalid Client");
-            if (!(interaction instanceof ChatInputCommandInteraction<CacheType> ||
-                interaction instanceof MessageContextMenuCommandInteraction<CacheType> ||
-                interaction instanceof UserContextMenuCommandInteraction<CacheType> ||
-                interaction instanceof AutocompleteInteraction<CacheType>
+            if (!(interaction instanceof ChatInputCommandInteraction ||
+                interaction instanceof MessageContextMenuCommandInteraction ||
+                interaction instanceof UserContextMenuCommandInteraction ||
+                interaction instanceof AutocompleteInteraction
             )) {
                 if (!this.customId(interaction.customId)) return;
                 const id = interaction?.member?.user.id || interaction?.user?.id;

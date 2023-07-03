@@ -31,6 +31,7 @@ export interface IBaseComponentOptions {
     readonly guildId?: Snowflake | Array<Snowflake>;
     readonly bypassSmite?: boolean;
     module?: IChironModule
+    feature?: string;
 }
 
 export interface IBaseComponent {

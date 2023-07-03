@@ -49,6 +49,7 @@ export declare class BaseComponent implements IBaseComponent {
     module?: IChironModule;
     guildId?: Snowflake | Array<Snowflake>;
     exec: IBaseExecFunction;
+    feature?: string;
     constructor(BaseComponentOptions: IBaseComponentOptions);
 }
 export declare class BaseInteractionComponent extends BaseComponent implements IBaseInteractionComponent {
