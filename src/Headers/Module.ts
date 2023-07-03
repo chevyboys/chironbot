@@ -39,6 +39,7 @@ export interface IBaseComponent {
     readonly enabled: boolean;
     readonly process: IBaseProcessFunction;
     readonly guildId?: Snowflake | Array<Snowflake>;
+    readonly feature?: string;
     module?: IChironModule;
     exec: IBaseExecFunction; //added by the component manager
 }
