@@ -14,4 +14,4 @@ export interface IModuleManager extends Collection<string, IChironModule> {
 export interface IModuleManagerRegisterFunction {
     (registerable?: IModuleManagerRegisterable): Promise<Collection<string, object>>;
 }
-export type IModuleManagerRegisterable = Array<IChironModule> | IChironModule | string | Array<string> | null;
+export declare type IModuleManagerRegisterable = Array<IChironModule> | IChironModule | string | Array<string> | null;

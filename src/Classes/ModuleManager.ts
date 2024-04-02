@@ -51,10 +51,11 @@ async function registerInteractions(client: IChironClient, ApplicationAndContext
 
             return commandData;
         } catch (error) {
-            if(error?.toString().indexOf("503 Service Unavailable")){
-                throw new Error("Discord error: Could not register commands");
+            const errorMessage = "Discord error: Could not register commands";
+            if (error instanceof Error && error?.toString().indexOf("503 Service Unavailable")) {
+                throw new Error(errorMessage);
             }
-            else throw error
+            else throw error;
         }
     }
 }

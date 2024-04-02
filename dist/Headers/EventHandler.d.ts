@@ -11,11 +11,11 @@ export interface IEventAddFunc {
 export interface IEventRemoveFunc {
     (Component: IEventComponent, EventOverride?: Events): object | void;
 }
-type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
-export type EventArgument1 = PropType<EventArgumentsAlias, "arg1">;
-export type EventArgument2 = PropType<EventArgumentsAlias, "arg2">;
-export type EventArgument3 = PropType<EventArgumentsAlias, "arg3">;
-export type EventArgument_ApplicationCommandPermissionsUpdate = {
+declare type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
+export declare type EventArgument1 = PropType<EventArgumentsAlias, "arg1">;
+export declare type EventArgument2 = PropType<EventArgumentsAlias, "arg2">;
+export declare type EventArgument3 = PropType<EventArgumentsAlias, "arg3">;
+export declare type EventArgument_ApplicationCommandPermissionsUpdate = {
     event: Events.ApplicationCommandPermissionsUpdate;
     /**
      * the updated permissions
@@ -24,7 +24,7 @@ export type EventArgument_ApplicationCommandPermissionsUpdate = {
     arg2: null;
     arg3: null | undefined;
 };
-export type EventArgument_AutoModerationActionExecution = {
+export declare type EventArgument_AutoModerationActionExecution = {
     event: Events.AutoModerationActionExecution;
     /**
      * the data of the execution
@@ -33,7 +33,7 @@ export type EventArgument_AutoModerationActionExecution = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_AutoModerationRuleCreate = {
+export declare type EventArgument_AutoModerationRuleCreate = {
     event: Events.AutoModerationRuleCreate;
     /**
      * the rule that was created
@@ -42,7 +42,7 @@ export type EventArgument_AutoModerationRuleCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_AutoModerationRuleDelete = {
+export declare type EventArgument_AutoModerationRuleDelete = {
     event: Events.AutoModerationRuleDelete;
     /**
      * the rule that was deleted
@@ -51,7 +51,7 @@ export type EventArgument_AutoModerationRuleDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_AutoModerationRuleUpdate = {
+export declare type EventArgument_AutoModerationRuleUpdate = {
     event: Events.AutoModerationRuleUpdate;
     /**
      * the old version of the rule that was updated
@@ -63,7 +63,7 @@ export type EventArgument_AutoModerationRuleUpdate = {
     arg2: AutoModerationRule;
     arg3: null | undefined;
 };
-export type EventArgument_ChannelCreate = {
+export declare type EventArgument_ChannelCreate = {
     event: Events.ChannelCreate;
     /**
      * the channel that was created
@@ -72,7 +72,7 @@ export type EventArgument_ChannelCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_ChannelDelete = {
+export declare type EventArgument_ChannelDelete = {
     event: Events.ChannelDelete;
     /**
      * the channel that was deleted
@@ -81,7 +81,7 @@ export type EventArgument_ChannelDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_ChannelPinsUpdate = {
+export declare type EventArgument_ChannelPinsUpdate = {
     event: Events.ChannelPinsUpdate;
     /**
      * the channel that the pins were updated in
@@ -93,7 +93,7 @@ export type EventArgument_ChannelPinsUpdate = {
     arg2: Date;
     arg3: null | undefined;
 };
-export type EventArgument_ChannelUpdate = {
+export declare type EventArgument_ChannelUpdate = {
     event: Events.ChannelUpdate;
     /**
      * the old version of the channel that was updated
@@ -105,7 +105,7 @@ export type EventArgument_ChannelUpdate = {
     arg2: GuildChannel | DMChannel;
     arg3: null | undefined;
 };
-export type EventArgument_Debug = {
+export declare type EventArgument_Debug = {
     event: Events.Debug;
     /**
      * the debug info
@@ -114,7 +114,7 @@ export type EventArgument_Debug = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildEmojiCreate = {
+export declare type EventArgument_GuildEmojiCreate = {
     event: Events.GuildEmojiCreate;
     /**
      * the emoji that was created
@@ -123,7 +123,7 @@ export type EventArgument_GuildEmojiCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildEmojiDelete = {
+export declare type EventArgument_GuildEmojiDelete = {
     event: Events.GuildEmojiDelete;
     /**
      * the emoji that was deleted
@@ -132,7 +132,7 @@ export type EventArgument_GuildEmojiDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildEmojiUpdate = {
+export declare type EventArgument_GuildEmojiUpdate = {
     event: Events.GuildEmojiUpdate;
     /**
      * the old version of the emoji that was updated
@@ -144,7 +144,7 @@ export type EventArgument_GuildEmojiUpdate = {
     arg2: GuildEmoji;
     arg3: null | undefined;
 };
-export type EventArgument_Error = {
+export declare type EventArgument_Error = {
     event: Events.Error;
     /**
      * the error that was thrown
@@ -155,7 +155,7 @@ export type EventArgument_Error = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildAuditLogEntryCreate = {
+export declare type EventArgument_GuildAuditLogEntryCreate = {
     event: Events.GuildAuditLogEntryCreate;
     /**
      * the entry that was created
@@ -164,7 +164,7 @@ export type EventArgument_GuildAuditLogEntryCreate = {
     arg2: Guild;
     arg3: null | undefined;
 };
-export type EventArgument_GuildBanAdd = {
+export declare type EventArgument_GuildBanAdd = {
     event: Events.GuildBanAdd;
     /**
      * The ban that occurred
@@ -173,7 +173,7 @@ export type EventArgument_GuildBanAdd = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildBanRemove = {
+export declare type EventArgument_GuildBanRemove = {
     event: Events.GuildBanRemove;
     /**
      * The ban that was removed
@@ -182,7 +182,7 @@ export type EventArgument_GuildBanRemove = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildCreate = {
+export declare type EventArgument_GuildCreate = {
     event: Events.GuildCreate;
     /**
      * the guild that was created
@@ -191,7 +191,7 @@ export type EventArgument_GuildCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildDelete = {
+export declare type EventArgument_GuildDelete = {
     event: Events.GuildDelete;
     /**
      * the guild that was deleted
@@ -200,7 +200,7 @@ export type EventArgument_GuildDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildIntegrationsUpdate = {
+export declare type EventArgument_GuildIntegrationsUpdate = {
     event: Events.GuildIntegrationsUpdate;
     /**
      * the guild that the integrations were updated in
@@ -209,7 +209,7 @@ export type EventArgument_GuildIntegrationsUpdate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildMemberAdd = {
+export declare type EventArgument_GuildMemberAdd = {
     event: Events.GuildMemberAdd;
     /**
      * the member that joined a guild
@@ -218,7 +218,7 @@ export type EventArgument_GuildMemberAdd = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildMemberAvailable = {
+export declare type EventArgument_GuildMemberAvailable = {
     event: Events.GuildMemberAvailable;
     /**
      * the member that became available
@@ -227,7 +227,7 @@ export type EventArgument_GuildMemberAvailable = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildMemberRemove = {
+export declare type EventArgument_GuildMemberRemove = {
     event: Events.GuildMemberRemove;
     /**
      * the member that left a guild
@@ -236,7 +236,7 @@ export type EventArgument_GuildMemberRemove = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildMembersChunk = {
+export declare type EventArgument_GuildMembersChunk = {
     event: Events.GuildMembersChunk;
     /**
      * the members in the chunk
@@ -251,7 +251,7 @@ export type EventArgument_GuildMembersChunk = {
      */
     arg3: object;
 };
-export type EventArgument_GuildMemberUpdate = {
+export declare type EventArgument_GuildMemberUpdate = {
     event: Events.GuildMemberUpdate;
     /**
      *  the old version of the member that was updated
@@ -263,7 +263,7 @@ export type EventArgument_GuildMemberUpdate = {
     arg2: GuildMember;
     arg3: null | undefined;
 };
-export type EventArgument_GuildScheduledEventCreate = {
+export declare type EventArgument_GuildScheduledEventCreate = {
     event: Events.GuildScheduledEventCreate;
     /**
      * the event that was created
@@ -272,7 +272,7 @@ export type EventArgument_GuildScheduledEventCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildScheduledEventDelete = {
+export declare type EventArgument_GuildScheduledEventDelete = {
     event: Events.GuildScheduledEventDelete;
     /**
      * the event that was deleted
@@ -281,7 +281,7 @@ export type EventArgument_GuildScheduledEventDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildScheduledEventUpdate = {
+export declare type EventArgument_GuildScheduledEventUpdate = {
     event: Events.GuildScheduledEventUpdate;
     /**
      * the old version of the event that was updated
@@ -293,7 +293,7 @@ export type EventArgument_GuildScheduledEventUpdate = {
     arg2: GuildScheduledEvent;
     arg3: null | undefined;
 };
-export type EventArgument_GuildScheduledEventUserAdd = {
+export declare type EventArgument_GuildScheduledEventUserAdd = {
     event: Events.GuildScheduledEventUserAdd;
     /**
      * the event that the user was added to
@@ -305,7 +305,7 @@ export type EventArgument_GuildScheduledEventUserAdd = {
     arg2: User;
     arg3: null | undefined;
 };
-export type EventArgument_GuildScheduledEventUserRemove = {
+export declare type EventArgument_GuildScheduledEventUserRemove = {
     event: Events.GuildScheduledEventUserRemove;
     /**
      *  the event that the user was removed from
@@ -317,7 +317,7 @@ export type EventArgument_GuildScheduledEventUserRemove = {
     arg2: User;
     arg3: null | undefined;
 };
-export type EventArgument_GuildUnavailable = {
+export declare type EventArgument_GuildUnavailable = {
     event: Events.GuildUnavailable;
     /**
      *  the guild that is unavailable
@@ -326,7 +326,7 @@ export type EventArgument_GuildUnavailable = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildUpdate = {
+export declare type EventArgument_GuildUpdate = {
     event: Events.GuildUpdate;
     /**
      * the old version of the guild that was updated
@@ -338,7 +338,7 @@ export type EventArgument_GuildUpdate = {
     arg2: Guild;
     arg3: null | undefined;
 };
-export type EventArgument_InteractionCreate = {
+export declare type EventArgument_InteractionCreate = {
     event: Events.InteractionCreate;
     /**
      * the interaction that was created
@@ -347,7 +347,7 @@ export type EventArgument_InteractionCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_InviteCreate = {
+export declare type EventArgument_InviteCreate = {
     event: Events.InviteCreate;
     /**
      * the invite that was created
@@ -356,7 +356,7 @@ export type EventArgument_InviteCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_InviteDelete = {
+export declare type EventArgument_InviteDelete = {
     event: Events.InviteDelete;
     /**
      * the invite that was deleted
@@ -365,7 +365,7 @@ export type EventArgument_InviteDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_MessageCreate = {
+export declare type EventArgument_MessageCreate = {
     event: Events.MessageCreate;
     /**
      * the message that was created
@@ -374,7 +374,7 @@ export type EventArgument_MessageCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_MessageDelete = {
+export declare type EventArgument_MessageDelete = {
     event: Events.MessageDelete;
     /**
      * the message that was deleted
@@ -383,7 +383,7 @@ export type EventArgument_MessageDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_MessageBulkDelete = {
+export declare type EventArgument_MessageBulkDelete = {
     event: Events.MessageBulkDelete;
     /**
      * the messages that were deleted
@@ -395,7 +395,7 @@ export type EventArgument_MessageBulkDelete = {
     arg2: GuildTextBasedChannel;
     arg3: null | undefined;
 };
-export type EventArgument_MessageReactionAdd = {
+export declare type EventArgument_MessageReactionAdd = {
     event: Events.MessageReactionAdd;
     /**
      * the reaction that was added
@@ -407,7 +407,7 @@ export type EventArgument_MessageReactionAdd = {
     arg2: User;
     arg3: null | undefined;
 };
-export type EventArgument_MessageReactionRemove = {
+export declare type EventArgument_MessageReactionRemove = {
     event: Events.MessageReactionRemove;
     /**
      * the reaction that was removed
@@ -419,7 +419,7 @@ export type EventArgument_MessageReactionRemove = {
     arg2: User;
     arg3: null | undefined;
 };
-export type EventArgument_MessageReactionRemoveAll = {
+export declare type EventArgument_MessageReactionRemoveAll = {
     event: Events.MessageReactionRemoveAll;
     /**
      * the message that all reactions were removed from
@@ -431,7 +431,7 @@ export type EventArgument_MessageReactionRemoveAll = {
     arg2: Collection<Snowflake | string, MessageReaction>;
     arg3: null | undefined;
 };
-export type EventArgument_MessageReactionRemoveEmoji = {
+export declare type EventArgument_MessageReactionRemoveEmoji = {
     event: Events.MessageReactionRemoveEmoji;
     /**
      * the reaction that was removed
@@ -440,7 +440,7 @@ export type EventArgument_MessageReactionRemoveEmoji = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_MessageUpdate = {
+export declare type EventArgument_MessageUpdate = {
     event: Events.MessageUpdate;
     /**
      * the old version of the message that was updated
@@ -452,7 +452,7 @@ export type EventArgument_MessageUpdate = {
     arg2: Message;
     arg3: null | undefined;
 };
-export type EventArgument_PresenceUpdate = {
+export declare type EventArgument_PresenceUpdate = {
     event: Events.PresenceUpdate;
     /**
      * the old version of the presence before the update
@@ -464,7 +464,7 @@ export type EventArgument_PresenceUpdate = {
     arg2: Presence;
     arg3: null | undefined;
 };
-export type EventArgument_ClientReady = {
+export declare type EventArgument_ClientReady = {
     event: Events.ClientReady;
     /**
      * the client that is ready
@@ -473,7 +473,7 @@ export type EventArgument_ClientReady = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildRoleCreate = {
+export declare type EventArgument_GuildRoleCreate = {
     event: Events.GuildRoleCreate;
     /**
      * the role that was created
@@ -482,7 +482,7 @@ export type EventArgument_GuildRoleCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildRoleDelete = {
+export declare type EventArgument_GuildRoleDelete = {
     event: Events.GuildRoleDelete;
     /**
      * the role that was deleted
@@ -491,7 +491,7 @@ export type EventArgument_GuildRoleDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildRoleUpdate = {
+export declare type EventArgument_GuildRoleUpdate = {
     event: Events.GuildRoleUpdate;
     /**
      * the old version of the role that was updated
@@ -503,7 +503,7 @@ export type EventArgument_GuildRoleUpdate = {
     arg2: Role;
     arg3: null | undefined;
 };
-export type EventArgument_ShardDisconnect = {
+export declare type EventArgument_ShardDisconnect = {
     event: Events.ShardDisconnect;
     /**
      * the websocket close event
@@ -515,7 +515,7 @@ export type EventArgument_ShardDisconnect = {
     arg2: number;
     arg3: null | undefined;
 };
-export type EventArgument_ShardError = {
+export declare type EventArgument_ShardError = {
     event: Events.ShardError;
     /**
      * the error that was thrown
@@ -527,7 +527,7 @@ export type EventArgument_ShardError = {
     arg2: number;
     arg3: null | undefined;
 };
-export type EventArgument_ShardReady = {
+export declare type EventArgument_ShardReady = {
     event: Events.ShardReady;
     /**
      * the id of the shard that is ready
@@ -539,7 +539,7 @@ export type EventArgument_ShardReady = {
     arg2: Set<Snowflake> | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_ShardReconnecting = {
+export declare type EventArgument_ShardReconnecting = {
     event: Events.ShardReconnecting;
     /**
      * the id of the shard that is reconnecting
@@ -548,7 +548,7 @@ export type EventArgument_ShardReconnecting = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_ShardResume = {
+export declare type EventArgument_ShardResume = {
     event: Events.ShardResume;
     /**
      * the id of the shard that resumed
@@ -560,7 +560,7 @@ export type EventArgument_ShardResume = {
     arg2: number;
     arg3: null | undefined;
 };
-export type EventArgument_StageInstanceCreate = {
+export declare type EventArgument_StageInstanceCreate = {
     event: Events.StageInstanceCreate;
     /**
      * the stage instance that was created
@@ -569,7 +569,7 @@ export type EventArgument_StageInstanceCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_StageInstanceDelete = {
+export declare type EventArgument_StageInstanceDelete = {
     event: Events.StageInstanceDelete;
     /**
      * the stage instance that was deleted
@@ -578,7 +578,7 @@ export type EventArgument_StageInstanceDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_StageInstanceUpdate = {
+export declare type EventArgument_StageInstanceUpdate = {
     event: Events.StageInstanceUpdate;
     /**
      * the old stage instance
@@ -590,7 +590,7 @@ export type EventArgument_StageInstanceUpdate = {
     arg2: StageInstance;
     arg3: null | undefined;
 };
-export type EventArgument_GuildStickerCreate = {
+export declare type EventArgument_GuildStickerCreate = {
     event: Events.GuildStickerCreate;
     /**
      * the sticker that was created
@@ -599,7 +599,7 @@ export type EventArgument_GuildStickerCreate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildStickerDelete = {
+export declare type EventArgument_GuildStickerDelete = {
     event: Events.GuildStickerDelete;
     /**
      * the sticker that was deleted
@@ -608,7 +608,7 @@ export type EventArgument_GuildStickerDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_GuildStickerUpdate = {
+export declare type EventArgument_GuildStickerUpdate = {
     event: Events.GuildStickerUpdate;
     /**
      * the old sticker
@@ -620,7 +620,7 @@ export type EventArgument_GuildStickerUpdate = {
     arg2: Sticker;
     arg3: null | undefined;
 };
-export type EventArgument_ThreadCreate = {
+export declare type EventArgument_ThreadCreate = {
     event: Events.ThreadCreate;
     /**
      * the thread that was created
@@ -632,7 +632,7 @@ export type EventArgument_ThreadCreate = {
     arg2: boolean;
     arg3: null | undefined;
 };
-export type EventArgument_ThreadDelete = {
+export declare type EventArgument_ThreadDelete = {
     event: Events.ThreadDelete;
     /**
      * the thread that was deleted
@@ -641,7 +641,7 @@ export type EventArgument_ThreadDelete = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_ThreadListSync = {
+export declare type EventArgument_ThreadListSync = {
     event: Events.ThreadListSync;
     /**
      * The threads that were synced
@@ -653,7 +653,7 @@ export type EventArgument_ThreadListSync = {
     arg2: Guild;
     arg3: null | undefined;
 };
-export type EventArgument_ThreadMembersUpdate = {
+export declare type EventArgument_ThreadMembersUpdate = {
     event: Events.ThreadMembersUpdate;
     /**
      * The members that were added
@@ -668,7 +668,7 @@ export type EventArgument_ThreadMembersUpdate = {
      * */
     arg3: ThreadChannel;
 };
-export type EventArgument_ThreadMemberUpdate = {
+export declare type EventArgument_ThreadMemberUpdate = {
     event: Events.ThreadMemberUpdate;
     /**
      * the old thread member
@@ -680,7 +680,7 @@ export type EventArgument_ThreadMemberUpdate = {
     arg2: ThreadMember;
     arg3: null | undefined;
 };
-export type EventArgument_ThreadUpdate = {
+export declare type EventArgument_ThreadUpdate = {
     event: Events.ThreadUpdate;
     /**
      * the old thread
@@ -692,7 +692,7 @@ export type EventArgument_ThreadUpdate = {
     arg2: ThreadChannel;
     arg3: null | undefined;
 };
-export type EventArgument_TypingStart = {
+export declare type EventArgument_TypingStart = {
     event: Events.TypingStart;
     /**
      * the typing state
@@ -701,7 +701,7 @@ export type EventArgument_TypingStart = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_UserUpdate = {
+export declare type EventArgument_UserUpdate = {
     event: Events.UserUpdate;
     /**
      * the old user
@@ -713,7 +713,7 @@ export type EventArgument_UserUpdate = {
     arg2: User;
     arg3: null | undefined;
 };
-export type EventArgument_VoiceStateUpdate = {
+export declare type EventArgument_VoiceStateUpdate = {
     event: Events.VoiceStateUpdate;
     /**
      * the old voice state
@@ -725,7 +725,7 @@ export type EventArgument_VoiceStateUpdate = {
     arg2: VoiceState;
     arg3: null | undefined;
 };
-export type EventArgument_VoiceServerUpdate = {
+export declare type EventArgument_VoiceServerUpdate = {
     event: Events.VoiceServerUpdate;
     /**
      * Voice connection token
@@ -744,7 +744,7 @@ export type EventArgument_VoiceServerUpdate = {
      */
     arg3: string | null;
 };
-export type EventArgument_Warn = {
+export declare type EventArgument_Warn = {
     event: Events.Warn;
     /**
      * the warning
@@ -753,7 +753,7 @@ export type EventArgument_Warn = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArgument_WebhooksUpdate = {
+export declare type EventArgument_WebhooksUpdate = {
     event: Events.WebhooksUpdate;
     /**
      * the channel that the webhook was updated in
@@ -762,10 +762,10 @@ export type EventArgument_WebhooksUpdate = {
     arg2: null | undefined;
     arg3: null | undefined;
 };
-export type EventArguments = {
+export declare type EventArguments = {
     [key in Events]: EventArgumentMap[Events];
 };
-export type EventArgumentMap = {
+export declare type EventArgumentMap = {
     cacheSweep: {
         event: Events.CacheSweep;
         arg1: unknown;
@@ -856,5 +856,5 @@ export type EventArgumentMap = {
     warn: EventArgument_Warn;
     webhookUpdate: EventArgument_WebhooksUpdate;
 };
-export type EventArgumentsAlias = EventArgument_ApplicationCommandPermissionsUpdate | EventArgument_AutoModerationActionExecution | EventArgument_AutoModerationRuleCreate | EventArgument_AutoModerationRuleDelete | EventArgument_AutoModerationRuleUpdate | EventArgument_ChannelCreate | EventArgument_ChannelDelete | EventArgument_ChannelPinsUpdate | EventArgument_ChannelUpdate | EventArgument_Debug | EventArgument_GuildEmojiCreate | EventArgument_GuildEmojiDelete | EventArgument_GuildEmojiUpdate | EventArgument_Error | EventArgument_GuildAuditLogEntryCreate | EventArgument_GuildBanAdd | EventArgument_GuildBanRemove | EventArgument_GuildCreate | EventArgument_GuildDelete | EventArgument_GuildIntegrationsUpdate | EventArgument_GuildMemberAdd | EventArgument_GuildMemberAvailable | EventArgument_GuildMemberRemove | EventArgument_GuildMembersChunk | EventArgument_GuildMemberUpdate | EventArgument_GuildScheduledEventCreate | EventArgument_GuildScheduledEventDelete | EventArgument_GuildScheduledEventUpdate | EventArgument_GuildScheduledEventUserAdd | EventArgument_GuildScheduledEventUserRemove | EventArgument_GuildUnavailable | EventArgument_GuildUpdate | EventArgument_InteractionCreate | EventArgument_InviteCreate | EventArgument_InviteDelete | EventArgument_MessageCreate | EventArgument_MessageDelete | EventArgument_MessageBulkDelete | EventArgument_MessageReactionAdd | EventArgument_MessageReactionRemove | EventArgument_MessageReactionRemoveAll | EventArgument_MessageReactionRemoveEmoji | EventArgument_MessageUpdate | EventArgument_PresenceUpdate | EventArgument_ClientReady | EventArgument_GuildRoleCreate | EventArgument_GuildRoleDelete | EventArgument_GuildRoleUpdate | EventArgument_ShardDisconnect | EventArgument_ShardError | EventArgument_ShardReady | EventArgument_ShardReconnecting | EventArgument_ShardResume | EventArgument_StageInstanceCreate | EventArgument_StageInstanceDelete | EventArgument_StageInstanceUpdate | EventArgument_GuildStickerCreate | EventArgument_GuildStickerDelete | EventArgument_GuildStickerUpdate | EventArgument_ThreadCreate | EventArgument_ThreadDelete | EventArgument_ThreadListSync | EventArgument_ThreadMembersUpdate | EventArgument_ThreadMemberUpdate | EventArgument_ThreadUpdate | EventArgument_TypingStart | EventArgument_UserUpdate | EventArgument_VoiceStateUpdate | EventArgument_VoiceServerUpdate | EventArgument_Warn | EventArgument_WebhooksUpdate;
+export declare type EventArgumentsAlias = EventArgument_ApplicationCommandPermissionsUpdate | EventArgument_AutoModerationActionExecution | EventArgument_AutoModerationRuleCreate | EventArgument_AutoModerationRuleDelete | EventArgument_AutoModerationRuleUpdate | EventArgument_ChannelCreate | EventArgument_ChannelDelete | EventArgument_ChannelPinsUpdate | EventArgument_ChannelUpdate | EventArgument_Debug | EventArgument_GuildEmojiCreate | EventArgument_GuildEmojiDelete | EventArgument_GuildEmojiUpdate | EventArgument_Error | EventArgument_GuildAuditLogEntryCreate | EventArgument_GuildBanAdd | EventArgument_GuildBanRemove | EventArgument_GuildCreate | EventArgument_GuildDelete | EventArgument_GuildIntegrationsUpdate | EventArgument_GuildMemberAdd | EventArgument_GuildMemberAvailable | EventArgument_GuildMemberRemove | EventArgument_GuildMembersChunk | EventArgument_GuildMemberUpdate | EventArgument_GuildScheduledEventCreate | EventArgument_GuildScheduledEventDelete | EventArgument_GuildScheduledEventUpdate | EventArgument_GuildScheduledEventUserAdd | EventArgument_GuildScheduledEventUserRemove | EventArgument_GuildUnavailable | EventArgument_GuildUpdate | EventArgument_InteractionCreate | EventArgument_InviteCreate | EventArgument_InviteDelete | EventArgument_MessageCreate | EventArgument_MessageDelete | EventArgument_MessageBulkDelete | EventArgument_MessageReactionAdd | EventArgument_MessageReactionRemove | EventArgument_MessageReactionRemoveAll | EventArgument_MessageReactionRemoveEmoji | EventArgument_MessageUpdate | EventArgument_PresenceUpdate | EventArgument_ClientReady | EventArgument_GuildRoleCreate | EventArgument_GuildRoleDelete | EventArgument_GuildRoleUpdate | EventArgument_ShardDisconnect | EventArgument_ShardError | EventArgument_ShardReady | EventArgument_ShardReconnecting | EventArgument_ShardResume | EventArgument_StageInstanceCreate | EventArgument_StageInstanceDelete | EventArgument_StageInstanceUpdate | EventArgument_GuildStickerCreate | EventArgument_GuildStickerDelete | EventArgument_GuildStickerUpdate | EventArgument_ThreadCreate | EventArgument_ThreadDelete | EventArgument_ThreadListSync | EventArgument_ThreadMembersUpdate | EventArgument_ThreadMemberUpdate | EventArgument_ThreadUpdate | EventArgument_TypingStart | EventArgument_UserUpdate | EventArgument_VoiceStateUpdate | EventArgument_VoiceServerUpdate | EventArgument_Warn | EventArgument_WebhooksUpdate;
 export {};

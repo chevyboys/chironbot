@@ -113,10 +113,10 @@ export interface IScheduleComponent extends IBaseComponent {
 export interface IScheduleProccessFunction extends IBaseProcessFunction {
     (fireDate: Date): object | void;
 }
-export type IModuleOnLoadComponentOptions = IBaseComponentOptions;
-export type IModuleOnUnloadComponentOptions = IBaseComponentOptions;
-export type IModuleOnLoadComponent = IBaseComponent;
-export type IModuleOnUnloadComponent = IBaseComponent;
+export declare type IModuleOnLoadComponentOptions = IBaseComponentOptions;
+export declare type IModuleOnUnloadComponentOptions = IBaseComponentOptions;
+export declare type IModuleOnLoadComponent = IBaseComponent;
+export declare type IModuleOnUnloadComponent = IBaseComponent;
 export interface IMessageCommandComponentOptions extends IEventComponentOptions {
     trigger: string | Events;
     readonly name: string;
