@@ -1,4 +1,4 @@
-import { Events, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction, Guild, User, GuildMember } from "discord.js";
+import { Events, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, AutocompleteInteraction } from "discord.js";
 import { ChironClient } from "./ChironClient";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -139,6 +139,9 @@ export class SlashCommandComponent extends BaseInteractionComponent {
         this.builder = SlashCommandComponentOptions.builder;
     }
 }
+//--------------------------------------------------------------------------
+//------------------- Context Menu Command Component ------------------------------
+// The base for all other Interaction Components
 export class ContextMenuCommandComponent extends BaseInteractionComponent {
     builder; //Contains our name and description
     description;
@@ -161,58 +164,20 @@ export class EventComponent extends BaseComponent {
         this.process = EventComponentOptions.process;
         this.guildId = EventComponentOptions.guildId;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.exec = ([arg1, arg2, arg3]) => {
-            //Handle Guild limiting
-            if (this.guildId) {
-                //Try to find the guild id connected to the event if the event is limited to a specific guild
-                const foundGuildId = (arg1 instanceof Guild) ? arg1.id :
-                    (arg2 instanceof Guild) ? arg2.id :
-                        (arg3 instanceof Guild) ? arg3.id :
-                            arg1 ? (arg1?.guild?.id ||
-                                arg1?.guildId ||
-                                arg1?.first()?.guild.id ||
-                                arg1?.message?.guildId ||
-                                arg1?.first()?.guildMember?.guild.id) :
-                                arg2 ? (arg2?.guildId ||
-                                    arg2?.guild?.id ||
-                                    arg2?.first()?.message.guildId) :
-                                    arg3 ? (arg3?.guild?.id ||
-                                        arg3?.guildId) :
-                                        null;
-                if (!foundGuildId || foundGuildId != this.guildId)
-                    return;
-            }
-            //Find the User ID of the person who triggered the event, and check if they are smited,
-            if (!this.bypassSmite && this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.length > 0) {
-                const triggeringUser = (arg1 instanceof User || arg1 instanceof GuildMember) ? arg1.id :
-                    (arg2 instanceof User || arg2 instanceof GuildMember) ? arg2.id :
-                        (arg3 instanceof User || arg3 instanceof GuildMember) ? arg3.id :
-                            arg1?.member?.id ||
-                                arg1?.user?.id ||
-                                arg1?.creatorId ||
-                                arg1?.recipient?.id ||
-                                arg1?.author?.id ||
-                                arg1?.executor?.id ||
-                                arg1?.user?.id ||
-                                arg1?.creatorId ||
-                                arg1?.inviter?.id ||
-                                arg2?.member?.id ||
-                                arg2?.user?.id ||
-                                arg2?.creatorId ||
-                                arg2?.recipient?.id ||
-                                arg2?.author?.id ||
-                                arg2?.creatorId ||
-                                arg3?.member?.id ||
-                                arg3?.user?.id ||
-                                null;
-                if (triggeringUser && this.module?.client.config.smiteArray.includes(triggeringUser)) {
-                    return smiteLog(triggeringUser, this.module.name, this.trigger, "event");
+        this.exec = (arg1, arg2, arg3) => {
+            const args = [arg1, arg2, arg3];
+            const argFinder = Array.isArray(args) ? args : [args];
+            for (const arg of argFinder) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                if (typeof arg === 'object' && (arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id)) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const id = arg?.member?.id || arg?.user?.id || arg.author?.id || arg?.id;
+                    if (this.module?.client instanceof ChironClient && this.module?.client.config.smiteArray.includes(id)) {
+                        console.warn("Smite System Blocked Event Triggered by " + id);
+                        return "Smite System Blocked Event Triggered by " + id;
+                    }
                 }
             }
-            if (this.module?.client instanceof ChironClient)
-                return this.process([arg1, arg2, arg3]);
-            else
-                throw new Error("Invalid Client");
         };
     }
 }

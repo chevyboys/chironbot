@@ -46,12 +46,12 @@ export interface IBaseComponent {
 
 export interface IBaseProcessFunction {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (input: any, input2?: any): any
+    (input: any | EventArgument1, input2?: any | EventArgument2, extraForEvents?: EventArgument3): any
 }
 
 export interface IBaseExecFunction extends IBaseProcessFunction {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (input: any, InvokerId?: Snowflake): any
+    (input: any | EventArgument1, InvokerId?: Snowflake | EventArgument2, extraForEvents?: EventArgument3 | null): any
 }
 
 //--------------------------------------------------------------------------

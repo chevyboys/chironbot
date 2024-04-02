@@ -31,10 +31,10 @@ export interface IBaseComponent {
     exec: IBaseExecFunction;
 }
 export interface IBaseProcessFunction {
-    (input: any, input2?: any): any;
+    (input: any | EventArgument1, input2?: any | EventArgument2, extraForEvents?: EventArgument3): any;
 }
 export interface IBaseExecFunction extends IBaseProcessFunction {
-    (input: any, InvokerId?: Snowflake): any;
+    (input: any | EventArgument1, InvokerId?: Snowflake | EventArgument2, extraForEvents?: EventArgument3 | null): any;
 }
 export interface IBaseInteractionComponentOption extends IBaseComponentOptions {
     readonly builder: SlashCommandBuilder | ContextMenuCommandBuilder | SlashCommandSubcommandsOnlyBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | Omit<SlashCommandBuilder, "addBooleanOption" | "addUserOption" | "addChannelOption" | "addRoleOption" | "addAttachmentOption" | "addMentionableOption" | "addStringOption" | "addIntegerOption" | "addNumberOption">;
