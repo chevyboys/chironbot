@@ -18,3 +18,6 @@ config/snowflakes.json
 package-lock.json
 Judgement
 avatar/*
+
+# Don't commit build artifacts
+/dist
